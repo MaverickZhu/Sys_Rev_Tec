@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API测试工具 - 政府采购项目审查分析系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background: #f5f7fa;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .api-section {
+            margin-bottom: 40px;
+            border: 1px solid #e1e5e9;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .section-header {
+            background: #f8f9fa;
+            padding: 15px 20px;
+            border-bottom: 1px solid #e1e5e9;
+            font-weight: bold;
+            color: #495057;
+        }
+        
+        .section-content {
+            padding: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #495057;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        
+        .form-group textarea {
+            height: 100px;
+            resize: vertical;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: transform 0.2s ease;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .response-area {
+            background: #f8f9fa;
+            border: 1px solid #e1e5e9;
+            border-radius: 5px;
+            padding: 15px;
+            margin-top: 20px;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .success {
+            color: #28a745;
+        }
+        
+        .error {
+            color: #dc3545;
+        }
+        
+        .loading {
+            color: #ffc107;
+        }
+        
+        .file-upload {
+            border: 2px dashed #ced4da;
+            border-radius: 5px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.3s ease;
+        }
+        
+        .file-upload:hover {
+            border-color: #667eea;
+        }
+        
+        .file-upload.dragover {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔧 API测试工具</h1>
+            <p>政府采购项目审查分析系统 API 交互界面</p>
+        </div>
+        
+        <div class="content">
+            <!-- 用户认证 -->
+            <div class="api-section">
+                <div class="section-header">👤 用户认证</div>
+                <div class="section-content">
+                    <div class="form-group">
+                        <label>用户名:</label>
+                        <input type="text" id="username" placeholder="输入用户名">
+                    </div>
+                    <div class="form-group">
+                        <label>密码:</label>
+                        <input type="password" id="password" placeholder="输入密码">
+                    </div>
+                    <button class="btn" onclick="login()">登录</button>
+                    <div id="auth-response" class="response-area" style="display: none;"></div>
+                </div>
+            </div>
+            
+            <!-- 项目管理 -->
+            <div class="api-section">
+                <div class="section-header">📋 项目管理</div>
+                <div class="section-content">
+                    <div class="form-group">
+                        <label>操作类型:</label>
+                        <select id="project-action">
+                            <option value="list">获取项目列表</option>
+                            <option value="create">创建新项目</option>
+                            <option value="get">获取项目详情</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="project-name-group" style="display: none;">
+                        <label>项目名称:</label>
+                        <input type="text" id="project-name" placeholder="输入项目名称">
+                    </div>
+                    <div class="form-group" id="project-desc-group" style="display: none;">
+                        <label>项目描述:</label>
+                        <textarea id="project-desc" placeholder="输入项目描述"></textarea>
+                    </div>
+                    <div class="form-group" id="project-id-group" style="display: none;">
+                        <label>项目ID:</label>
+                        <input type="number" id="project-id" placeholder="输入项目ID">
+                    </div>
+                    <button class="btn" onclick="handleProject()">执行操作</button>
+                    <div id="project-response" class="response-area" style="display: none;"></div>
+                </div>
+            </div>
+            
+            <!-- 文档上传 -->
+            <div class="api-section">
+                <div class="section-header">📄 文档上传</div>
+                <div class="section-content">
+                    <div class="form-group">
+                        <label>项目ID:</label>
+                        <input type="number" id="upload-project-id" placeholder="输入项目ID">
+                    </div>
+                    <div class="form-group">
+                        <label>选择文件:</label>
+                        <div class="file-upload" onclick="document.getElementById('file-input').click()">
+                            <input type="file" id="file-input" style="display: none;" onchange="handleFileSelect(this)">
+                            <p id="file-info">点击选择文件或拖拽文件到此处</p>
+                        </div>
+                    </div>
+                    <button class="btn" onclick="uploadDocument()" id="upload-btn" disabled>上传文档</button>
+                    <div id="upload-response" class="response-area" style="display: none;"></div>
+                </div>
+            </div>
+            
+            <!-- OCR处理 -->
+            <div class="api-section">
+                <div class="section-header">🔍 OCR文字识别</div>
+                <div class="section-content">
+                    <div class="form-group">
+                        <label>OCR引擎:</label>
+                        <select id="ocr-engine">
+                            <option value="auto">自动选择</option>
+                            <option value="paddleocr">PaddleOCR</option>
+                            <option value="easyocr">EasyOCR</option>
+                            <option value="tesseract">TesseractOCR</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>选择图片:</label>
+                        <div class="file-upload" onclick="document.getElementById('ocr-file-input').click()">
+                            <input type="file" id="ocr-file-input" accept="image/*" style="display: none;" onchange="handleOcrFileSelect(this)">
+                            <p id="ocr-file-info">点击选择图片文件</p>
+                        </div>
+                    </div>
+                    <button class="btn" onclick="processOcr()" id="ocr-btn" disabled>开始OCR识别</button>
+                    <div id="ocr-response" class="response-area" style="display: none;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let authToken = null;
+        let selectedFile = null;
+        let selectedOcrFile = null;
+        
+        // 监听项目操作类型变化
+        document.getElementById('project-action').addEventListener('change', function() {
+            const action = this.value;
+            const nameGroup = document.getElementById('project-name-group');
+            const descGroup = document.getElementById('project-desc-group');
+            const idGroup = document.getElementById('project-id-group');
+            
+            // 隐藏所有字段
+            nameGroup.style.display = 'none';
+            descGroup.style.display = 'none';
+            idGroup.style.display = 'none';
+            
+            // 根据操作类型显示相应字段
+            if (action === 'create') {
+                nameGroup.style.display = 'block';
+                descGroup.style.display = 'block';
+            } else if (action === 'get') {
+                idGroup.style.display = 'block';
+            }
+        });
+        
+        // 文件选择处理
+        function handleFileSelect(input) {
+            const file = input.files[0];
+            if (file) {
+                selectedFile = file;
+                document.getElementById('file-info').textContent = `已选择: ${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+                document.getElementById('upload-btn').disabled = false;
+            }
+        }
+        
+        function handleOcrFileSelect(input) {
+            const file = input.files[0];
+            if (file) {
+                selectedOcrFile = file;
+                document.getElementById('ocr-file-info').textContent = `已选择: ${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+                document.getElementById('ocr-btn').disabled = false;
+            }
+        }
+        
+        // 拖拽上传支持
+        const fileUpload = document.querySelector('.file-upload');
+        fileUpload.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            this.classList.add('dragover');
+        });
+        
+        fileUpload.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            this.classList.remove('dragover');
+        });
+        
+        fileUpload.addEventListener('drop', function(e) {
+            e.preventDefault();
+            this.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                selectedFile = files[0];
+                document.getElementById('file-info').textContent = `已选择: ${files[0].name} (${(files[0].size / 1024).toFixed(1)} KB)`;
+                document.getElementById('upload-btn').disabled = false;
+            }
+        });
+        
+        // API调用函数
+        async function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            if (!username || !password) {
+                showResponse('auth-response', '请输入用户名和密码', 'error');
+                return;
+            }
+            
+            showResponse('auth-response', '正在登录...', 'loading');
+            
+            try {
+                const formData = new FormData();
+                formData.append('username', username);
+                formData.append('password', password);
+                
+                const response = await fetch('/api/v1/login/access-token', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    authToken = data.access_token;
+                    showResponse('auth-response', `登录成功!\nToken: ${authToken}`, 'success');
+                } else {
+                    showResponse('auth-response', `登录失败: ${data.detail || data.message}`, 'error');
+                }
+            } catch (error) {
+                showResponse('auth-response', `网络错误: ${error.message}`, 'error');
+            }
+        }
+        
+        async function handleProject() {
+            const action = document.getElementById('project-action').value;
+            
+            if (!authToken) {
+                showResponse('project-response', '请先登录获取访问令牌', 'error');
+                return;
+            }
+            
+            showResponse('project-response', '正在处理...', 'loading');
+            
+            try {
+                let url, method, body;
+                
+                switch (action) {
+                    case 'list':
+                        url = '/api/v1/projects/';
+                        method = 'GET';
+                        break;
+                    case 'create':
+                        const name = document.getElementById('project-name').value;
+                        const description = document.getElementById('project-desc').value;
+                        if (!name) {
+                            showResponse('project-response', '请输入项目名称', 'error');
+                            return;
+                        }
+                        url = '/api/v1/projects/';
+                        method = 'POST';
+                        body = JSON.stringify({ name, description });
+                        break;
+                    case 'get':
+                        const projectId = document.getElementById('project-id').value;
+                        if (!projectId) {
+                            showResponse('project-response', '请输入项目ID', 'error');
+                            return;
+                        }
+                        url = `/api/v1/projects/${projectId}`;
+                        method = 'GET';
+                        break;
+                }
+                
+                const options = {
+                    method,
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                };
+                
+                if (body) {
+                    options.body = body;
+                }
+                
+                const response = await fetch(url, options);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showResponse('project-response', JSON.stringify(data, null, 2), 'success');
+                } else {
+                    showResponse('project-response', `操作失败: ${data.detail || data.message}`, 'error');
+                }
+            } catch (error) {
+                showResponse('project-response', `网络错误: ${error.message}`, 'error');
+            }
+        }
+        
+        async function uploadDocument() {
+            const projectId = document.getElementById('upload-project-id').value;
+            
+            if (!authToken) {
+                showResponse('upload-response', '请先登录获取访问令牌', 'error');
+                return;
+            }
+            
+            if (!projectId) {
+                showResponse('upload-response', '请输入项目ID', 'error');
+                return;
+            }
+            
+            if (!selectedFile) {
+                showResponse('upload-response', '请选择要上传的文件', 'error');
+                return;
+            }
+            
+            showResponse('upload-response', '正在上传文档...', 'loading');
+            
+            try {
+                const formData = new FormData();
+                formData.append('file', selectedFile);
+                
+                const response = await fetch(`/api/v1/documents/upload/${projectId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showResponse('upload-response', JSON.stringify(data, null, 2), 'success');
+                } else {
+                    showResponse('upload-response', `上传失败: ${data.detail || data.message}`, 'error');
+                }
+            } catch (error) {
+                showResponse('upload-response', `网络错误: ${error.message}`, 'error');
+            }
+        }
+        
+        async function processOcr() {
+            const engine = document.getElementById('ocr-engine').value;
+            
+            if (!selectedOcrFile) {
+                showResponse('ocr-response', '请选择要识别的图片文件', 'error');
+                return;
+            }
+            
+            showResponse('ocr-response', '正在进行OCR识别...', 'loading');
+            
+            try {
+                const formData = new FormData();
+                formData.append('file', selectedOcrFile);
+                formData.append('engine', engine);
+                
+                const response = await fetch('/api/v1/ocr/extract-text', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showResponse('ocr-response', JSON.stringify(data, null, 2), 'success');
+                } else {
+                    showResponse('ocr-response', `OCR识别失败: ${data.detail || data.message}`, 'error');
+                }
+            } catch (error) {
+                showResponse('ocr-response', `网络错误: ${error.message}`, 'error');
+            }
+        }
+        
+        function showResponse(elementId, message, type) {
+            const element = document.getElementById(elementId);
+            element.style.display = 'block';
+            element.textContent = message;
+            element.className = `response-area ${type}`;
+        }
+    </script>
+</body>
+</html>
