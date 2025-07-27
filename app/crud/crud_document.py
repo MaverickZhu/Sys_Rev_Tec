@@ -1,6 +1,6 @@
 from typing import List, Optional, Dict, Any
 from sqlalchemy.orm import Session
-from sqlalchemy import and_, or_
+from sqlalchemy import and_, or_, func
 
 from app.crud.base import CRUDBase
 from app.models.document import Document
@@ -9,11 +9,11 @@ from app.schemas.document import DocumentCreate, DocumentUpdate
 
 class CRUDDocument(CRUDBase[Document, DocumentCreate, DocumentUpdate]):
     def create_with_uploader(
-        self, db: Session, *, obj_in: DocumentCreate, uploader_id: int
+        self, db: Session, *, obj_in: DocumentCreate, owner_id: int
     ) -> Document:
         """创建文档并关联上传者"""
         obj_in_data = obj_in.model_dump() if hasattr(obj_in, 'model_dump') else obj_in.dict()
-        db_obj = self.model(**obj_in_data, uploaded_by=uploader_id)
+        db_obj = self.model(**obj_in_data, uploader_id=owner_id)
         db.add(db_obj)
         db.commit()
         db.refresh(db_obj)
@@ -25,7 +25,7 @@ class CRUDDocument(CRUDBase[Document, DocumentCreate, DocumentUpdate]):
         """根据上传者获取文档列表"""
         return (
             db.query(self.model)
-            .filter(Document.uploaded_by == uploader_id)
+            .filter(Document.uploader_id == uploader_id)
             .offset(skip)
             .limit(limit)
             .all()
@@ -68,21 +68,45 @@ class CRUDDocument(CRUDBase[Document, DocumentCreate, DocumentUpdate]):
         return query.offset(skip).limit(limit).all()
     
     def search_documents(
-        self, db: Session, *, query: str, skip: int = 0, limit: int = 100
+        self, db: Session, *, query: str, skip: int = 0, limit: int = 100, project_id: Optional[int] = None
     ) -> List[Document]:
-        """搜索文档（按文件名和描述）"""
+        """搜索文档（按文件名、摘要、提取的文本内容和OCR文本）"""
         search_filter = or_(
             Document.filename.contains(query),
-            Document.description.contains(query)
+            Document.original_filename.contains(query),
+            Document.summary.contains(query),
+            Document.extracted_text.contains(query),
+            Document.ocr_text.contains(query),
+            Document.keywords.contains(query)
         )
         
-        return (
-            db.query(self.model)
-            .filter(search_filter)
-            .offset(skip)
-            .limit(limit)
-            .all()
+        query_obj = db.query(self.model).filter(search_filter)
+        
+        # 如果指定了项目ID，则只在该项目中搜索
+        if project_id is not None:
+            query_obj = query_obj.filter(Document.project_id == project_id)
+        
+        return query_obj.offset(skip).limit(limit).all()
+    
+    def search_documents_count(
+        self, db: Session, *, query: str, project_id: Optional[int] = None
+    ) -> int:
+        """获取搜索结果总数"""
+        search_filter = or_(
+            Document.filename.contains(query),
+            Document.original_filename.contains(query),
+            Document.summary.contains(query),
+            Document.extracted_text.contains(query),
+            Document.ocr_text.contains(query),
+            Document.keywords.contains(query)
         )
+        
+        query_obj = db.query(self.model).filter(search_filter)
+        
+        if project_id is not None:
+            query_obj = query_obj.filter(Document.project_id == project_id)
+        
+        return query_obj.count()
     
     def get_unprocessed_documents(
         self, db: Session, *, skip: int = 0, limit: int = 100
@@ -97,16 +121,14 @@ class CRUDDocument(CRUDBase[Document, DocumentCreate, DocumentUpdate]):
         )
     
     def mark_as_processed(
-        self, db: Session, *, document_id: int, processing_status: str = "completed"
+        self, db: Session, *, document_id: int, processing_status: str = "processed"
     ) -> Optional[Document]:
         """标记文档为已处理"""
         document = self.get(db, id=document_id)
         if document:
             document.is_processed = True
-            document.processing_status = processing_status
-            db.add(document)
+            document.status = processing_status
             db.commit()
-            db.refresh(document)
         return document
     
     def update_access_info(
@@ -117,11 +139,11 @@ class CRUDDocument(CRUDBase[Document, DocumentCreate, DocumentUpdate]):
         
         document = self.get(db, id=document_id)
         if document:
-            document.access_count = (document.access_count or 0) + 1
-            document.last_accessed = datetime.utcnow()
-            db.add(document)
-            db.commit()
-            db.refresh(document)
+            # 由于Document模型没有access_count和last_accessed字段
+            # 这里只是更新updated_at时间戳
+            if hasattr(document, 'updated_at'):
+                document.updated_at = datetime.utcnow()
+                db.commit()
         return document
     
     def get_statistics(
@@ -131,7 +153,7 @@ class CRUDDocument(CRUDBase[Document, DocumentCreate, DocumentUpdate]):
         query = db.query(self.model)
         
         if uploader_id:
-            query = query.filter(Document.uploaded_by == uploader_id)
+            query = query.filter(Document.uploader_id == uploader_id)
         
         total_documents = query.count()
         processed_documents = query.filter(Document.is_processed == True).count()
@@ -139,12 +161,12 @@ class CRUDDocument(CRUDBase[Document, DocumentCreate, DocumentUpdate]):
         
         # 按类型统计
         type_stats = {}
-        for doc_type, count in db.query(Document.document_type, db.func.count(Document.id)).group_by(Document.document_type).all():
+        for doc_type, count in db.query(Document.document_type, func.count(Document.id)).group_by(Document.document_type).all():
             type_stats[doc_type] = count
         
         # 按处理状态统计
         status_stats = {}
-        for status, count in db.query(Document.processing_status, db.func.count(Document.id)).group_by(Document.processing_status).all():
+        for status, count in db.query(Document.status, func.count(Document.id)).group_by(Document.status).all():
             if status:
                 status_stats[status] = count
         
@@ -153,8 +175,9 @@ class CRUDDocument(CRUDBase[Document, DocumentCreate, DocumentUpdate]):
             "processed_documents": processed_documents,
             "unprocessed_documents": unprocessed_documents,
             "processing_rate": round(processed_documents / total_documents * 100, 2) if total_documents > 0 else 0,
-            "type_distribution": type_stats,
-            "status_distribution": status_stats
+            "by_type": [{"type": k, "count": v} for k, v in type_stats.items()],
+            "by_status": [{"status": k, "count": v} for k, v in status_stats.items()],
+            "total_size": db.query(func.sum(Document.file_size)).scalar() or 0
         }
 
 

@@ -17,9 +17,12 @@ class ProjectCreate(ProjectBase):
     department: Optional[str] = None
     priority: Optional[str] = "medium"
     risk_level: Optional[str] = "low"
+    is_active: Optional[bool] = True
 
 # Properties to receive on project update
-class ProjectUpdate(ProjectBase):
+class ProjectUpdate(BaseModel):
+    name: Optional[str] = None
+    description: Optional[str] = None
     project_code: Optional[str] = None
     project_type: Optional[str] = None
     procurement_method: Optional[str] = None
@@ -29,6 +32,7 @@ class ProjectUpdate(ProjectBase):
     risk_level: Optional[str] = None
     status: Optional[str] = None
     review_status: Optional[str] = None
+    is_active: Optional[bool] = None
 
 # Properties shared by models stored in DB
 class ProjectInDBBase(ProjectBase):
@@ -38,6 +42,7 @@ class ProjectInDBBase(ProjectBase):
     owner_id: int
     status: Optional[str] = "planning"
     review_status: Optional[str] = "pending"
+    is_active: Optional[bool] = True
     budget_amount: Optional[Decimal] = None
     department: Optional[str] = None
     priority: Optional[str] = "medium"

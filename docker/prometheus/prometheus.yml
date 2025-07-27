@@ -1,0 +1,93 @@
+# Prometheus 配置文件
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    monitor: 'sys-rev-tech-monitor'
+
+# 规则文件
+rule_files:
+  # - "first_rules.yml"
+  # - "second_rules.yml"
+
+# 抓取配置
+scrape_configs:
+  # Prometheus 自身监控
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+    scrape_interval: 5s
+    metrics_path: /metrics
+
+  # 主应用监控
+  - job_name: 'sys-rev-tech-app'
+    static_configs:
+      - targets: ['app:8000']
+    scrape_interval: 10s
+    metrics_path: /metrics
+    scrape_timeout: 5s
+    honor_labels: true
+
+  # PostgreSQL 监控 (如果有postgres_exporter)
+  - job_name: 'postgres'
+    static_configs:
+      - targets: ['db:5432']
+    scrape_interval: 30s
+    metrics_path: /metrics
+    scrape_timeout: 10s
+
+  # Redis 监控 (如果有redis_exporter)
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['redis:6379']
+    scrape_interval: 30s
+    metrics_path: /metrics
+    scrape_timeout: 10s
+
+  # Nginx 监控 (如果有nginx_exporter)
+  - job_name: 'nginx'
+    static_configs:
+      - targets: ['nginx:80']
+    scrape_interval: 30s
+    metrics_path: /metrics
+    scrape_timeout: 10s
+
+  # OCR 服务监控
+  - job_name: 'ocr-service'
+    static_configs:
+      - targets: ['ocr-service:8001']
+    scrape_interval: 30s
+    metrics_path: /metrics
+    scrape_timeout: 10s
+
+  # AI 向量化和搜索服务监控
+  - job_name: 'ai-service'
+    static_configs:
+      - targets: ['ai-service:8001']
+    scrape_interval: 15s  # AI服务需要更频繁的监控
+    metrics_path: /metrics
+    scrape_timeout: 10s
+    honor_labels: true
+    # AI服务特定的标签
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: service_type
+        replacement: 'ai-service'
+      - source_labels: [__address__]
+        target_label: component
+        replacement: 'vector-search'
+
+# 告警管理器配置 (可选)
+# alerting:
+#   alertmanagers:
+#     - static_configs:
+#         - targets:
+#           - alertmanager:9093
+
+# 远程写入配置 (可选)
+# remote_write:
+#   - url: "http://remote-storage:9201/write"
+
+# 远程读取配置 (可选)
+# remote_read:
+#   - url: "http://remote-storage:9201/read"

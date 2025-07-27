@@ -81,11 +81,7 @@ class TestDocuments:
         
         assert response.status_code == 404
         result = response.json()
-        # Check if it's ResponseModel format or FastAPI default format
-        if "detail" in result:
-            assert "Project not found" in result["detail"]
-        elif "message" in result:
-            assert "Project not found" in result["message"]
+        assert "Project not found" in result["error"]["message"]
     
     def test_upload_unsupported_file_type(self, client: TestClient, auth_headers, test_project):
         """测试上传不支持的文件类型"""
@@ -108,11 +104,7 @@ class TestDocuments:
         
         assert response.status_code == 400
         result = response.json()
-        # Check if it's ResponseModel format or FastAPI default format
-        if "detail" in result:
-            assert "Unsupported file type" in result["detail"]
-        elif "message" in result:
-            assert "Unsupported file type" in result["message"]
+        assert "Unsupported file type" in result["error"]["message"]
     
     def test_get_project_documents(self, client: TestClient, auth_headers, test_project, test_document):
         """测试获取项目文档列表"""
@@ -168,11 +160,7 @@ class TestDocuments:
         
         assert response.status_code == 404
         result = response.json()
-        # Check if it's ResponseModel format or FastAPI default format
-        if "detail" in result:
-            assert "Project not found" in result["detail"]
-        elif "message" in result:
-            assert "Project not found" in result["message"]
+        assert "Project not found" in result["error"]["message"]
     
     def test_get_document_detail(self, client: TestClient, auth_headers, test_document):
         """测试获取文档详细信息"""
@@ -197,11 +185,7 @@ class TestDocuments:
         
         assert response.status_code == 404
         result = response.json()
-        # Check if it's ResponseModel format or FastAPI default format
-        if "detail" in result:
-            assert "Document not found" in result["detail"]
-        elif "message" in result:
-            assert "Document not found" in result["message"]
+        assert "Document not found" in result["error"]["message"]
     
     def test_update_document(self, client: TestClient, auth_headers, test_document):
         """测试更新文档信息"""
@@ -213,7 +197,7 @@ class TestDocuments:
         
         response = client.put(
             f"/api/v1/documents/{test_document.id}",
-            params=update_data,
+            json=update_data,
             headers=auth_headers
         )
         
@@ -232,17 +216,13 @@ class TestDocuments:
         
         response = client.put(
             "/api/v1/documents/99999",
-            params=update_data,
+            json=update_data,
             headers=auth_headers
         )
         
         assert response.status_code == 404
         result = response.json()
-        # Check if it's ResponseModel format or FastAPI default format
-        if "detail" in result:
-            assert "Document not found" in result["detail"]
-        elif "message" in result:
-            assert "Document not found" in result["message"]
+        assert "Document not found" in result["error"]["message"]
     
     def test_delete_document(self, client: TestClient, auth_headers, test_document):
         """测试删除文档"""
@@ -272,11 +252,7 @@ class TestDocuments:
         
         assert response.status_code == 404
         result = response.json()
-        # Check if it's ResponseModel format or FastAPI default format
-        if "detail" in result:
-            assert "Document not found" in result["detail"]
-        elif "message" in result:
-            assert "Document not found" in result["message"]
+        assert "Document not found" in result["error"]["message"]
     
     def test_get_project_documents_without_auth(self, client: TestClient, test_project):
         """测试无认证获取项目文档列表"""
@@ -291,7 +267,7 @@ class TestDocuments:
     def test_update_document_without_auth(self, client: TestClient, test_document):
         """测试无认证更新文档"""
         update_data = {"document_category": "新类别"}
-        response = client.put(f"/api/v1/documents/{test_document.id}", params=update_data)
+        response = client.put(f"/api/v1/documents/{test_document.id}", json=update_data)
         assert response.status_code == 401
     
     def test_delete_document_without_auth(self, client: TestClient, test_document):

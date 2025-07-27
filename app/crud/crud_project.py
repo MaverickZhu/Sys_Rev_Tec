@@ -31,6 +31,8 @@ class CRUDProject(CRUDBase[Project, ProjectCreate, ProjectUpdate]):
         db.refresh(db_obj)
         return db_obj
     
+
+    
     def get_by_code(self, db: Session, *, project_code: str) -> Optional[Project]:
         """根据项目编号获取项目"""
         return db.query(Project).filter(Project.project_code == project_code).first()
@@ -46,6 +48,12 @@ class CRUDProject(CRUDBase[Project, ProjectCreate, ProjectUpdate]):
             .limit(limit)
             .all()
         )
+    
+    def get_multi_by_owner(
+        self, db: Session, *, owner_id: int, skip: int = 0, limit: int = 100
+    ) -> List[Project]:
+        """获取指定负责人的多个项目（别名方法）"""
+        return self.get_by_owner(db=db, owner_id=owner_id, skip=skip, limit=limit)
     
     def get_by_status(
         self, db: Session, *, status: str, skip: int = 0, limit: int = 100
@@ -213,6 +221,118 @@ class CRUDProject(CRUDBase[Project, ProjectCreate, ProjectUpdate]):
             db.commit()
             db.refresh(project)
         return project
+    
+    def get_projects_by_date_range(
+        self, db: Session, *, start_date: datetime, end_date: datetime, skip: int = 0, limit: int = 100
+    ) -> List[Project]:
+        """根据日期范围获取项目列表"""
+        return (
+            db.query(Project)
+            .filter(
+                and_(
+                    Project.created_at >= start_date,
+                    Project.created_at <= end_date
+                )
+            )
+            .offset(skip)
+            .limit(limit)
+            .all()
+        )
+    
+    def update_status(
+        self, db: Session, *, project_id: int, status: str
+    ) -> Optional[Project]:
+        """更新项目状态"""
+        project = self.get(db, id=project_id)
+        if project:
+            project.status = status
+            project.updated_at = datetime.utcnow()
+            db.commit()
+            db.refresh(project)
+        return project
+    
+    def get_recent_projects(
+        self, db: Session, *, limit: int = 10
+    ) -> List[Project]:
+        """获取最近创建的项目"""
+        return (
+            db.query(Project)
+            .order_by(desc(Project.created_at))
+            .limit(limit)
+            .all()
+        )
+    
+    def activate(
+        self, db: Session, *, project_id: int
+    ) -> Optional[Project]:
+        """激活项目"""
+        project = db.query(Project).filter(Project.id == project_id).first()
+        if project:
+            project.is_active = True
+            project.updated_at = datetime.utcnow()
+            db.commit()
+            db.refresh(project)
+        return project
+    
+    def deactivate(
+        self, db: Session, *, project_id: int
+    ) -> Optional[Project]:
+        """停用项目"""
+        project = db.query(Project).filter(Project.id == project_id).first()
+        if project:
+            project.is_active = False
+            project.updated_at = datetime.utcnow()
+            db.commit()
+            db.refresh(project)
+        return project
+    
+    def get_active_projects(
+        self, db: Session, *, skip: int = 0, limit: int = 100
+    ) -> List[Project]:
+        """获取活跃项目"""
+        return (
+            db.query(Project)
+            .filter(Project.is_active == True)
+            .offset(skip)
+            .limit(limit)
+            .all()
+        )
+    
+    def search(
+        self, db: Session, *, query: str, skip: int = 0, limit: int = 100
+    ) -> List[Project]:
+        """搜索项目"""
+        search_filter = or_(
+            Project.name.contains(query),
+            Project.description.contains(query)
+        )
+        return (
+            db.query(Project)
+            .filter(search_filter)
+            .offset(skip)
+            .limit(limit)
+            .all()
+        )
+    
+    def get_statistics(
+        self, db: Session, *, owner_id: Optional[int] = None
+    ) -> Dict[str, Any]:
+        """获取项目统计信息"""
+        query = db.query(Project)
+        if owner_id:
+            query = query.filter(Project.owner_id == owner_id)
+        
+        total_count = query.count()
+        active_count = query.filter(Project.is_active == True).count()
+        completed_count = query.filter(Project.status == "completed").count()
+        inactive_count = query.filter(Project.is_active == False).count()
+        
+        return {
+            "total_count": total_count,
+            "active_count": active_count,
+            "completed_count": completed_count,
+            "inactive_count": inactive_count
+        }
 
 
 class CRUDIssue(CRUDBase[Issue, IssueCreate, IssueUpdate]):

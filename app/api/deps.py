@@ -11,7 +11,8 @@ from app.core.config import settings
 from app.db.session import SessionLocal
 
 reusable_oauth2 = OAuth2PasswordBearer(
-    tokenUrl=f"{settings.API_V1_STR}/login/access-token"
+    tokenUrl=f"{settings.API_V1_STR}/login/access-token",
+    auto_error=True
 )
 
 
@@ -40,3 +41,20 @@ def get_current_user(
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return user
+
+
+def get_current_user_id(
+    token: str = Depends(reusable_oauth2)
+) -> int:
+    """获取当前用户ID，避免会话绑定问题"""
+    try:
+        payload = jwt.decode(
+            token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM]
+        )
+        token_data = schemas.TokenPayload(**payload)
+    except (jwt.JWTError, ValidationError):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Could not validate credentials",
+        )
+    return int(token_data.sub)

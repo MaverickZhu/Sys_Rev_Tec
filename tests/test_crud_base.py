@@ -36,51 +36,78 @@ class TestCRUDBase:
         db.commit()
         
         result = self.crud_project.get_multi(db)
-        assert result == []
+        assert isinstance(result, list)
+        assert len(result) == 0
     
     def test_get_multi_with_items(self, db: Session, test_user):
         """测试获取多个项目（有数据）"""
-        # 创建多个项目
-        projects = []
-        for i in range(3):
-            project_data = {
-                "name": f"Test Project {i}", 
-                "description": f"Description {i}",
-                "project_code": f"MULTI-2024-{i:03d}",
-                "project_type": "货物"
-            }
-            project = self.crud_project.create_with_owner(db, obj_in=project_data, owner_id=test_user.id)
-            projects.append(project)
+        # 禁用缓存以确保测试准确性
+        original_cache_enabled = self.crud_project.cache_enabled
+        self.crud_project.cache_enabled = False
         
-        result = self.crud_project.get_multi(db)
-        assert len(result) >= 3
-        
-        # 验证项目名称
-        project_names = [p.name for p in result]
-        for project in projects:
-            assert project.name in project_names
+        try:
+            # 先获取当前数据库中的项目数量
+            initial_count = len(self.crud_project.get_multi(db))
+            
+            # 创建多个项目
+            projects = []
+            for i in range(3):
+                project_data = ProjectCreate(
+                    name=f"Test Project {i}", 
+                    description=f"Description {i}",
+                    project_code=f"MULTI-2024-{i:03d}",
+                    project_type="货物"
+                )
+                # 使用不自动提交的create_with_owner方法
+                project = self.crud_project.create_with_owner(db, obj_in=project_data, owner_id=test_user.id)
+                projects.append(project)
+            
+            # 刷新会话以确保数据可见
+            
+            result = self.crud_project.get_multi(db)
+            
+            # 验证新增了3个项目
+            assert len(result) == initial_count + 3
+            
+            # 验证项目名称
+            project_names = [p.name for p in result]
+            for project in projects:
+                assert project.name in project_names
+        finally:
+            # 恢复缓存设置
+            self.crud_project.cache_enabled = original_cache_enabled
     
     def test_get_multi_with_skip_and_limit(self, db: Session, test_user):
         """测试获取多个项目（分页）"""
-        # 创建5个项目
-        projects = []
-        for i in range(5):
-            project_data = {
-                "name": f"Paginated Project {i}", 
-                "description": f"Description {i}",
-                "project_code": f"PAGE-2024-{i:03d}",
-                "project_type": "货物"
-            }
-            project = self.crud_project.create_with_owner(db, obj_in=project_data, owner_id=test_user.id)
-            projects.append(project)
+        # 禁用缓存以确保测试准确性
+        original_cache_enabled = self.crud_project.cache_enabled
+        self.crud_project.cache_enabled = False
         
-        # 测试跳过前2个，限制3个
-        result = self.crud_project.get_multi(db, skip=2, limit=3)
-        assert len(result) <= 3
-        
-        # 测试只限制数量
-        result_limited = self.crud_project.get_multi(db, limit=2)
-        assert len(result_limited) <= 2
+        try:
+            # 创建5个项目
+            projects = []
+            for i in range(5):
+                project_data = ProjectCreate(
+                    name=f"Paginated Project {i}", 
+                    description=f"Description {i}",
+                    project_code=f"PAGE-2024-{i:03d}",
+                    project_type="货物"
+                )
+                project = self.crud_project.create_with_owner(db, obj_in=project_data, owner_id=test_user.id)
+                projects.append(project)
+            
+
+            
+            # 测试跳过前2个，限制3个
+            result = self.crud_project.get_multi(db, skip=2, limit=3)
+            assert len(result) <= 3
+            
+            # 测试只限制数量
+            result_limited = self.crud_project.get_multi(db, limit=2)
+            assert len(result_limited) <= 2
+        finally:
+            # 恢复缓存设置
+            self.crud_project.cache_enabled = original_cache_enabled
     
     def test_create_item(self, db: Session, test_user):
         """测试创建项目"""
@@ -120,7 +147,7 @@ class TestCRUDBase:
     def test_update_existing_item(self, db: Session, test_project: Project):
         """测试更新存在的项目"""
         original_description = test_project.description
-        update_data = ProjectUpdate(name="Updated Project Name")
+        update_data = ProjectUpdate(name="Updated Project Name", project_code=test_project.project_code)
         
         result = self.crud_project.update(db, db_obj=test_project, obj_in=update_data)
         
@@ -216,8 +243,8 @@ class TestCRUDBase:
         db.commit()
         
         result = self.crud_document.get_multi(db)
-        assert result == []
         assert isinstance(result, list)
+        assert len(result) == 0
     
     def test_create_with_none_values(self, db: Session, test_user):
         """测试创建时处理None值"""

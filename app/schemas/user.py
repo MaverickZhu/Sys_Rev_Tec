@@ -7,6 +7,8 @@ class UserBase(BaseModel):
 # Properties to receive on user creation
 class UserCreate(UserBase):
     password: str
+    is_superuser: bool = False
+    is_active: bool = True
 
 # Properties to receive on user update
 class UserUpdate(UserBase):

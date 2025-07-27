@@ -26,9 +26,10 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
 
     def create(self, db: Session, *, obj_in: UserCreate) -> User:
         db_obj = User(
-                        username=obj_in.username,
+            username=obj_in.username,
             hashed_password=get_password_hash(obj_in.password),
-            is_superuser=False, # Default value
+            is_superuser=getattr(obj_in, 'is_superuser', False),
+            is_active=getattr(obj_in, 'is_active', True),
         )
         db.add(db_obj)
         db.commit()

@@ -1,5 +1,6 @@
 import pytest
 from fastapi.testclient import TestClient
+from fastapi import HTTPException
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
@@ -12,22 +13,31 @@ from app.models.user import User
 from app.models.project import Project
 from app.models.document import Document
 from app import crud, schemas
+from app.services.cache_service import cache_service
+
+# 在测试中禁用缓存
+settings.CACHE_ENABLED = False
+cache_service.is_enabled = False
 
 # 测试数据库配置
-SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"
-
-engine = create_engine(
-    SQLALCHEMY_DATABASE_URL,
-    connect_args={"check_same_thread": False},
-    poolclass=StaticPool,
-)
-TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+import tempfile
+import os
+import uuid
 
 
 @pytest.fixture(scope="function")
 def db():
     """创建测试数据库"""
-    Base.metadata.create_all(bind=engine)
+    # 为每个测试创建独立的内存数据库
+    test_engine = create_engine(
+        "sqlite:///:memory:",
+        connect_args={"check_same_thread": False},
+        poolclass=StaticPool,
+    )
+    TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=test_engine)
+    
+    # 创建表
+    Base.metadata.create_all(bind=test_engine)
     session = TestingSessionLocal()
     try:
         yield session
@@ -36,7 +46,9 @@ def db():
         raise
     finally:
         session.close()
-        Base.metadata.drop_all(bind=engine)
+        # 清理数据库
+        Base.metadata.drop_all(bind=test_engine)
+        test_engine.dispose()
 
 
 @pytest.fixture(scope="function")
@@ -67,6 +79,7 @@ def test_user(db):
         )
         user = crud.user.create(db=db, obj_in=user_data)
         db.commit()
+        db.refresh(user)  # 确保对象与会话保持连接
         return user
     except Exception as e:
         db.rollback()
@@ -87,6 +100,7 @@ def test_project(db, test_user):
             db=db, obj_in=project_data, owner_id=test_user.id
         )
         db.commit()
+        db.refresh(project)  # 确保对象与会话保持连接
         return project
     except Exception as e:
         db.rollback()
@@ -114,19 +128,61 @@ def test_document(db, test_project, test_user):
         db.add(document)
         db.commit()
         db.refresh(document)
+        # 确保关联对象也被刷新
+        db.refresh(test_project)
+        db.refresh(test_user)
         return document
     except Exception as e:
         db.rollback()
         raise e
 
 
-@pytest.fixture
-def auth_headers(client, test_user):
+@pytest.fixture(scope="function")
+def auth_user(db):
+    """创建认证用户"""
+    import uuid
+    unique_id = str(uuid.uuid4())[:8]
+    user_data = schemas.UserCreate(
+        username=f"testuser_{unique_id}",
+        password="testpassword123"
+    )
+    user = crud.user.create(db=db, obj_in=user_data)
+    db.commit()
+    db.refresh(user)
+    return user
+
+
+@pytest.fixture(scope="function")
+def auth_headers(auth_user):
     """获取认证头"""
-    login_data = {
-        "username": test_user.username,
-        "password": "testpassword123"
-    }
-    response = client.post("/api/v1/login/access-token", data=login_data)
-    token = response.json()["access_token"]
-    return {"Authorization": f"Bearer {token}"}
+    from app.core.security import create_access_token
+    access_token = create_access_token(subject=auth_user.id)
+    return {"Authorization": f"Bearer {access_token}"}
+
+
+@pytest.fixture(scope="function")
+def auth_client(db, auth_user):
+    """创建带认证的测试客户端"""
+    from app.api.deps import get_current_user, get_current_user_id
+    
+    def override_get_db():
+        try:
+            yield db
+        finally:
+            pass
+    
+    def override_get_current_user():
+        return auth_user
+    
+    def override_get_current_user_id():
+        return auth_user.id
+    
+    app.dependency_overrides[get_db] = override_get_db
+    app.dependency_overrides[get_current_user] = override_get_current_user
+    app.dependency_overrides[get_current_user_id] = override_get_current_user_id
+    
+    try:
+        with TestClient(app) as test_client:
+            yield test_client
+    finally:
+        app.dependency_overrides.clear()

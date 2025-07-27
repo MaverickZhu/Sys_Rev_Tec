@@ -1,9 +1,18 @@
 from fastapi import APIRouter
 
-from app.api.v1.endpoints import login, users, projects, documents
-from app.api.v1 import ocr
+from app.api.v1.endpoints import login, users, projects, documents, vector
+from app.api.v1 import health, ocr, cache
 
 api_router = APIRouter()
+
+# 健康检查相关路由（无需认证）
+api_router.include_router(
+    health.router,
+    tags=["🏥 健康检查"],
+    responses={
+        503: {"description": "服务不可用"}
+    }
+)
 
 # 用户认证相关路由
 api_router.include_router(
@@ -59,5 +68,28 @@ api_router.include_router(
         401: {"description": "需要登录认证"},
         404: {"description": "文档不存在"},
         500: {"description": "OCR处理失败"}
+    }
+)
+
+# 缓存管理相关路由
+api_router.include_router(
+    cache.router, 
+    prefix="/cache", 
+    tags=["🗄️ 缓存管理"],
+    responses={
+        401: {"description": "需要登录认证"},
+        404: {"description": "缓存项不存在"}
+    }
+)
+
+# AI向量化和智能分析相关路由
+api_router.include_router(
+    vector.router, 
+    prefix="/vector", 
+    tags=["🤖 AI向量化"],
+    responses={
+        401: {"description": "需要登录认证"},
+        404: {"description": "文档不存在"},
+        500: {"description": "AI处理失败"}
     }
 )

@@ -1,10 +1,11 @@
 from typing import Any, List
 
-from fastapi import APIRouter, Body, Depends, HTTPException
+from fastapi import APIRouter, Body, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
 
 from app import crud, models, schemas
 from app.api import deps
+from app.middleware import moderate_rate_limit
 
 router = APIRouter()
 
@@ -15,7 +16,9 @@ router = APIRouter()
     summary="创建新用户",
     description="注册一个新的系统用户账户"
 )
+@moderate_rate_limit
 def create_user(
+    request: Request,
     *, 
     db: Session = Depends(deps.get_db),
     user_in: schemas.UserCreate,

@@ -34,6 +34,7 @@ class Project(Base):
     # 项目状态
     status = Column(String(20), default="planning", comment="项目状态：planning/procurement/implementation/acceptance/completed/cancelled")
     review_status = Column(String(20), default="pending", comment="审查状态：pending/in_progress/completed/rejected")
+    is_active = Column(Boolean, default=True, comment="是否激活")
     
     # 项目参与方
     procuring_entity = Column(String(200), comment="采购人")

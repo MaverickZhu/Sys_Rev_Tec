@@ -1,0 +1,15 @@
+2025-07-24 18:27:54,232 - __main__ - INFO - 初始化 Docker 部署器 - 环境: 
+2025-07-24 18:27:54,233 - __main__ - INFO - 初始化 Docker 部署器 - 环境: production
+2025-07-24 18:27:54,233 - __main__ - INFO - 检查部署前置条件...
+2025-07-24 18:27:54,355 - __main__ - INFO - Docker 版本: Docker version 28.3.2, build 578ccf6
+2025-07-24 18:27:55,234 - __main__ - INFO - Docker 守护进程运行正常
+2025-07-24 18:27:55,545 - __main__ - INFO - Docker Compose 版本: Docker Compose version v2.38.2-desktop.1
+2025-07-24 18:27:55,546 - __main__ - INFO - 可用磁盘空间: 254 GB
+2025-07-24 18:27:55,546 - __main__ - INFO - 前置条件检查通过
+2025-07-24 18:27:55,546 - __main__ - INFO - 开始构建 Docker 镜像...
+2025-07-24 18:27:59,094 - __main__ - ERROR - Docker 镜像构建失败: Command '['docker-compose', '-f', 'C:\\Users\\Zz-20240101\\Desktop\\Sys_Rev_Tec\\docker-compose.yml', '--env-file', 'C:\\Users\\Zz-20240101\\Desktop\\Sys_Rev_Tec\\.env.production', 'build']' returned non-zero exit status 1.
+2025-07-24 18:27:59,094 - __main__ - ERROR - 镜像构建失败，部署中止
+2025-07-24 18:35:00,625 - __main__ - INFO - 初始化 Docker 部署器 - 环境: 
+2025-07-24 18:35:00,626 - __main__ - INFO - 初始化 Docker 部署器 - 环境: production
+2025-07-24 18:35:00,626 - __main__ - INFO - 获取容器状态...
+2025-07-24 18:35:00,756 - __main__ - ERROR - 操作 'status' 执行失败

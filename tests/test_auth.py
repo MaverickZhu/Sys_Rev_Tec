@@ -30,7 +30,7 @@ class TestUserAuth:
         print(f"Response: {response.text}")
         assert response.status_code == 400
         response_data = response.json()
-        assert "already exists" in response_data["message"]
+        assert "already exists" in response_data["error"]["message"]
     
     def test_login_success(self, client: TestClient, test_user):
         """测试成功登录"""
@@ -52,7 +52,7 @@ class TestUserAuth:
         }
         response = client.post("/api/v1/login/access-token", data=login_data)
         assert response.status_code == 400
-        assert "Incorrect" in response.json()["message"]
+        assert "Incorrect" in response.json()["error"]["message"]
     
     def test_login_nonexistent_user(self, client: TestClient):
         """测试不存在用户登录"""
@@ -62,7 +62,7 @@ class TestUserAuth:
         }
         response = client.post("/api/v1/login/access-token", data=login_data)
         assert response.status_code == 400
-        assert "Incorrect" in response.json()["message"]
+        assert "Incorrect" in response.json()["error"]["message"]
     
     def test_access_protected_endpoint_without_token(self, client: TestClient):
         """测试无令牌访问受保护端点"""

@@ -1,0 +1,10 @@
+# OCR服务专用依赖
+redis==5.0.1
+paddleocr==3.1.0
+opencv-python
+Pillow==10.1.0
+numpy==1.24.3
+scipy==1.11.4
+scikit-image==0.22.0
+pytesseract==0.3.10
+pdf2image==1.16.3

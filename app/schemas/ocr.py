@@ -18,6 +18,7 @@ class OCRResultCreate(OCRResultBase):
     word_count: int = 0
     metadata: Optional[str] = None
     document_id: Optional[int] = None
+    status: Optional[str] = None
 
 
 # Properties to receive on OCR result update
@@ -27,6 +28,7 @@ class OCRResultUpdate(BaseModel):
     metadata: Optional[str] = None
     is_verified: Optional[bool] = None
     verified_text: Optional[str] = None
+    status: Optional[str] = None
 
 
 # Properties shared by models stored in DB
@@ -37,6 +39,7 @@ class OCRResultInDBBase(OCRResultBase):
     word_count: int = 0
     metadata: Optional[str] = None
     document_id: Optional[int] = None
+    status: str = "completed"
     is_verified: bool = False
     verified_text: Optional[str] = None
     verified_by: Optional[int] = None

@@ -40,6 +40,22 @@ class Document(Base):
     summary = Column(Text, comment="文档摘要")
     keywords = Column(Text, comment="关键词(JSON格式)")
     
+    # AI向量化相关
+    is_vectorized = Column(Boolean, default=False, comment="是否已向量化")
+    vector_model = Column(String(100), comment="使用的向量化模型")
+    embedding_dimension = Column(Integer, comment="向量维度")
+    chunk_count = Column(Integer, comment="文本分块数量")
+    vectorized_at = Column(DateTime(timezone=True), comment="向量化完成时间")
+    vector_status = Column(String(20), default="pending", comment="向量化状态：pending/processing/completed/failed")
+    
+    # 智能分析结果
+    ai_summary = Column(Text, comment="AI生成的摘要")
+    ai_keywords = Column(Text, comment="AI提取的关键词(JSON格式)")
+    document_classification = Column(String(100), comment="AI文档分类")
+    risk_assessment = Column(Text, comment="风险评估结果(JSON格式)")
+    compliance_analysis = Column(Text, comment="合规性分析结果(JSON格式)")
+    entity_extraction = Column(Text, comment="实体抽取结果(JSON格式)")
+    
     # 版本控制
     version = Column(String(20), default="1.0", comment="版本号")
     parent_document_id = Column(Integer, ForeignKey("documents.id"), comment="父文档ID")

@@ -14,14 +14,15 @@ class ResponseModel(BaseModel, Generic[T]):
     message: str = "success"
     data: Optional[T] = None
     
-    class Config:
-        json_schema_extra = {
+    model_config = {
+        "json_schema_extra": {
             "example": {
                 "code": 200,
                 "message": "success",
                 "data": None
             }
         }
+    }
 
 class ErrorResponse(BaseModel):
     """错误响应模型"""
@@ -29,14 +30,15 @@ class ErrorResponse(BaseModel):
     message: str
     detail: Optional[str] = None
     
-    class Config:
-        json_schema_extra = {
+    model_config = {
+        "json_schema_extra": {
             "example": {
                 "code": 400,
                 "message": "Bad Request",
                 "detail": "Invalid input parameters"
             }
         }
+    }
 
 class OCRResponse(BaseModel):
     """OCR响应模型"""
@@ -46,8 +48,8 @@ class OCRResponse(BaseModel):
     is_handwritten: bool
     details: Optional[dict] = None
     
-    class Config:
-        json_schema_extra = {
+    model_config = {
+        "json_schema_extra": {
             "example": {
                 "text": "识别的文本内容",
                 "confidence": 0.95,
@@ -56,6 +58,7 @@ class OCRResponse(BaseModel):
                 "details": {}
             }
         }
+    }
 
 class OCRStatusResponse(BaseModel):
     """OCR状态响应模型"""
@@ -66,8 +69,8 @@ class OCRStatusResponse(BaseModel):
     is_handwritten: Optional[bool] = None
     processed_at: Optional[str] = None
     
-    class Config:
-        json_schema_extra = {
+    model_config = {
+        "json_schema_extra": {
             "example": {
                 "document_id": 1,
                 "is_ocr_processed": True,
@@ -77,6 +80,7 @@ class OCRStatusResponse(BaseModel):
                 "processed_at": "2024-01-01T12:00:00"
             }
         }
+    }
 
 class OCRStatsResponse(BaseModel):
     """OCR统计响应模型"""
@@ -87,8 +91,8 @@ class OCRStatsResponse(BaseModel):
     avg_confidence: float
     handwritten_count: int
     
-    class Config:
-        json_schema_extra = {
+    model_config = {
+        "json_schema_extra": {
             "example": {
                 "total_documents": 100,
                 "processed_documents": 85,
@@ -102,3 +106,4 @@ class OCRStatsResponse(BaseModel):
                 "handwritten_count": 20
             }
         }
+    }

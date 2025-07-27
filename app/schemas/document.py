@@ -7,13 +7,15 @@ from datetime import datetime
 class DocumentBase(BaseModel):
     filename: str
     document_type: str
-    description: Optional[str] = None
 
 
 # Properties to receive on document creation
 class DocumentCreate(DocumentBase):
+    original_filename: str
     file_path: str
     file_size: int
+    file_type: str
+    document_category: str
     project_id: Optional[int] = None
 
 
@@ -21,7 +23,6 @@ class DocumentCreate(DocumentBase):
 class DocumentUpdate(BaseModel):
     filename: Optional[str] = None
     document_type: Optional[str] = None
-    description: Optional[str] = None
     project_id: Optional[int] = None
 
 

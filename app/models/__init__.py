@@ -12,3 +12,6 @@ from .document import Document, DocumentAnnotation, ComplianceCheck, ComplianceR
 
 # OCR相关模型
 from .ocr import OCRResult
+
+# 向量相关模型
+from .vector import DocumentVector, VectorSearchIndex, SearchQuery, KnowledgeGraph, KnowledgeGraphRelation

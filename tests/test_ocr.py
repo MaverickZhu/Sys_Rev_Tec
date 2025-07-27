@@ -6,6 +6,7 @@ from datetime import datetime
 
 from app.models.document import Document
 from app.models.project import Project
+from app.models.ocr import OCRResult
 
 
 class TestOCR:
@@ -40,19 +41,19 @@ class TestOCR:
         """测试获取不存在文档的OCR状态"""
         response = client.get("/api/v1/ocr/status/99999", headers=auth_headers)
         assert response.status_code == 404
-        assert "not found" in response.json()["message"].lower()
+        assert "not found" in response.json()["error"]["message"].lower()
     
     def test_get_ocr_text_nonexistent_document(self, client: TestClient, auth_headers):
         """测试获取不存在文档的OCR文本"""
         response = client.get("/api/v1/ocr/text/99999", headers=auth_headers)
         assert response.status_code == 404
-        assert "not found" in response.json()["message"].lower()
+        assert "not found" in response.json()["error"]["message"].lower()
     
     def test_process_ocr_nonexistent_document(self, client: TestClient, auth_headers):
         """测试处理不存在文档的OCR"""
         response = client.post("/api/v1/ocr/process/99999", headers=auth_headers)
         assert response.status_code == 404
-        assert "not found" in response.json()["message"].lower()
+        assert "not found" in response.json()["error"]["message"].lower()
     
     def test_batch_process_empty_list(self, client: TestClient, auth_headers):
         """测试批量处理空文档列表"""
@@ -62,7 +63,7 @@ class TestOCR:
             headers=auth_headers
         )
         assert response.status_code == 400
-        assert "empty" in response.json()["message"].lower()
+        assert "empty" in response.json()["error"]["message"].lower()
     
     def test_batch_process_too_many_documents(self, client: TestClient, auth_headers):
         """测试批量处理过多文档"""
@@ -73,7 +74,7 @@ class TestOCR:
             headers=auth_headers
         )
         assert response.status_code == 400
-        assert "50" in response.json()["message"]
+        assert "50" in response.json()["error"]["message"]
     
     @patch('app.services.document_service.document_service.process_document_ocr')
     def test_process_ocr_success_mock(self, mock_process, client: TestClient, auth_headers, db, test_project):
@@ -253,9 +254,7 @@ class TestOCR:
         
         assert response.status_code == 400
         response_data = response.json()
-        # 检查错误信息是否在message或detail字段中
-        error_message = response_data.get("message", response_data.get("detail", ""))
-        assert "Document has not been processed with OCR yet" in error_message
+        assert "Document has not been processed with OCR yet" in response_data["error"]["message"]
     
     @patch('app.services.document_service.document_service.get_ocr_statistics')
     def test_get_ocr_statistics_error(self, mock_get_stats, client: TestClient, auth_headers):
@@ -269,8 +268,7 @@ class TestOCR:
         
         assert response.status_code == 500
         response_data = response.json()
-        error_message = response_data.get("message", response_data.get("detail", ""))
-        assert "Failed to retrieve OCR statistics" in error_message
+        assert "Failed to retrieve OCR statistics" in response_data["error"]["message"]
     
     @patch('app.services.document_service.document_service.process_document_ocr')
     def test_process_document_ocr_exception(self, mock_process, client: TestClient, auth_headers, db, test_project):
@@ -299,8 +297,7 @@ class TestOCR:
         
         assert response.status_code == 500
         response_data = response.json()
-        error_message = response_data.get("message", response_data.get("detail", ""))
-        assert "OCR processing failed: OCR service error" in error_message
+        assert "OCR processing failed: OCR service error" in response_data["error"]["message"]
     
     @patch('app.services.document_service.document_service.batch_process_ocr')
     def test_batch_process_ocr_exception(self, mock_batch_process, client: TestClient, auth_headers):
@@ -315,5 +312,22 @@ class TestOCR:
         
         assert response.status_code == 500
         response_data = response.json()
-        error_message = response_data.get("message", response_data.get("detail", ""))
-        assert "Batch OCR processing failed: Batch processing error" in error_message
+        assert "Batch OCR processing failed: Batch processing error" in response_data["error"]["message"]
+
+
+class TestOCRResultModel:
+    """OCRResult模型测试"""
+    
+    def test_ocr_result_repr(self, db):
+        """测试OCRResult模型的__repr__方法"""
+        ocr_result = OCRResult(
+            id=1,
+            filename="test.pdf",
+            status="completed",
+            processed_by=1
+        )
+        db.add(ocr_result)
+        db.commit()
+        
+        repr_str = repr(ocr_result)
+        assert "OCRResult(id=1, filename='test.pdf', status='completed')" in repr_str

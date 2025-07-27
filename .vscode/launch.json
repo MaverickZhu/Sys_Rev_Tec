@@ -1,0 +1,222 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "FastAPI Development Server",
+            "type": "python",
+            "request": "launch",
+            "module": "uvicorn",
+            "args": [
+                "app.main:app",
+                "--reload",
+                "--host", "0.0.0.0",
+                "--port", "8000",
+                "--log-level", "debug"
+            ],
+            "env": {
+                "ENVIRONMENT": "development",
+                "DEBUG": "true",
+                "PYTHONPATH": "${workspaceFolder}"
+            },
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "justMyCode": false,
+            "stopOnEntry": false,
+            "autoReload": {
+                "enable": true
+            }
+        },
+        {
+            "name": "FastAPI Production Server",
+            "type": "python",
+            "request": "launch",
+            "module": "uvicorn",
+            "args": [
+                "app.main:app",
+                "--host", "0.0.0.0",
+                "--port", "8000",
+                "--workers", "1",
+                "--log-level", "info"
+            ],
+            "env": {
+                "ENVIRONMENT": "production",
+                "DEBUG": "false",
+                "PYTHONPATH": "${workspaceFolder}"
+            },
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "justMyCode": true
+        },
+        {
+            "name": "Run Current Python File",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            },
+            "justMyCode": false
+        },
+        {
+            "name": "Run Tests (Current File)",
+            "type": "python",
+            "request": "launch",
+            "module": "pytest",
+            "args": [
+                "${file}",
+                "-v",
+                "--tb=short"
+            ],
+            "env": {
+                "ENVIRONMENT": "testing",
+                "PYTHONPATH": "${workspaceFolder}"
+            },
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "justMyCode": false
+        },
+        {
+            "name": "Run All Tests",
+            "type": "python",
+            "request": "launch",
+            "module": "pytest",
+            "args": [
+                "tests/",
+                "-v",
+                "--tb=short"
+            ],
+            "env": {
+                "ENVIRONMENT": "testing",
+                "PYTHONPATH": "${workspaceFolder}"
+            },
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "justMyCode": false
+        },
+        {
+            "name": "Run Tests with Coverage",
+            "type": "python",
+            "request": "launch",
+            "module": "pytest",
+            "args": [
+                "tests/",
+                "-v",
+                "--cov=app",
+                "--cov-report=html",
+                "--cov-report=term-missing"
+            ],
+            "env": {
+                "ENVIRONMENT": "testing",
+                "PYTHONPATH": "${workspaceFolder}"
+            },
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "justMyCode": false
+        },
+        {
+            "name": "Debug OCR Processing",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/app/services/ocr_service.py",
+            "args": [],
+            "env": {
+                "ENVIRONMENT": "development",
+                "DEBUG": "true",
+                "PYTHONPATH": "${workspaceFolder}"
+            },
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "justMyCode": false
+        },
+        {
+            "name": "Debug Database Operations",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/app/database/database.py",
+            "args": [],
+            "env": {
+                "ENVIRONMENT": "development",
+                "DEBUG": "true",
+                "PYTHONPATH": "${workspaceFolder}"
+            },
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "justMyCode": false
+        },
+        {
+            "name": "Run Quality Checks",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/scripts/quality_check.py",
+            "args": [
+                "--verbose"
+            ],
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            },
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "justMyCode": false
+        },
+        {
+            "name": "Run Quality Checks (Fix Mode)",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/scripts/quality_check.py",
+            "args": [
+                "--fix",
+                "--verbose"
+            ],
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            },
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "justMyCode": false
+        },
+        {
+            "name": "Database Migration",
+            "type": "python",
+            "request": "launch",
+            "module": "alembic",
+            "args": [
+                "upgrade",
+                "head"
+            ],
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            },
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "justMyCode": false
+        },
+        {
+            "name": "Attach to Docker Container",
+            "type": "python",
+            "request": "attach",
+            "connect": {
+                "host": "localhost",
+                "port": 5678
+            },
+            "pathMappings": [
+                {
+                    "localRoot": "${workspaceFolder}",
+                    "remoteRoot": "/app"
+                }
+            ],
+            "justMyCode": false
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Launch FastAPI + Debug Tests",
+            "configurations": [
+                "FastAPI Development Server",
+                "Run All Tests"
+            ],
+            "stopAll": true
+        }
+    ]
+}

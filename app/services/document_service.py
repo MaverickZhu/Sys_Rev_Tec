@@ -11,6 +11,8 @@ from fastapi import UploadFile
 from app.models.document import Document
 from app.services.ocr_service import ocr_service
 from app.core.config import settings
+from app.utils.cache_decorator import cache_medium
+from app.services.cache_service import cache_service
 
 logger = logging.getLogger(__name__)
 
@@ -37,6 +39,10 @@ class DocumentService:
     def is_document_file(self, filename: str) -> bool:
         """检查是否为文档文件"""
         return Path(filename).suffix.lower() in self.supported_doc_types
+    
+    def is_text_file(self, filename: str) -> bool:
+        """检查是否为文本文件"""
+        return Path(filename).suffix.lower() in {'.txt', '.md', '.rtf'}
     
     async def save_uploaded_file(self, file: UploadFile, project_id: int) -> str:
         """保存上传的文件"""
@@ -76,6 +82,8 @@ class DocumentService:
                 return self._process_image_ocr(document, db)
             elif self.is_pdf_file(document.filename):
                 return self._process_pdf_ocr(document, db)
+            elif self.is_text_file(document.filename):
+                return self._process_text_file(document, db)
             else:
                 logger.warning(f"Unsupported file type for OCR: {document.filename}")
                 return {
@@ -110,6 +118,9 @@ class DocumentService:
                 document.extracted_text = document.ocr_text
             
             db.commit()
+            
+            # 清除相关缓存
+            cache_service.clear_pattern("get_ocr_statistics:*", "app")
             
             logger.info(f"Image OCR completed for document {document.id} using {ocr_result['engine']}")
             
@@ -182,6 +193,9 @@ class DocumentService:
                 
                 db.commit()
                 
+                # 清除相关缓存
+                cache_service.clear_pattern("get_ocr_statistics:*", "app")
+                
                 logger.info(f"PDF OCR completed for document {document.id}, processed {len(pages)} pages")
                 
                 return {
@@ -203,6 +217,95 @@ class DocumentService:
         except Exception as e:
             logger.error(f"PDF OCR failed for document {document.id}: {e}")
             raise
+    
+    def _process_text_file(self, document: Document, db: Session) -> Dict[str, Any]:
+        """处理文本文件"""
+        try:
+            # 直接读取文本文件内容
+            with open(document.file_path, 'r', encoding='utf-8') as file:
+                text_content = file.read()
+            
+            # 更新文档记录
+            document.ocr_text = text_content
+            document.ocr_engine = 'text_reader'
+            document.ocr_confidence = 100  # 文本文件置信度为100%
+            document.is_ocr_processed = True
+            document.is_handwritten = False  # 文本文件不是手写的
+            document.ocr_details = json.dumps({
+                'file_type': 'text',
+                'encoding': 'utf-8',
+                'character_count': len(text_content)
+            }, ensure_ascii=False)
+            document.processed_at = datetime.utcnow()
+            
+            # 如果没有提取到文本内容，使用读取的文本
+            if not document.extracted_text and document.ocr_text:
+                document.extracted_text = document.ocr_text
+            
+            db.commit()
+            
+            # 清除相关缓存
+            cache_service.clear_pattern("get_ocr_statistics:*", "app")
+            
+            logger.info(f"Text file processing completed for document {document.id}")
+            
+            return {
+                'success': True,
+                'text': text_content,
+                'engine': 'text_reader',
+                'confidence': 1.0,
+                'is_handwritten': False
+            }
+            
+        except UnicodeDecodeError:
+            # 尝试其他编码
+            try:
+                with open(document.file_path, 'r', encoding='gbk') as file:
+                    text_content = file.read()
+                
+                # 更新文档记录（使用gbk编码）
+                document.ocr_text = text_content
+                document.ocr_engine = 'text_reader'
+                document.ocr_confidence = 100
+                document.is_ocr_processed = True
+                document.is_handwritten = False
+                document.ocr_details = json.dumps({
+                    'file_type': 'text',
+                    'encoding': 'gbk',
+                    'character_count': len(text_content)
+                }, ensure_ascii=False)
+                document.processed_at = datetime.utcnow()
+                
+                if not document.extracted_text and document.ocr_text:
+                    document.extracted_text = document.ocr_text
+                
+                db.commit()
+                
+                cache_service.clear_pattern("get_ocr_statistics:*", "app")
+                
+                logger.info(f"Text file processing completed for document {document.id} using gbk encoding")
+                
+                return {
+                    'success': True,
+                    'text': text_content,
+                    'engine': 'text_reader',
+                    'confidence': 1.0,
+                    'is_handwritten': False
+                }
+                
+            except Exception as e:
+                logger.error(f"Text file processing failed for document {document.id}: {e}")
+                return {
+                    'success': False,
+                    'message': f'Text file processing failed: {str(e)}'
+                }
+        
+        except Exception as e:
+            logger.error(f"Text file processing failed for document {document.id}: {e}")
+            return {
+                'success': False,
+                'message': f'Text file processing failed: {str(e)}'
+            }
     
     def batch_process_ocr(self, document_ids: List[int], db: Session) -> Dict[str, Any]:
         """批量处理OCR"""

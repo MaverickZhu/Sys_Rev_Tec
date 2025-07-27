@@ -1,0 +1,92 @@
+{
+    "recommendations": [
+        // Python 开发必备
+        "ms-python.python",
+        "ms-python.black-formatter",
+        "ms-python.isort",
+        "ms-python.flake8",
+        "ms-python.mypy-type-checker",
+        "ms-python.pylint",
+        
+        // 测试和调试
+        "ms-python.debugpy",
+        "littlefoxteam.vscode-python-test-adapter",
+        "ryanluker.vscode-coverage-gutters",
+        
+        // 代码质量
+        "charliermarsh.ruff",
+        "ms-python.bandit",
+        "sonarsource.sonarlint-vscode",
+        
+        // Git 和版本控制
+        "eamodio.gitlens",
+        "github.vscode-pull-request-github",
+        "github.copilot",
+        "github.copilot-chat",
+        
+        // Docker 和容器
+        "ms-azuretools.vscode-docker",
+        "ms-vscode-remote.remote-containers",
+        
+        // 数据库
+        "ms-mssql.mssql",
+        "cweijan.vscode-postgresql-client2",
+        "redis.redis-for-vscode",
+        
+        // Web 开发
+        "ms-vscode.vscode-json",
+        "redhat.vscode-yaml",
+        "ms-vscode.vscode-typescript-next",
+        "bradlc.vscode-tailwindcss",
+        
+        // API 开发和测试
+        "humao.rest-client",
+        "42crunch.vscode-openapi",
+        "rangav.vscode-thunder-client",
+        
+        // 文档和 Markdown
+        "yzhang.markdown-all-in-one",
+        "davidanson.vscode-markdownlint",
+        "bierner.markdown-mermaid",
+        
+        // 配置文件
+        "redhat.vscode-xml",
+        "tamasfe.even-better-toml",
+        "dotenv.dotenv-vscode",
+        
+        // 代码格式化和美化
+        "esbenp.prettier-vscode",
+        "editorconfig.editorconfig",
+        "streetsidesoftware.code-spell-checker",
+        
+        // 主题和图标
+        "pkief.material-icon-theme",
+        "github.github-vscode-theme",
+        "dracula-theme.theme-dracula",
+        
+        // 生产力工具
+        "alefragnani.bookmarks",
+        "gruntfuggly.todo-tree",
+        "aaron-bond.better-comments",
+        "oderwat.indent-rainbow",
+        "christian-kohler.path-intellisense",
+        
+        // 监控和日志
+        "ms-vscode.vscode-json",
+        "emilast.logfilehighlighter",
+        
+        // 安全
+        "snyk-security.snyk-vulnerability-scanner",
+        
+        // 其他有用工具
+        "ms-vscode.hexeditor",
+        "formulahendry.auto-rename-tag",
+        "ms-vscode.live-server",
+        "ritwickdey.liveserver"
+    ],
+    "unwantedRecommendations": [
+        // 避免冲突的扩展
+        "ms-python.autopep8",
+        "ms-python.yapf"
+    ]
+}

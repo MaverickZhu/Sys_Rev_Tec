@@ -1,6 +1,7 @@
-from typing import List, Optional, Dict, Any
+from typing import List, Optional, Dict, Any, Union
 from sqlalchemy.orm import Session
-from sqlalchemy import and_, or_, desc
+from sqlalchemy import desc, or_, and_
+from datetime import datetime
 
 from app.crud.base import CRUDBase
 from app.models.ocr import OCRResult
@@ -13,7 +14,30 @@ class CRUDOCRResult(CRUDBase[OCRResult, OCRResultCreate, OCRResultUpdate]):
     ) -> OCRResult:
         """创建OCR结果并关联处理者"""
         obj_in_data = obj_in.model_dump() if hasattr(obj_in, 'model_dump') else obj_in.dict()
-        db_obj = self.model(**obj_in_data, processed_by=processor_id)
+        
+        # 字段映射：schema字段名 -> 模型字段名
+        field_mapping = {
+            'engine': 'ocr_engine',
+            'text_content': 'extracted_text',
+            'confidence_score': 'confidence'
+        }
+        
+        # 忽略的字段（模型中不存在）
+        ignored_fields = {'word_count'}
+        
+        # 转换字段名
+        mapped_data = {}
+        for key, value in obj_in_data.items():
+            if key in ignored_fields:
+                continue
+            mapped_key = field_mapping.get(key, key)
+            mapped_data[mapped_key] = value
+        
+        # 设置默认状态（如果没有明确指定）
+        if 'status' not in mapped_data:
+            mapped_data['status'] = 'completed'
+        
+        db_obj = self.model(**mapped_data, processed_by=processor_id)
         db.add(db_obj)
         db.commit()
         db.refresh(db_obj)
@@ -85,6 +109,32 @@ class CRUDOCRResult(CRUDBase[OCRResult, OCRResultCreate, OCRResultUpdate]):
                     query = query.filter(OCRResult.confidence <= value)
                 else:
                     query = query.filter(getattr(OCRResult, key) == value)
+        
+        return query.order_by(desc(OCRResult.created_at)).offset(skip).limit(limit).all()
+    
+    def get_by_filters_with_dates(
+        self, db: Session, *, filters: Dict[str, Any] = None, date_filters: Dict[str, datetime] = None, skip: int = 0, limit: int = 100
+    ) -> List[OCRResult]:
+        """根据多个条件和日期范围筛选OCR结果"""
+        query = db.query(self.model)
+        
+        # 应用普通过滤条件
+        if filters:
+            for key, value in filters.items():
+                if hasattr(OCRResult, key) and value is not None:
+                    if key == 'confidence_min':
+                        query = query.filter(OCRResult.confidence >= value)
+                    elif key == 'confidence_max':
+                        query = query.filter(OCRResult.confidence <= value)
+                    else:
+                        query = query.filter(getattr(OCRResult, key) == value)
+        
+        # 应用日期过滤条件
+        if date_filters:
+            if 'start_date' in date_filters:
+                query = query.filter(OCRResult.created_at >= date_filters['start_date'])
+            if 'end_date' in date_filters:
+                query = query.filter(OCRResult.created_at <= date_filters['end_date'])
         
         return query.order_by(desc(OCRResult.created_at)).offset(skip).limit(limit).all()
     
@@ -186,23 +236,24 @@ class CRUDOCRResult(CRUDBase[OCRResult, OCRResultCreate, OCRResultUpdate]):
         processing_results = query.filter(OCRResult.status == "processing").count()
         
         # 平均置信度
-        avg_confidence = db.query(db.func.avg(OCRResult.confidence)).filter(
+        from sqlalchemy import func
+        avg_confidence = db.query(func.avg(OCRResult.confidence)).filter(
             OCRResult.status == "completed"
         ).scalar() or 0
         
         # 平均处理时间
-        avg_processing_time = db.query(db.func.avg(OCRResult.processing_time)).filter(
+        avg_processing_time = db.query(func.avg(OCRResult.processing_time)).filter(
             OCRResult.processing_time.isnot(None)
         ).scalar() or 0
         
         # 按引擎统计
         engine_stats = {}
-        for engine, count in db.query(OCRResult.ocr_engine, db.func.count(OCRResult.id)).group_by(OCRResult.ocr_engine).all():
+        for engine, count in db.query(OCRResult.ocr_engine, func.count(OCRResult.id)).group_by(OCRResult.ocr_engine).all():
             engine_stats[engine] = count
         
         # 按语言统计
         language_stats = {}
-        for language, count in db.query(OCRResult.language, db.func.count(OCRResult.id)).group_by(OCRResult.language).all():
+        for language, count in db.query(OCRResult.language, func.count(OCRResult.id)).group_by(OCRResult.language).all():
             if language:
                 language_stats[language] = count
         
@@ -234,6 +285,79 @@ class CRUDOCRResult(CRUDBase[OCRResult, OCRResultCreate, OCRResultUpdate]):
             .limit(limit)
             .all()
         )
+    
+    def update_status(
+        self, db: Session, *, ocr_id: int, status: str
+    ) -> Optional[OCRResult]:
+        """更新OCR结果状态"""
+        ocr_result = self.get(db, id=ocr_id)
+        if ocr_result:
+            ocr_result.status = status
+            db.add(ocr_result)
+            db.commit()
+            db.refresh(ocr_result)
+        return ocr_result
+    
+    def get_by_confidence_range(
+        self, db: Session, *, min_confidence: float, max_confidence: float, skip: int = 0, limit: int = 100
+    ) -> List[OCRResult]:
+        """根据置信度范围获取OCR结果"""
+        return (
+            db.query(self.model)
+            .filter(OCRResult.confidence >= min_confidence)
+            .filter(OCRResult.confidence <= max_confidence)
+            .order_by(desc(OCRResult.created_at))
+            .offset(skip)
+            .limit(limit)
+            .all()
+        )
+    
+    def get_latest_by_document(
+        self, db: Session, *, document_id: int
+    ) -> Optional[OCRResult]:
+        """获取文档的最新OCR结果"""
+        return (
+            db.query(self.model)
+            .filter(OCRResult.document_id == document_id)
+            .order_by(desc(OCRResult.created_at))
+            .first()
+        )
+    
+    def update(
+        self, db: Session, *, db_obj: OCRResult, obj_in: Union[OCRResultUpdate, Dict[str, Any]]
+    ) -> OCRResult:
+        """更新OCR结果（处理字段映射）"""
+        if isinstance(obj_in, dict):
+            update_data = obj_in
+        else:
+            update_data = obj_in.model_dump(exclude_unset=True) if hasattr(obj_in, 'model_dump') else obj_in.dict(exclude_unset=True)
+        
+        # 字段映射：schema字段名 -> 模型字段名
+        field_mapping = {
+            'engine': 'ocr_engine',
+            'text_content': 'extracted_text',
+            'confidence_score': 'confidence'
+        }
+        
+        # 忽略的字段（模型中不存在）
+        ignored_fields = {'word_count'}
+        
+        # 转换字段名
+        mapped_data = {}
+        for key, value in update_data.items():
+            if key in ignored_fields:
+                continue
+            mapped_key = field_mapping.get(key, key)
+            mapped_data[mapped_key] = value
+        
+        for field in mapped_data:
+            if hasattr(db_obj, field) and mapped_data[field] is not None:
+                setattr(db_obj, field, mapped_data[field])
+        
+        db.add(db_obj)
+        db.commit()
+        db.refresh(db_obj)
+        return db_obj
 
 
 ocr_result = CRUDOCRResult(OCRResult)
