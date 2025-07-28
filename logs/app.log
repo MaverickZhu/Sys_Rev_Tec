@@ -322,3 +322,91 @@
 2025-07-28 09:07:49,865 - app.core.monitoring - INFO - Prometheus监控已启用
 2025-07-28 09:07:50 - app.core.monitoring - INFO - 监控系统设置完成
 2025-07-28 09:07:50,871 - app.core.monitoring - INFO - 监控系统设置完成
+2025-07-28 09:09:36 - app - INFO - Redis cache connected successfully
+2025-07-28 09:09:36 - app.services.ocr_service - INFO - OCR Service initialized (mock mode)
+2025-07-28 09:09:36 - app.core.monitoring - INFO - 设置监控系统...
+2025-07-28 09:09:36,894 - app.core.monitoring - INFO - 设置监控系统...
+2025-07-28 09:09:36 - app.core.monitoring - INFO - Prometheus监控已启用
+2025-07-28 09:09:36,895 - app.core.monitoring - INFO - Prometheus监控已启用
+2025-07-28 09:09:37 - app.core.monitoring - INFO - 监控系统设置完成
+2025-07-28 09:09:37,900 - app.core.monitoring - INFO - 监控系统设置完成
+2025-07-28 09:09:50 - app - INFO - Redis cache connected successfully
+2025-07-28 09:09:50 - app.services.ocr_service - INFO - OCR Service initialized (mock mode)
+2025-07-28 09:09:50 - app.core.monitoring - INFO - 设置监控系统...
+2025-07-28 09:09:50,282 - app.core.monitoring - INFO - 设置监控系统...
+2025-07-28 09:09:50 - app.core.monitoring - INFO - Prometheus监控已启用
+2025-07-28 09:09:50,282 - app.core.monitoring - INFO - Prometheus监控已启用
+2025-07-28 09:09:51 - app.core.monitoring - INFO - 监控系统设置完成
+2025-07-28 09:09:51,288 - app.core.monitoring - INFO - 监控系统设置完成
+2025-07-28 09:11:01 - app - INFO - Redis cache connected successfully
+2025-07-28 09:11:01 - app.services.ocr_service - INFO - OCR Service initialized (mock mode)
+2025-07-28 09:11:01 - app.core.monitoring - INFO - 设置监控系统...
+2025-07-28 09:11:01,839 - app.core.monitoring - INFO - 设置监控系统...
+2025-07-28 09:11:01 - app.core.monitoring - INFO - Prometheus监控已启用
+2025-07-28 09:11:01,840 - app.core.monitoring - INFO - Prometheus监控已启用
+2025-07-28 09:11:02 - app.core.monitoring - INFO - 监控系统设置完成
+2025-07-28 09:11:02,846 - app.core.monitoring - INFO - 监控系统设置完成
+2025-07-28 09:13:49 - app - INFO - Redis cache connected successfully
+2025-07-28 09:13:49 - app.services.ocr_service - INFO - OCR Service initialized (mock mode)
+2025-07-28 09:13:49 - app.core.monitoring - INFO - 设置监控系统...
+2025-07-28 09:13:49,320 - app.core.monitoring - INFO - 设置监控系统...
+2025-07-28 09:13:49 - app.core.monitoring - INFO - Prometheus监控已启用
+2025-07-28 09:13:49,321 - app.core.monitoring - INFO - Prometheus监控已启用
+2025-07-28 09:13:50 - app.core.monitoring - INFO - 监控系统设置完成
+2025-07-28 09:13:50,327 - app.core.monitoring - INFO - 监控系统设置完成
+2025-07-28 09:14:03 - app - INFO - Redis cache connected successfully
+2025-07-28 09:14:03 - app.services.ocr_service - INFO - OCR Service initialized (mock mode)
+2025-07-28 09:14:03 - app.core.monitoring - INFO - 设置监控系统...
+2025-07-28 09:14:03,781 - app.core.monitoring - INFO - 设置监控系统...
+2025-07-28 09:14:03 - app.core.monitoring - INFO - Prometheus监控已启用
+2025-07-28 09:14:03,781 - app.core.monitoring - INFO - Prometheus监控已启用
+2025-07-28 09:14:04 - app.core.monitoring - INFO - 监控系统设置完成
+2025-07-28 09:14:04,786 - app.core.monitoring - INFO - 监控系统设置完成
+2025-07-28 09:15:24 - app - INFO - Redis cache connected successfully
+2025-07-28 09:15:24 - app.services.ocr_service - INFO - OCR Service initialized (mock mode)
+2025-07-28 09:15:24 - app.core.monitoring - INFO - 设置监控系统...
+2025-07-28 09:15:24,381 - app.core.monitoring - INFO - 设置监控系统...
+2025-07-28 09:15:24 - app.core.monitoring - INFO - Prometheus监控已启用
+2025-07-28 09:15:24,381 - app.core.monitoring - INFO - Prometheus监控已启用
+2025-07-28 09:15:25 - app.core.monitoring - INFO - 监控系统设置完成
+2025-07-28 09:15:25,387 - app.core.monitoring - INFO - 监控系统设置完成
+2025-07-28 09:17:26 - app - INFO - Redis cache connected successfully
+2025-07-28 09:17:26 - app.services.ocr_service - INFO - OCR Service initialized (mock mode)
+2025-07-28 09:17:26 - app.core.monitoring - INFO - 设置监控系统...
+2025-07-28 09:17:26,837 - app.core.monitoring - INFO - 设置监控系统...
+2025-07-28 09:17:26 - app.core.monitoring - INFO - Prometheus监控已启用
+2025-07-28 09:17:26,837 - app.core.monitoring - INFO - Prometheus监控已启用
+2025-07-28 09:17:27 - app.core.monitoring - INFO - 监控系统设置完成
+2025-07-28 09:17:27,844 - app.core.monitoring - INFO - 监控系统设置完成
+2025-07-28 09:18:29 - app - INFO - Redis cache connected successfully
+2025-07-28 09:18:29 - app.services.ocr_service - INFO - OCR Service initialized (mock mode)
+2025-07-28 09:18:30 - app.core.monitoring - INFO - 设置监控系统...
+2025-07-28 09:18:30,266 - app.core.monitoring - INFO - 设置监控系统...
+2025-07-28 09:18:30 - app.core.monitoring - INFO - Prometheus监控已启用
+2025-07-28 09:18:30,267 - app.core.monitoring - INFO - Prometheus监控已启用
+2025-07-28 09:18:31 - app.core.monitoring - INFO - 监控系统设置完成
+2025-07-28 09:18:31,273 - app.core.monitoring - INFO - 监控系统设置完成
+2025-07-28 09:19:02 - app - INFO - Redis cache connected successfully
+2025-07-28 09:19:02 - app.services.ocr_service - INFO - OCR Service initialized (mock mode)
+2025-07-28 09:19:03 - app.core.monitoring - INFO - 设置监控系统...
+2025-07-28 09:19:03,162 - app.core.monitoring - INFO - 设置监控系统...
+2025-07-28 09:19:03 - app.core.monitoring - INFO - Prometheus监控已启用
+2025-07-28 09:19:03,162 - app.core.monitoring - INFO - Prometheus监控已启用
+2025-07-28 09:19:04 - app.core.monitoring - INFO - 监控系统设置完成
+2025-07-28 09:19:04,168 - app.core.monitoring - INFO - 监控系统设置完成
+2025-07-28 09:19:12 - app - INFO - Redis cache connected successfully
+2025-07-28 09:19:12 - app.services.ocr_service - INFO - OCR Service initialized (mock mode)
+2025-07-28 09:19:12 - app.core.monitoring - INFO - 设置监控系统...
+2025-07-28 09:19:12,997 - app.core.monitoring - INFO - 设置监控系统...
+2025-07-28 09:19:12 - app.core.monitoring - INFO - Prometheus监控已启用
+2025-07-28 09:19:12,998 - app.core.monitoring - INFO - Prometheus监控已启用
+2025-07-28 09:19:14 - app.core.monitoring - INFO - 监控系统设置完成
+2025-07-28 09:19:14,004 - app.core.monitoring - INFO - 监控系统设置完成
+2025-07-28 09:20:07 - app - INFO - Redis cache connected successfully
+2025-07-28 09:20:07 - app.services.ocr_service - INFO - OCR Service initialized (mock mode)
+2025-07-28 09:20:07 - app.core.monitoring - INFO - 设置监控系统...
+2025-07-28 09:20:07,932 - app.core.monitoring - INFO - 设置监控系统...
+2025-07-28 09:20:07 - app.core.monitoring - INFO - Prometheus监控已启用
+2025-07-28 09:20:07,932 - app.core.monitoring - INFO - Prometheus监控已启用
+2025-07-28 09:20:08 - app.core.monitoring - INFO - 监控系统设置完成
+2025-07-28 09:20:08,940 - app.core.monitoring - INFO - 监控系统设置完成
