@@ -1,0 +1,98 @@
+# Prometheus配置文件
+# 用于监控系统性能指标收集
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    monitor: 'sys-rev-tech-monitor'
+    environment: 'development'
+
+# 规则文件配置
+rule_files:
+  - "alert_rules.yml"
+
+# 告警管理器配置
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          - alertmanager:9093
+
+# 抓取配置
+scrape_configs:
+  # Prometheus自身监控
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+    scrape_interval: 5s
+    metrics_path: /metrics
+
+  # 主应用监控
+  - job_name: 'sys-rev-tech-app'
+    static_configs:
+      - targets: ['localhost:8000']
+    scrape_interval: 10s
+    metrics_path: /metrics
+    scrape_timeout: 5s
+    honor_labels: true
+    params:
+      format: ['prometheus']
+
+  # AI服务监控
+  - job_name: 'ai-service'
+    static_configs:
+      - targets: ['localhost:8001']
+    scrape_interval: 15s
+    metrics_path: /metrics
+    scrape_timeout: 10s
+
+  # Redis监控
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['localhost:9121']
+    scrape_interval: 30s
+    metrics_path: /metrics
+
+  # PostgreSQL监控
+  - job_name: 'postgres'
+    static_configs:
+      - targets: ['localhost:9187']
+    scrape_interval: 30s
+    metrics_path: /metrics
+
+  # 系统监控 (Node Exporter)
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['localhost:9100']
+    scrape_interval: 15s
+    metrics_path: /metrics
+
+  # 前端应用监控
+  - job_name: 'frontend'
+    static_configs:
+      - targets: ['localhost:3000']
+    scrape_interval: 30s
+    metrics_path: /metrics
+    scrape_timeout: 5s
+
+# 存储配置
+storage:
+  tsdb:
+    path: /prometheus/data
+    retention.time: 30d
+    retention.size: 10GB
+    wal-compression: true
+
+# 远程写入配置（可选）
+# remote_write:
+#   - url: "http://remote-storage:8086/api/v1/prom/write"
+#     queue_config:
+#       max_samples_per_send: 1000
+#       max_shards: 200
+#       capacity: 2500
+
+# 远程读取配置（可选）
+# remote_read:
+#   - url: "http://remote-storage:8086/api/v1/prom/read"
+#     read_recent: true

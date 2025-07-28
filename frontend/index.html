@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>系统评审技术平台 - 智能报告生成</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
+
+</head>
+<body>
+    <div class="status-indicator">
+        <div class="status-dot"></div>
+        <span>AI服务运行中</span>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-brain"></i> 系统评审技术平台</h1>
+            <p>智能化项目审计与报告生成系统</p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number" id="totalReports">0</div>
+                <div class="stat-label">生成报告</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalProjects">0</div>
+                <div class="stat-label">审计项目</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalTemplates">4</div>
+                <div class="stat-label">可用模板</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">99.9%</div>
+                <div class="stat-label">系统可用性</div>
+            </div>
+        </div>
+
+        <div class="dashboard">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon reports">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <div>
+                        <h3>智能报告生成</h3>
+                    </div>
+                </div>
+                <p>基于AI技术的智能报告生成系统，支持风险评估、合规检查、综合分析等多种报告类型。</p>
+                <button class="btn" onclick="openReportGenerator()">生成报告</button>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon analytics">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div>
+                        <h3>数据分析</h3>
+                    </div>
+                </div>
+                <p>深度数据分析和可视化，提供项目风险评估、合规性检查和性能指标监控。</p>
+                <button class="btn btn-secondary" onclick="openAnalytics()">查看分析</button>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon templates">
+                        <i class="fas fa-layer-group"></i>
+                    </div>
+                    <div>
+                        <h3>模板管理</h3>
+                    </div>
+                </div>
+                <p>管理和自定义报告模板，支持风险评估、合规检查、综合报告和执行摘要模板。</p>
+                <button class="btn" onclick="openTemplates()">管理模板</button>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon settings">
+                        <i class="fas fa-cog"></i>
+                    </div>
+                    <div>
+                        <h3>系统设置</h3>
+                    </div>
+                </div>
+                <p>配置系统参数、用户权限、API设置和监控告警规则。</p>
+                <button class="btn" onclick="openSettings()">系统设置</button>
+            </div>
+        </div>
+
+        <div class="quick-actions">
+            <h3><i class="fas fa-bolt"></i> 快速操作</h3>
+            <div class="action-buttons">
+                <div class="action-btn" onclick="quickAction('risk-assessment')">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h4>风险评估报告</h4>
+                    <p>快速生成项目风险评估报告</p>
+                </div>
+                <div class="action-btn" onclick="quickAction('compliance-check')">
+                    <i class="fas fa-shield-alt"></i>
+                    <h4>合规性检查</h4>
+                    <p>执行合规性自动检查</p>
+                </div>
+                <div class="action-btn" onclick="quickAction('comprehensive')">
+                    <i class="fas fa-clipboard-list"></i>
+                    <h4>综合分析报告</h4>
+                    <p>生成全面的项目分析报告</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 报告生成模态框 -->
+    <div id="reportModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('reportModal')">&times;</span>
+            <h3><i class="fas fa-file-alt"></i> 生成智能报告</h3>
+            <form id="reportForm">
+                <div class="form-group">
+                    <label class="form-label">报告类型:</label>
+                    <select id="reportType" class="form-select">
+                        <option value="risk_assessment">风险评估报告</option>
+                        <option value="compliance_check">合规性检查报告</option>
+                        <option value="comprehensive">综合分析报告</option>
+                        <option value="executive_summary">执行摘要报告</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">项目ID:</label>
+                    <input type="number" id="projectId" class="form-input" placeholder="输入项目ID" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">项目名称:</label>
+                    <input type="text" id="projectName" class="form-input" placeholder="输入项目名称（可选）">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">报告作者:</label>
+                    <input type="text" id="author" class="form-input" placeholder="输入作者姓名" value="系统管理员">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">报告描述:</label>
+                    <textarea id="description" class="form-input" placeholder="输入报告描述（可选）" rows="3" style="resize: vertical;"></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">输出格式:</label>
+                    <select id="outputFormat" class="form-select">
+                        <option value="html">HTML</option>
+                        <option value="pdf">PDF</option>
+                        <option value="markdown">Markdown</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <button type="button" class="btn" onclick="generateReport()" style="width: 100%;">
+                        <i class="fas fa-magic"></i> 生成报告
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

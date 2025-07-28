@@ -1,11 +1,16 @@
-from typing import List, Optional, Dict, Any, Union
-from pydantic import BaseModel, Field, validator
 from datetime import datetime
 from enum import Enum
+from typing import Any, Dict, List, Optional
+
+from pydantic import BaseModel, Field
 
 
+# 注释掉不存在的导入
+# from app.models.document import Document
+# from app.models.vector import Vector
 class VectorizationStatus(str, Enum):
     """向量化状态枚举"""
+
     PENDING = "pending"
     PROCESSING = "processing"
     COMPLETED = "completed"
@@ -14,6 +19,7 @@ class VectorizationStatus(str, Enum):
 
 class AnalysisStatus(str, Enum):
     """分析状态枚举"""
+
     PENDING = "pending"
     PROCESSING = "processing"
     COMPLETED = "completed"
@@ -22,6 +28,7 @@ class AnalysisStatus(str, Enum):
 
 class RiskLevel(str, Enum):
     """风险等级枚举"""
+
     LOW = "低风险"
     MEDIUM = "中风险"
     HIGH = "高风险"
@@ -30,6 +37,7 @@ class RiskLevel(str, Enum):
 
 class DocumentCategory(str, Enum):
     """文档分类枚举"""
+
     TECHNICAL = "技术文档"
     BUSINESS = "商务文档"
     LEGAL = "法律文档"
@@ -41,11 +49,14 @@ class DocumentCategory(str, Enum):
 
 
 # DocumentVector Schemas
+
+
 class DocumentVectorBase(BaseModel):
     """文档向量基础模型"""
+
     chunk_index: int = Field(..., description="分块索引")
     chunk_text: str = Field(..., description="分块文本内容")
-    chunk_size: int = Field(..., description="分块大小（字符数）")
+    chunk_size: int = Field(..., description="分块大小(字符数)")
     chunk_position: Optional[str] = Field(None, description="分块位置信息")
     vector_model: str = Field(..., description="向量化模型")
     embedding_dimension: int = Field(..., description="向量维度")
@@ -59,6 +70,7 @@ class DocumentVectorBase(BaseModel):
 
 class DocumentVectorCreate(DocumentVectorBase):
     """创建文档向量"""
+
     document_id: int = Field(..., description="文档ID")
     embedding_vector: List[float] = Field(..., description="向量嵌入")
     processing_time: Optional[float] = Field(None, description="处理时间")
@@ -66,6 +78,7 @@ class DocumentVectorCreate(DocumentVectorBase):
 
 class DocumentVectorUpdate(BaseModel):
     """更新文档向量"""
+
     chunk_text: Optional[str] = None
     embedding_vector: Optional[List[float]] = None
     confidence_score: Optional[float] = None
@@ -76,6 +89,7 @@ class DocumentVectorUpdate(BaseModel):
 
 class DocumentVectorInDB(DocumentVectorBase):
     """数据库中的文档向量"""
+
     id: int
     document_id: int
     embedding_vector: List[float]
@@ -83,19 +97,21 @@ class DocumentVectorInDB(DocumentVectorBase):
     processing_time: Optional[float]
     created_at: datetime
     updated_at: Optional[datetime]
-    
+
     class Config:
         from_attributes = True
 
 
 class DocumentVector(DocumentVectorInDB):
     """文档向量响应模型"""
-    pass
 
 
 # VectorSearchIndex Schemas
+
+
 class VectorSearchIndexBase(BaseModel):
     """向量搜索索引基础模型"""
+
     index_name: str = Field(..., description="索引名称")
     index_type: str = Field(..., description="索引类型")
     vector_dimension: int = Field(..., description="向量维度")
@@ -106,11 +122,11 @@ class VectorSearchIndexBase(BaseModel):
 
 class VectorSearchIndexCreate(VectorSearchIndexBase):
     """创建向量搜索索引"""
-    pass
 
 
 class VectorSearchIndexUpdate(BaseModel):
     """更新向量搜索索引"""
+
     index_config: Optional[str] = None
     is_active: Optional[bool] = None
     total_vectors: Optional[int] = None
@@ -119,25 +135,28 @@ class VectorSearchIndexUpdate(BaseModel):
 
 class VectorSearchIndexInDB(VectorSearchIndexBase):
     """数据库中的向量搜索索引"""
+
     id: int
     total_vectors: int
     index_size: Optional[int]
     last_rebuild_at: Optional[datetime]
     created_at: datetime
     updated_at: Optional[datetime]
-    
+
     class Config:
         from_attributes = True
 
 
 class VectorSearchIndex(VectorSearchIndexInDB):
     """向量搜索索引响应模型"""
-    pass
 
 
 # SearchQuery Schemas
+
+
 class SearchQueryBase(BaseModel):
     """搜索查询基础模型"""
+
     query_text: str = Field(..., description="查询文本")
     query_type: str = Field(..., description="查询类型")
     search_filters: Optional[str] = Field(None, description="搜索过滤条件")
@@ -147,12 +166,14 @@ class SearchQueryBase(BaseModel):
 
 class SearchQueryCreate(SearchQueryBase):
     """创建搜索查询"""
+
     user_id: int = Field(..., description="用户ID")
     query_vector: Optional[List[float]] = Field(None, description="查询向量")
 
 
 class SearchQueryUpdate(BaseModel):
     """更新搜索查询"""
+
     result_count: Optional[int] = None
     search_results: Optional[str] = None
     response_time: Optional[float] = None
@@ -162,6 +183,7 @@ class SearchQueryUpdate(BaseModel):
 
 class SearchQueryInDB(SearchQueryBase):
     """数据库中的搜索查询"""
+
     id: int
     user_id: int
     query_vector: Optional[List[float]]
@@ -171,19 +193,21 @@ class SearchQueryInDB(SearchQueryBase):
     user_rating: Optional[int]
     feedback: Optional[str]
     created_at: datetime
-    
+
     class Config:
         from_attributes = True
 
 
 class SearchQuery(SearchQueryInDB):
     """搜索查询响应模型"""
-    pass
 
 
 # 向量化请求和响应模型
+
+
 class VectorizeRequest(BaseModel):
     """向量化请求"""
+
     document_id: int = Field(..., description="文档ID")
     force_reprocess: bool = Field(False, description="是否强制重新处理")
     chunk_strategy: str = Field("semantic", description="分块策略")
@@ -194,6 +218,7 @@ class VectorizeRequest(BaseModel):
 
 class VectorizeResponse(BaseModel):
     """向量化响应"""
+
     document_id: int
     status: str
     chunk_count: int
@@ -204,6 +229,7 @@ class VectorizeResponse(BaseModel):
 
 class BatchVectorizeRequest(BaseModel):
     """批量向量化请求"""
+
     document_ids: List[int] = Field(..., description="文档ID列表")
     force_reprocess: bool = Field(False, description="是否强制重新处理")
     chunk_strategy: str = Field("semantic", description="分块策略")
@@ -214,6 +240,7 @@ class BatchVectorizeRequest(BaseModel):
 
 class BatchVectorizeResponse(BaseModel):
     """批量向量化响应"""
+
     total_documents: int
     processed: int
     failed: int
@@ -223,19 +250,23 @@ class BatchVectorizeResponse(BaseModel):
 
 
 # 语义搜索请求和响应模型
+
+
 class SemanticSearchRequest(BaseModel):
     """语义搜索请求"""
+
     query: str = Field(..., description="搜索查询")
     project_id: Optional[int] = Field(None, description="项目ID过滤")
     document_types: Optional[List[str]] = Field(None, description="文档类型过滤")
     similarity_threshold: float = Field(0.7, description="相似度阈值")
     max_results: int = Field(10, description="最大结果数量")
     include_metadata: bool = Field(True, description="是否包含元数据")
-    search_type: str = Field("semantic", description="搜索类型：semantic/keyword/hybrid")
+    search_type: str = Field("semantic", description="搜索类型:semantic/keyword/hybrid")
 
 
 class SearchResult(BaseModel):
     """搜索结果项"""
+
     document_id: int
     chunk_id: int
     chunk_text: str
@@ -248,6 +279,7 @@ class SearchResult(BaseModel):
 
 class SemanticSearchResponse(BaseModel):
     """语义搜索响应"""
+
     query: str
     total_results: int
     search_time: float
@@ -256,8 +288,11 @@ class SemanticSearchResponse(BaseModel):
 
 
 # 知识图谱相关模型
+
+
 class KnowledgeGraphNodeBase(BaseModel):
     """知识图谱节点基础模型"""
+
     node_id: str = Field(..., description="节点ID")
     node_type: str = Field(..., description="节点类型")
     node_name: str = Field(..., description="节点名称")
@@ -269,23 +304,26 @@ class KnowledgeGraphNodeBase(BaseModel):
 
 class KnowledgeGraphNodeCreate(KnowledgeGraphNodeBase):
     """创建知识图谱节点"""
+
     source_document_id: Optional[int] = Field(None, description="来源文档ID")
     node_vector: Optional[List[float]] = Field(None, description="节点向量")
 
 
 class KnowledgeGraphNode(KnowledgeGraphNodeBase):
     """知识图谱节点响应模型"""
+
     id: int
     source_document_id: Optional[int]
     created_at: datetime
     updated_at: Optional[datetime]
-    
+
     class Config:
         from_attributes = True
 
 
 class KnowledgeGraphRelationBase(BaseModel):
     """知识图谱关系基础模型"""
+
     relation_id: str = Field(..., description="关系ID")
     source_node_id: str = Field(..., description="源节点ID")
     target_node_id: str = Field(..., description="目标节点ID")
@@ -298,25 +336,30 @@ class KnowledgeGraphRelationBase(BaseModel):
 
 class KnowledgeGraphRelationCreate(KnowledgeGraphRelationBase):
     """创建知识图谱关系"""
+
     source_document_id: Optional[int] = Field(None, description="来源文档ID")
     extraction_method: Optional[str] = Field(None, description="抽取方法")
 
 
 class KnowledgeGraphRelation(KnowledgeGraphRelationBase):
     """知识图谱关系响应模型"""
+
     id: int
     source_document_id: Optional[int]
     extraction_method: Optional[str]
     created_at: datetime
     updated_at: Optional[datetime]
-    
+
     class Config:
         from_attributes = True
 
 
 # 文档智能分析相关模型
+
+
 class DocumentAnalysisRequest(BaseModel):
     """文档智能分析请求"""
+
     document_id: int = Field(..., description="文档ID")
     analysis_types: List[str] = Field(..., description="分析类型列表")
     force_reprocess: bool = Field(False, description="是否强制重新分析")
@@ -324,6 +367,7 @@ class DocumentAnalysisRequest(BaseModel):
 
 class DocumentAnalysisResponse(BaseModel):
     """文档智能分析响应"""
+
     document_id: int
     analysis_results: Dict[str, Any]
     processing_time: float
@@ -333,6 +377,7 @@ class DocumentAnalysisResponse(BaseModel):
 
 class DocumentClassificationResult(BaseModel):
     """文档分类结果"""
+
     category: str
     confidence: float
     subcategories: Optional[List[Dict[str, Any]]]
@@ -340,6 +385,7 @@ class DocumentClassificationResult(BaseModel):
 
 class RiskAssessmentResult(BaseModel):
     """风险评估结果"""
+
     overall_risk_level: str
     risk_factors: List[Dict[str, Any]]
     recommendations: List[str]
@@ -348,6 +394,7 @@ class RiskAssessmentResult(BaseModel):
 
 class ComplianceAnalysisResult(BaseModel):
     """合规性分析结果"""
+
     compliance_status: str
     violations: List[Dict[str, Any]]
     recommendations: List[str]
@@ -356,6 +403,7 @@ class ComplianceAnalysisResult(BaseModel):
 
 class EntityExtractionResult(BaseModel):
     """实体抽取结果"""
+
     entities: List[Dict[str, Any]]
     relations: List[Dict[str, Any]]
     confidence_scores: Dict[str, float]
@@ -363,8 +411,10 @@ class EntityExtractionResult(BaseModel):
 
 # === 新增的AI功能模型 ===
 
+
 class VectorizationStatusResponse(BaseModel):
     """向量化状态响应"""
+
     document_id: int = Field(description="文档ID")
     status: VectorizationStatus = Field(description="向量化状态")
     progress: float = Field(ge=0, le=100, description="进度百分比")
@@ -378,6 +428,7 @@ class VectorizationStatusResponse(BaseModel):
 
 class AnalysisStatusResponse(BaseModel):
     """分析状态响应"""
+
     document_id: int = Field(description="文档ID")
     status: AnalysisStatus = Field(description="分析状态")
     progress: float = Field(ge=0, le=100, description="进度百分比")
@@ -390,6 +441,7 @@ class AnalysisStatusResponse(BaseModel):
 
 class DocumentSummary(BaseModel):
     """文档摘要"""
+
     content: str = Field(description="摘要内容")
     length: int = Field(description="摘要长度")
     confidence: float = Field(ge=0, le=1, description="置信度")
@@ -397,6 +449,7 @@ class DocumentSummary(BaseModel):
 
 class DocumentKeywords(BaseModel):
     """文档关键词"""
+
     keywords: List[str] = Field(description="关键词列表")
     scores: List[float] = Field(description="关键词分数")
     total_count: int = Field(description="关键词总数")
@@ -404,6 +457,7 @@ class DocumentKeywords(BaseModel):
 
 class DocumentClassification(BaseModel):
     """文档分类"""
+
     category: DocumentCategory = Field(description="文档类别")
     confidence: float = Field(ge=0, le=1, description="置信度")
     subcategories: Optional[List[str]] = Field(default=None, description="子类别")
@@ -411,6 +465,7 @@ class DocumentClassification(BaseModel):
 
 class RiskFactor(BaseModel):
     """风险因素"""
+
     factor: str = Field(description="风险因素")
     level: RiskLevel = Field(description="风险等级")
     description: str = Field(description="风险描述")
@@ -419,6 +474,7 @@ class RiskFactor(BaseModel):
 
 class RiskAssessment(BaseModel):
     """风险评估"""
+
     overall_risk: RiskLevel = Field(description="总体风险等级")
     risk_score: float = Field(ge=0, le=100, description="风险分数")
     risk_factors: List[RiskFactor] = Field(description="风险因素列表")
@@ -427,6 +483,7 @@ class RiskAssessment(BaseModel):
 
 class ComplianceCheck(BaseModel):
     """合规性检查"""
+
     is_compliant: bool = Field(description="是否合规")
     compliance_score: float = Field(ge=0, le=100, description="合规分数")
     violations: List[str] = Field(description="违规项列表")
@@ -435,6 +492,7 @@ class ComplianceCheck(BaseModel):
 
 class EntityExtraction(BaseModel):
     """实体提取"""
+
     entities: Dict[str, List[str]] = Field(description="实体字典")
     entity_count: int = Field(description="实体总数")
     confidence_scores: Dict[str, List[float]] = Field(description="置信度分数")
@@ -442,6 +500,7 @@ class EntityExtraction(BaseModel):
 
 class SentimentAnalysis(BaseModel):
     """情感分析"""
+
     sentiment: str = Field(description="情感倾向")
     confidence: float = Field(ge=0, le=1, description="置信度")
     scores: Dict[str, float] = Field(description="各情感分数")
@@ -449,13 +508,20 @@ class SentimentAnalysis(BaseModel):
 
 class EnhancedDocumentAnalysisResponse(BaseModel):
     """增强的文档分析响应"""
+
     document_id: int = Field(description="文档ID")
     analysis_types: List[str] = Field(description="分析类型")
     summary: Optional[DocumentSummary] = Field(default=None, description="文档摘要")
     keywords: Optional[DocumentKeywords] = Field(default=None, description="关键词")
-    classification: Optional[DocumentClassification] = Field(default=None, description="分类")
-    risk_assessment: Optional[RiskAssessment] = Field(default=None, description="风险评估")
-    compliance: Optional[ComplianceCheck] = Field(default=None, description="合规性检查")
+    classification: Optional[DocumentClassification] = Field(
+        default=None, description="分类"
+    )
+    risk_assessment: Optional[RiskAssessment] = Field(
+        default=None, description="风险评估"
+    )
+    compliance: Optional[ComplianceCheck] = Field(
+        default=None, description="合规性检查"
+    )
     entities: Optional[EntityExtraction] = Field(default=None, description="实体提取")
     sentiment: Optional[SentimentAnalysis] = Field(default=None, description="情感分析")
     model: str = Field(description="使用的模型")
@@ -465,6 +531,7 @@ class EnhancedDocumentAnalysisResponse(BaseModel):
 
 class SearchHistoryItem(BaseModel):
     """搜索历史项"""
+
     id: str = Field(description="搜索ID")
     query: str = Field(description="搜索查询")
     results_count: int = Field(description="结果数量")
@@ -475,6 +542,7 @@ class SearchHistoryItem(BaseModel):
 
 class SearchHistoryResponse(BaseModel):
     """搜索历史响应"""
+
     total_count: int = Field(description="总搜索次数")
     items: List[SearchHistoryItem] = Field(description="搜索历史列表")
     page: int = Field(description="当前页码")
@@ -484,6 +552,7 @@ class SearchHistoryResponse(BaseModel):
 
 class VectorStatistics(BaseModel):
     """向量统计信息"""
+
     total_documents: int = Field(description="总文档数")
     vectorized_documents: int = Field(description="已向量化文档数")
     total_chunks: int = Field(description="总分块数")
@@ -495,6 +564,7 @@ class VectorStatistics(BaseModel):
 
 class SearchStatistics(BaseModel):
     """搜索统计信息"""
+
     total_searches: int = Field(description="总搜索次数")
     unique_queries: int = Field(description="唯一查询数")
     average_results_per_search: float = Field(description="平均每次搜索结果数")
@@ -505,6 +575,7 @@ class SearchStatistics(BaseModel):
 
 class AnalysisStatistics(BaseModel):
     """分析统计信息"""
+
     total_analyses: int = Field(description="总分析次数")
     analysis_types_count: Dict[str, int] = Field(description="分析类型计数")
     average_analysis_time: float = Field(description="平均分析时间")
@@ -514,6 +585,7 @@ class AnalysisStatistics(BaseModel):
 
 class KnowledgeGraphStatistics(BaseModel):
     """知识图谱统计信息"""
+
     total_nodes: int = Field(description="总节点数")
     total_relations: int = Field(description="总关系数")
     node_types_count: Dict[str, int] = Field(description="节点类型计数")
@@ -524,6 +596,7 @@ class KnowledgeGraphStatistics(BaseModel):
 
 class AIStatisticsResponse(BaseModel):
     """AI统计信息响应"""
+
     vector_stats: VectorStatistics = Field(description="向量统计")
     search_stats: SearchStatistics = Field(description="搜索统计")
     analysis_stats: AnalysisStatistics = Field(description="分析统计")
@@ -533,6 +606,7 @@ class AIStatisticsResponse(BaseModel):
 
 class TaskResponse(BaseModel):
     """任务响应"""
+
     task_id: str = Field(description="任务ID")
     status: str = Field(description="任务状态")
     message: str = Field(description="响应消息")
@@ -541,6 +615,7 @@ class TaskResponse(BaseModel):
 
 class HealthCheckResponse(BaseModel):
     """健康检查响应"""
+
     status: str = Field(description="服务状态")
     ai_service: bool = Field(description="AI服务状态")
     vector_service: bool = Field(description="向量服务状态")

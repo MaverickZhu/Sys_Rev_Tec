@@ -1,9 +1,38 @@
+# Import schemas for external use
 from .project import (
-    Project, ProjectCreate, ProjectUpdate,
-    Issue, IssueCreate, IssueUpdate,
-    ProjectComparison, ProjectComparisonCreate, ProjectComparisonUpdate
+    Project,
+    ProjectCreate,
+    ProjectUpdate,
+    ProjectInDB,
+    Issue,
+    IssueCreate,
+    IssueUpdate,
+    IssueInDB,
+    ProjectComparison,
+    ProjectComparisonCreate,
+    ProjectComparisonUpdate,
+    ProjectComparisonInDB,
 )
-from .document import Document, DocumentCreate, DocumentUpdate
-from .ocr import OCRResult, OCRResultCreate, OCRResultUpdate
-from .token import Token, TokenPayload
-from .user import User, UserCreate, UserUpdate
+from .user import (
+    User,
+    UserCreate,
+    UserUpdate,
+    UserInDB,
+)
+from .document import (
+    Document,
+    DocumentCreate,
+    DocumentUpdate,
+    DocumentInDB,
+)
+from .vector import (
+    DocumentVector,
+    DocumentVectorCreate,
+    DocumentVectorUpdate,
+    VectorSearchIndex,
+    VectorSearchIndexCreate,
+    VectorSearchIndexUpdate,
+    SearchQuery,
+    SearchQueryCreate,
+    SearchQueryUpdate,
+)

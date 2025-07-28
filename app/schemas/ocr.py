@@ -1,10 +1,14 @@
-from pydantic import BaseModel
-from typing import Optional
-from datetime import datetime
-
-
 # Shared properties
+
+
+from datetime import datetime
+from typing import Optional
+
+from pydantic import BaseModel
+
+
 class OCRResultBase(BaseModel):
+
     filename: str
     engine: str
     language: str = "chi_sim+eng"
@@ -13,7 +17,10 @@ class OCRResultBase(BaseModel):
 
 
 # Properties to receive on OCR result creation
+
+
 class OCRResultCreate(OCRResultBase):
+
     processing_time: float = 0.0
     word_count: int = 0
     metadata: Optional[str] = None
@@ -22,7 +29,10 @@ class OCRResultCreate(OCRResultBase):
 
 
 # Properties to receive on OCR result update
+
+
 class OCRResultUpdate(BaseModel):
+
     text_content: Optional[str] = None
     confidence_score: Optional[float] = None
     metadata: Optional[str] = None
@@ -32,7 +42,10 @@ class OCRResultUpdate(BaseModel):
 
 
 # Properties shared by models stored in DB
+
+
 class OCRResultInDBBase(OCRResultBase):
+
     id: int
     processed_by: int
     processing_time: float = 0.0
@@ -51,10 +64,16 @@ class OCRResultInDBBase(OCRResultBase):
 
 
 # Properties to return to client
+
+
 class OCRResult(OCRResultInDBBase):
+
     pass
 
 
 # Properties stored in DB
+
+
 class OCRResultInDB(OCRResultInDBBase):
+
     pass

@@ -4162,3 +4162,104 @@ For further information visit https://errors.pydantic.dev/2.11/u/invalid-for-jso
 2025-07-27 00:13:54 - app.core.exceptions - ERROR - Unhandled Exception: ResponseValidationError - 1 validation errors:
   {'type': 'model_attributes_type', 'loc': ('response',), 'msg': 'Input should be a valid dictionary or object to extract fields from', 'input': <coroutine object clear_cache at 0x000002943A496680>}
 
+2025-07-28 11:00:20 - app - ERROR - Failed to connect to Redis: Connection failed
+2025-07-28 11:00:20 - app - ERROR - Failed to set cache test: Redis error
+2025-07-28 11:00:20 - app - ERROR - Failed to get cache test: Redis error
+2025-07-28 11:00:20 - app - ERROR - Failed to deserialize pickle cache test: non-hexadecimal number found in fromhex() arg at position 0
+2025-07-28 11:00:20 - app - ERROR - Failed to delete cache test: Redis error
+2025-07-28 11:00:20 - app - ERROR - Failed to check cache existence test: Redis error
+2025-07-28 11:00:20 - app - ERROR - Failed to clear cache pattern test:*: Redis error
+2025-07-28 11:00:20 - app - ERROR - Failed to get cache stats: Redis error
+2025-07-28 11:00:20 - app - ERROR - Cache health check failed: Connection failed
+2025-07-28 11:00:57 - app.services.document_service - ERROR - Failed to save file test.txt: Read error
+2025-07-28 11:01:02 - app.services.document_service - ERROR - Text file processing failed for document 1: File read error
+2025-07-28 11:01:02 - app.services.document_service - ERROR - Failed to process document 1: Processing error
+2025-07-28 11:01:02 - app.services.document_service - ERROR - Text file processing failed for document 1: Permission denied
+2025-07-28 11:01:02 - app.services.document_service - ERROR - Text file processing failed for document 1: File not found
+2025-07-28 11:01:02 - app.services.document_service - ERROR - Text file processing failed for document 1: I/O operation failed
+2025-07-28 11:01:02 - app.services.document_service - ERROR - Text file processing failed for document 1: Disk full
+2025-07-28 11:01:02 - app.services.document_service - ERROR - Text file processing failed for document 1: Not enough memory
+2025-07-28 11:01:12 - app.app.core.error_tracking - CRITICAL - ALERT TRIGGERED: critical_errors
+2025-07-28 11:01:17 - app.main - ERROR - Database health check failed: Database connection failed
+2025-07-28 11:04:12 - app - ERROR - Failed to connect to Redis: Connection failed
+2025-07-28 11:04:13 - app - ERROR - Failed to set cache test: Redis error
+2025-07-28 11:04:13 - app - ERROR - Failed to get cache test: Redis error
+2025-07-28 11:04:13 - app - ERROR - Failed to deserialize pickle cache test: non-hexadecimal number found in fromhex() arg at position 0
+2025-07-28 11:04:13 - app - ERROR - Failed to delete cache test: Redis error
+2025-07-28 11:04:13 - app - ERROR - Failed to check cache existence test: Redis error
+2025-07-28 11:04:13 - app - ERROR - Failed to clear cache pattern test:*: Redis error
+2025-07-28 11:04:13 - app - ERROR - Failed to get cache stats: Redis error
+2025-07-28 11:04:13 - app - ERROR - Cache health check failed: Connection failed
+2025-07-28 11:04:48 - app.services.document_service - ERROR - Failed to save file test.txt: Read error
+2025-07-28 11:04:53 - app.services.document_service - ERROR - Text file processing failed for document 1: File read error
+2025-07-28 11:04:53 - app.services.document_service - ERROR - Failed to process document 1: Processing error
+2025-07-28 11:04:53 - app.services.document_service - ERROR - Text file processing failed for document 1: Permission denied
+2025-07-28 11:04:53 - app.services.document_service - ERROR - Text file processing failed for document 1: File not found
+2025-07-28 11:04:53 - app.services.document_service - ERROR - Text file processing failed for document 1: I/O operation failed
+2025-07-28 11:04:53 - app.services.document_service - ERROR - Text file processing failed for document 1: Disk full
+2025-07-28 11:04:53 - app.services.document_service - ERROR - Text file processing failed for document 1: Not enough memory
+2025-07-28 11:05:03 - app.app.core.error_tracking - CRITICAL - ALERT TRIGGERED: critical_errors
+2025-07-28 11:05:08 - app.main - ERROR - Database health check failed: Database connection failed
+2025-07-28 20:15:07 - app.services.cache_init - ERROR - Failed to initialize cache monitor: 'CacheMonitor' object has no attribute 'configure'
+2025-07-28 20:15:07 - app.services.cache_init - ERROR - Cache system initialization failed: 'CacheMonitor' object has no attribute 'configure'
+2025-07-28 20:15:22 - app.core.exceptions - ERROR - HTTP Exception: 404 - Index file not found
+2025-07-28 20:18:41 - app.services.cache_init - ERROR - Failed to initialize cache monitor: 'CacheMonitor' object has no attribute 'configure'
+2025-07-28 20:18:41 - app.services.cache_init - ERROR - Cache system initialization failed: 'CacheMonitor' object has no attribute 'configure'
+2025-07-28 20:18:57 - app.services.cache_init - ERROR - Failed to initialize cache monitor: 'CacheMonitor' object has no attribute 'configure'
+2025-07-28 20:18:57 - app.services.cache_init - ERROR - Cache system initialization failed: 'CacheMonitor' object has no attribute 'configure'
+2025-07-28 20:19:48 - app.services.cache_init - ERROR - Failed to initialize cache monitor: 'CacheMonitor' object has no attribute 'configure'
+2025-07-28 20:19:48 - app.services.cache_init - ERROR - Cache system initialization failed: 'CacheMonitor' object has no attribute 'configure'
+2025-07-28 20:20:00 - app.services.cache_init - ERROR - Failed to initialize cache monitor: 'CacheMonitor' object has no attribute 'configure'
+2025-07-28 20:20:00 - app.services.cache_init - ERROR - Cache system initialization failed: 'CacheMonitor' object has no attribute 'configure'
+2025-07-28 20:23:13 - app.services.cache_init - ERROR - Failed to initialize cache monitor: 'CacheMonitor' object has no attribute 'configure'
+2025-07-28 20:23:13 - app.services.cache_init - ERROR - Cache system initialization failed: 'CacheMonitor' object has no attribute 'configure'
+2025-07-28 20:23:13 - app.services.cache_init - ERROR - Failed to initialize cache monitor: 'CacheMonitor' object has no attribute 'configure'
+2025-07-28 20:23:13 - app.services.cache_init - ERROR - Cache system initialization failed: 'CacheMonitor' object has no attribute 'configure'
+2025-07-28 20:23:17 - app.services.cache_init - ERROR - Failed to initialize cache monitor: 'CacheMonitor' object has no attribute 'configure'
+2025-07-28 20:23:17 - app.services.cache_init - ERROR - Cache system initialization failed: 'CacheMonitor' object has no attribute 'configure'
+2025-07-28 20:23:22 - app.services.cache_init - ERROR - Failed to initialize cache monitor: 'CacheMonitor' object has no attribute 'configure'
+2025-07-28 20:23:22 - app.services.cache_init - ERROR - Cache system initialization failed: 'CacheMonitor' object has no attribute 'configure'
+2025-07-28 20:40:29 - app.services.cache_init - ERROR - Failed to initialize cache monitor: 'CacheMonitor' object has no attribute 'configure'
+2025-07-28 20:40:29 - app.services.cache_init - ERROR - Failed to initialize cache monitor: 'CacheMonitor' object has no attribute 'configure'
+2025-07-28 20:40:29 - app.services.cache_init - ERROR - Cache system initialization failed: 'CacheMonitor' object has no attribute 'configure'
+2025-07-28 20:40:29 - app.services.cache_init - ERROR - Cache system initialization failed: 'CacheMonitor' object has no attribute 'configure'
+2025-07-28 20:40:32 - app.services.cache_init - ERROR - Failed to initialize cache monitor: 'CacheMonitor' object has no attribute 'configure'
+2025-07-28 20:40:32 - app.services.cache_init - ERROR - Cache system initialization failed: 'CacheMonitor' object has no attribute 'configure'
+2025-07-28 20:40:32 - app.services.cache_init - ERROR - Failed to initialize cache monitor: 'CacheMonitor' object has no attribute 'configure'
+2025-07-28 20:40:32 - app.services.cache_init - ERROR - Cache system initialization failed: 'CacheMonitor' object has no attribute 'configure'
+2025-07-28 20:41:33 - app.services.cache_init - ERROR - Failed to initialize cache monitor: 'CacheMonitor' object has no attribute 'configure'
+2025-07-28 20:41:33 - app.services.cache_init - ERROR - Cache system initialization failed: 'CacheMonitor' object has no attribute 'configure'
+2025-07-28 20:41:33 - app.services.cache_init - ERROR - Failed to initialize cache monitor: 'CacheMonitor' object has no attribute 'configure'
+2025-07-28 20:41:33 - app.services.cache_init - ERROR - Cache system initialization failed: 'CacheMonitor' object has no attribute 'configure'
+2025-07-28 20:41:36 - app.services.cache_init - ERROR - Failed to initialize cache monitor: 'CacheMonitor' object has no attribute 'configure'
+2025-07-28 20:41:36 - app.services.cache_init - ERROR - Cache system initialization failed: 'CacheMonitor' object has no attribute 'configure'
+2025-07-28 20:41:36 - app.services.cache_init - ERROR - Failed to initialize cache monitor: 'CacheMonitor' object has no attribute 'configure'
+2025-07-28 20:41:36 - app.services.cache_init - ERROR - Cache system initialization failed: 'CacheMonitor' object has no attribute 'configure'
+2025-07-28 20:43:15 - app.services.cache_init - ERROR - Failed to initialize cache monitor: 'CacheMonitor' object has no attribute 'configure'
+2025-07-28 20:43:15 - app.services.cache_init - ERROR - Cache system initialization failed: 'CacheMonitor' object has no attribute 'configure'
+2025-07-28 20:43:15 - app.services.cache_monitor - ERROR - 收集指标失败: name 'get_all_cache_strategies' is not defined
+2025-07-28 20:43:15 - app.services.cache_init - ERROR - Failed to initialize cache monitor: 'CacheMonitor' object has no attribute 'configure'
+2025-07-28 20:43:15 - app.services.cache_init - ERROR - Cache system initialization failed: 'CacheMonitor' object has no attribute 'configure'
+2025-07-28 20:43:15 - app.services.cache_monitor - ERROR - 收集指标失败: name 'get_all_cache_strategies' is not defined
+2025-07-28 20:43:19 - app.services.cache_init - ERROR - Failed to initialize cache monitor: 'CacheMonitor' object has no attribute 'configure'
+2025-07-28 20:43:19 - app.services.cache_init - ERROR - Cache system initialization failed: 'CacheMonitor' object has no attribute 'configure'
+2025-07-28 20:43:19 - app.services.cache_monitor - ERROR - 收集指标失败: name 'get_all_cache_strategies' is not defined
+2025-07-28 20:43:19 - app.services.cache_init - ERROR - Failed to initialize cache monitor: 'CacheMonitor' object has no attribute 'configure'
+2025-07-28 20:43:19 - app.services.cache_init - ERROR - Cache system initialization failed: 'CacheMonitor' object has no attribute 'configure'
+2025-07-28 20:43:19 - app.services.cache_monitor - ERROR - 收集指标失败: name 'get_all_cache_strategies' is not defined
+2025-07-28 20:44:19 - app.services.cache_monitor - ERROR - 收集指标失败: name 'get_all_cache_strategies' is not defined
+2025-07-28 20:44:19 - app.services.cache_monitor - ERROR - 收集指标失败: name 'get_all_cache_strategies' is not defined
+2025-07-28 21:21:53 - app.services.cache_init - ERROR - Failed to initialize cache monitor: name 'cache_monitor' is not defined
+2025-07-28 21:21:53 - app.services.cache_init - ERROR - Cache system initialization failed: name 'cache_monitor' is not defined
+2025-07-28 21:21:53 - app.services.cache_init - ERROR - Failed to initialize cache monitor: name 'cache_monitor' is not defined
+2025-07-28 21:21:53 - app.services.cache_init - ERROR - Cache system initialization failed: name 'cache_monitor' is not defined
+2025-07-28 21:21:53 - app.services.cache_init - ERROR - Failed to initialize cache monitor: name 'cache_monitor' is not defined
+2025-07-28 21:21:53 - app.services.cache_init - ERROR - Cache system initialization failed: name 'cache_monitor' is not defined
+2025-07-28 21:22:25 - app.services.cache_init - ERROR - Failed to initialize cache monitor: 'CacheMonitor' object has no attribute 'configure'
+2025-07-28 21:22:25 - app.services.cache_init - ERROR - Cache system initialization failed: 'CacheMonitor' object has no attribute 'configure'
+2025-07-28 21:22:25 - app.services.cache_init - ERROR - Failed to initialize cache monitor: 'CacheMonitor' object has no attribute 'configure'
+2025-07-28 21:22:25 - app.services.cache_init - ERROR - Cache system initialization failed: 'CacheMonitor' object has no attribute 'configure'
+2025-07-28 21:22:25 - app.services.cache_init - ERROR - Failed to initialize cache monitor: 'CacheMonitor' object has no attribute 'configure'
+2025-07-28 21:22:25 - app.services.cache_init - ERROR - Cache system initialization failed: 'CacheMonitor' object has no attribute 'configure'
+2025-07-28 21:22:44 - app.core.exceptions - ERROR - HTTP Exception: 404 - Index file not found
+2025-07-28 21:23:05 - app.core.exceptions - ERROR - HTTP Exception: 404 - Index file not found

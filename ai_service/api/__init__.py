@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 AI服务API模块
 提供向量化、搜索和AI增强功能的REST API接口

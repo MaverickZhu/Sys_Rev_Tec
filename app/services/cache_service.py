@@ -1,304 +1,505 @@
-from typing import Any, Optional, Union, Dict, List
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+缓存服务模块
+提供Redis缓存操作的核心功能
+"""
+
 import json
 import pickle
+import gzip
+import asyncio
+from typing import Any, Dict, List, Optional, Union, Set
 from datetime import datetime, timedelta
-import redis
+import logging
+import redis.asyncio as redis
+from redis.asyncio import Redis
+from contextlib import asynccontextmanager
+
+from app.config.cache_strategy import (
+    CacheStrategy, 
+    CacheLevel, 
+    EvictionPolicy,
+    get_cache_strategy
+)
 from app.core.config import settings
-from app.core.logging import logger
+from app.core.logger import logger
+
 
 class CacheService:
-    """缓存服务类，提供Redis缓存功能"""
+    """
+    缓存服务类
+    提供统一的缓存操作接口
+    """
     
     def __init__(self):
-        self.redis_client = None
-        self.is_enabled = settings.CACHE_ENABLED
-        self._connect()
-    
-    def _connect(self):
-        """连接Redis"""
+        self.redis_client: Optional[Redis] = None
+        self.local_cache: Dict[str, Any] = {}  # L1本地缓存
+        self.cache_stats = {
+            "hits": 0,
+            "misses": 0,
+            "sets": 0,
+            "deletes": 0,
+            "errors": 0
+        }
+        self._connection_pool = None
+        self.is_enabled = getattr(settings, 'CACHE_ENABLED', True)
+        
+    async def initialize(self):
+        """
+        初始化缓存服务
+        """
         if not self.is_enabled:
             logger.info("Cache is disabled")
             return
             
         try:
-            self.redis_client = redis.from_url(
-                settings.REDIS_URL,
-                decode_responses=True,
-                socket_connect_timeout=5,
-                socket_timeout=5,
-                retry_on_timeout=True
+            # 创建Redis连接池
+            self._connection_pool = redis.ConnectionPool(
+                host=getattr(settings, 'REDIS_HOST', 'localhost'),
+                port=getattr(settings, 'REDIS_PORT', 6379),
+                password=getattr(settings, 'REDIS_PASSWORD', None),
+                db=getattr(settings, 'REDIS_DB', 0),
+                decode_responses=False,  # 保持二进制数据
+                max_connections=20,
+                retry_on_timeout=True,
+                socket_keepalive=True,
+                socket_keepalive_options={}
             )
+            
+            self.redis_client = Redis(connection_pool=self._connection_pool)
+            
             # 测试连接
-            self.redis_client.ping()
-            logger.info("Redis cache connected successfully")
+            await self.redis_client.ping()
+            logger.info("Redis缓存服务初始化成功")
+            
         except Exception as e:
-            logger.error(f"Failed to connect to Redis: {e}")
+            logger.error(f"Redis缓存服务初始化失败: {e}")
             self.is_enabled = False
-            self.redis_client = None
+            raise
     
-    def _get_key(self, key: str, prefix: str = "app") -> str:
-        """生成缓存键"""
-        return f"{prefix}:{key}"
-    
-    def set(self, key: str, value: Any, expire: Optional[int] = None, prefix: str = "app") -> bool:
-        """设置缓存
-        
-        Args:
-            key: 缓存键
-            value: 缓存值
-            expire: 过期时间（秒），默认使用配置中的值
-            prefix: 键前缀
-            
-        Returns:
-            bool: 是否设置成功
+    async def close(self):
         """
-        if not self.is_enabled or not self.redis_client:
-            return False
-            
+        关闭缓存服务
+        """
         try:
-            cache_key = self._get_key(key, prefix)
-            
-            # 序列化值
-            if isinstance(value, (dict, list)):
-                serialized_value = json.dumps(value, ensure_ascii=False, default=str)
-            elif isinstance(value, (int, float, str, bool)):
-                serialized_value = str(value)
-            else:
-                # 对于复杂对象使用pickle
-                serialized_value = pickle.dumps(value).hex()
-                cache_key += ":pickle"
-            
-            # 设置过期时间
-            if expire is None:
-                expire = settings.CACHE_EXPIRE_TIME
-            
-            result = self.redis_client.setex(cache_key, expire, serialized_value)
-            logger.debug(f"Cache set: {cache_key} (expire: {expire}s)")
-            return result
-            
+            if self.redis_client:
+                await self.redis_client.close()
+            if self._connection_pool:
+                await self._connection_pool.disconnect()
+            logger.info("缓存服务已关闭")
         except Exception as e:
-            logger.error(f"Failed to set cache {key}: {e}")
-            return False
-    
-    def get(self, key: str, prefix: str = "app") -> Optional[Any]:
-        """获取缓存
+            logger.error(f"关闭缓存服务失败: {e}")
+
+    async def get(self, key: str, cache_type: str = "default") -> Optional[Any]:
+        """
+        获取缓存值
         
         Args:
             key: 缓存键
-            prefix: 键前缀
+            cache_type: 缓存类型
             
         Returns:
             缓存值或None
         """
-        if not self.is_enabled or not self.redis_client:
-            return None
-            
         try:
-            cache_key = self._get_key(key, prefix)
+            strategy = get_cache_strategy(cache_type)
+            if not strategy:
+                logger.warning(f"未找到缓存策略: {cache_type}")
+                return None
             
-            # 尝试获取普通缓存
-            value = self.redis_client.get(cache_key)
-            if value is not None:
-                try:
-                    # 尝试JSON反序列化
-                    return json.loads(value)
-                except (json.JSONDecodeError, ValueError):
-                    # 如果不是JSON，返回字符串
-                    return value
+            full_key = f"{strategy.key_prefix}:{key}"
             
-            # 尝试获取pickle缓存
-            pickle_key = cache_key + ":pickle"
-            pickle_value = self.redis_client.get(pickle_key)
-            if pickle_value is not None:
-                try:
-                    return pickle.loads(bytes.fromhex(pickle_value))
-                except Exception as e:
-                    logger.error(f"Failed to deserialize pickle cache {key}: {e}")
-                    return None
+            # L1缓存查找
+            if strategy.level in [CacheLevel.L1, CacheLevel.HYBRID]:
+                if full_key in self.local_cache:
+                    self.cache_stats["hits"] += 1
+                    return self.local_cache[full_key]
             
-            logger.debug(f"Cache miss: {cache_key}")
+            # L2 Redis缓存查找
+            if strategy.level in [CacheLevel.L2, CacheLevel.HYBRID] and self.redis_client:
+                value = await self.redis_client.get(full_key)
+                if value is not None:
+                    self.cache_stats["hits"] += 1
+                    deserialized_value = self._deserialize(value, strategy)
+                    
+                    # 回填L1缓存
+                    if strategy.level == CacheLevel.HYBRID:
+                        self.local_cache[full_key] = deserialized_value
+                        await self._evict_local_cache_if_needed()
+                    
+                    return deserialized_value
+            
+            self.cache_stats["misses"] += 1
             return None
             
         except Exception as e:
-            logger.error(f"Failed to get cache {key}: {e}")
+            logger.error(f"获取缓存失败 {full_key}: {e}")
+            self.cache_stats["errors"] += 1
             return None
     
-    def delete(self, key: str, prefix: str = "app") -> bool:
-        """删除缓存
+    async def set(
+        self, 
+        key: str, 
+        value: Any, 
+        cache_type: str = "default",
+        ttl: Optional[int] = None
+    ) -> bool:
+        """
+        设置缓存值
         
         Args:
             key: 缓存键
-            prefix: 键前缀
+            value: 缓存值
+            cache_type: 缓存类型
+            ttl: 过期时间（秒），不指定则使用策略默认值
             
         Returns:
-            bool: 是否删除成功
+            是否设置成功
         """
-        if not self.is_enabled or not self.redis_client:
-            return False
-            
         try:
-            cache_key = self._get_key(key, prefix)
-            pickle_key = cache_key + ":pickle"
+            strategy = get_cache_strategy(cache_type)
+            if not strategy:
+                logger.warning(f"未找到缓存策略: {cache_type}")
+                return False
             
-            # 删除两种可能的键
-            result1 = self.redis_client.delete(cache_key)
-            result2 = self.redis_client.delete(pickle_key)
+            full_key = f"{strategy.key_prefix}:{key}"
+            effective_ttl = ttl or strategy.ttl
             
-            success = result1 > 0 or result2 > 0
-            if success:
-                logger.debug(f"Cache deleted: {cache_key}")
+            # L1缓存设置
+            if strategy.level in [CacheLevel.L1, CacheLevel.HYBRID]:
+                self.local_cache[full_key] = value
+                await self._evict_local_cache_if_needed()
+            
+            # L2 Redis缓存设置
+            if strategy.level in [CacheLevel.L2, CacheLevel.HYBRID] and self.redis_client:
+                serialized_value = self._serialize(value, strategy)
+                if effective_ttl > 0:
+                    await self.redis_client.setex(full_key, effective_ttl, serialized_value)
+                else:
+                    await self.redis_client.set(full_key, serialized_value)
+            
+            self.cache_stats["sets"] += 1
+            return True
+            
+        except Exception as e:
+            logger.error(f"设置缓存失败 {full_key}: {e}")
+            self.cache_stats["errors"] += 1
+            return False
+
+    async def delete(self, key: str, cache_type: str = "default") -> bool:
+        """
+        删除缓存
+        
+        Args:
+            key: 缓存键
+            cache_type: 缓存类型
+            
+        Returns:
+            是否删除成功
+        """
+        try:
+            strategy = get_cache_strategy(cache_type)
+            if not strategy:
+                return False
+            
+            full_key = f"{strategy.key_prefix}:{key}"
+            success = True
+            
+            # 删除L1缓存
+            if strategy.level in [CacheLevel.L1, CacheLevel.HYBRID]:
+                self.local_cache.pop(full_key, None)
+            
+            # 删除L2缓存
+            if strategy.level in [CacheLevel.L2, CacheLevel.HYBRID] and self.redis_client:
+                result = await self.redis_client.delete(full_key)
+                success = result > 0
+            
+            self.cache_stats["deletes"] += 1
             return success
             
         except Exception as e:
-            logger.error(f"Failed to delete cache {key}: {e}")
+            logger.error(f"删除缓存失败 {full_key}: {e}")
+            self.cache_stats["errors"] += 1
             return False
-    
-    def exists(self, key: str, prefix: str = "app") -> bool:
-        """检查缓存是否存在
+
+    async def exists(self, key: str, cache_type: str = "default") -> bool:
+        """
+        检查缓存是否存在
         
         Args:
             key: 缓存键
-            prefix: 键前缀
+            cache_type: 缓存类型
             
         Returns:
-            bool: 是否存在
+            是否存在
         """
-        if not self.is_enabled or not self.redis_client:
-            return False
-            
         try:
-            cache_key = self._get_key(key, prefix)
-            pickle_key = cache_key + ":pickle"
+            strategy = get_cache_strategy(cache_type)
+            if not strategy:
+                return False
             
-            return (self.redis_client.exists(cache_key) > 0 or 
-                   self.redis_client.exists(pickle_key) > 0)
+            full_key = f"{strategy.key_prefix}:{key}"
+            
+            # 检查L1缓存
+            if strategy.level in [CacheLevel.L1, CacheLevel.HYBRID]:
+                if full_key in self.local_cache:
+                    return True
+            
+            # 检查L2缓存
+            if strategy.level in [CacheLevel.L2, CacheLevel.HYBRID] and self.redis_client:
+                return await self.redis_client.exists(full_key) > 0
+            
+            return False
             
         except Exception as e:
-            logger.error(f"Failed to check cache existence {key}: {e}")
+            logger.error(f"检查缓存存在性失败 {full_key}: {e}")
             return False
-    
-    def clear_pattern(self, pattern: str, prefix: str = "app") -> int:
-        """根据模式清除缓存
+
+    async def clear_pattern(self, pattern: str, cache_type: str = "default") -> int:
+        """
+        按模式清除缓存
         
         Args:
-            pattern: 匹配模式（支持*通配符）
-            prefix: 键前缀
+            pattern: 匹配模式（支持通配符*）
+            cache_type: 缓存类型
             
         Returns:
-            int: 删除的键数量
+            删除的键数量
         """
-        if not self.is_enabled or not self.redis_client:
-            return 0
-            
         try:
-            search_pattern = self._get_key(pattern, prefix)
-            keys = self.redis_client.keys(search_pattern)
+            strategy = get_cache_strategy(cache_type)
+            if not strategy:
+                return 0
             
-            if keys:
-                deleted = self.redis_client.delete(*keys)
-                logger.info(f"Cleared {deleted} cache keys matching pattern: {search_pattern}")
-                return deleted
-            return 0
+            search_pattern = f"{strategy.key_prefix}:{pattern}"
+            deleted_count = 0
+            
+            # 清除L1缓存
+            if strategy.level in [CacheLevel.L1, CacheLevel.HYBRID]:
+                keys_to_delete = [k for k in self.local_cache.keys() if k.startswith(search_pattern.replace('*', ''))]
+                for key in keys_to_delete:
+                    self.local_cache.pop(key, None)
+                    deleted_count += 1
+            
+            # 清除L2缓存
+            if strategy.level in [CacheLevel.L2, CacheLevel.HYBRID] and self.redis_client:
+                keys = await self.redis_client.keys(search_pattern)
+                if keys:
+                    deleted = await self.redis_client.delete(*keys)
+                    deleted_count += deleted
+            
+            logger.info(f"清除了 {deleted_count} 个匹配模式的键: {search_pattern}")
+            return deleted_count
             
         except Exception as e:
-            logger.error(f"Failed to clear cache pattern {pattern}: {e}")
+            logger.error(f"按模式清除缓存失败 {pattern}: {e}")
             return 0
-    
-    def get_stats(self) -> Dict[str, Any]:
-        """获取缓存统计信息
+
+    async def get_stats(self) -> Dict[str, Any]:
+        """
+        获取缓存统计信息
         
         Returns:
-            Dict: 缓存统计信息
+            缓存统计信息
         """
-        if not self.is_enabled or not self.redis_client:
-            return {"enabled": False, "connected": False}
-            
         try:
-            info = self.redis_client.info()
-            return {
-                "enabled": True,
-                "connected": True,
-                "used_memory": info.get("used_memory_human", "N/A"),
-                "connected_clients": info.get("connected_clients", 0),
-                "total_commands_processed": info.get("total_commands_processed", 0),
-                "keyspace_hits": info.get("keyspace_hits", 0),
-                "keyspace_misses": info.get("keyspace_misses", 0),
-                "hit_rate": self._calculate_hit_rate(info)
+            stats = {
+                "enabled": self.is_enabled,
+                "connected": self.redis_client is not None,
+                "local_cache_size": len(self.local_cache),
+                "cache_stats": self.cache_stats.copy()
             }
+            
+            # 计算命中率
+            total_requests = self.cache_stats["hits"] + self.cache_stats["misses"]
+            if total_requests > 0:
+                stats["hit_rate"] = (self.cache_stats["hits"] / total_requests) * 100
+            else:
+                stats["hit_rate"] = 0.0
+            
+            # Redis统计信息
+            if self.redis_client:
+                try:
+                    info = await self.redis_client.info()
+                    stats.update({
+                        "redis_memory_used": info.get("used_memory_human", "0B"),
+                        "redis_memory_peak": info.get("used_memory_peak_human", "0B"),
+                        "redis_connected_clients": info.get("connected_clients", 0),
+                        "redis_total_commands": info.get("total_commands_processed", 0),
+                        "redis_keyspace_hits": info.get("keyspace_hits", 0),
+                        "redis_keyspace_misses": info.get("keyspace_misses", 0)
+                    })
+                except Exception as e:
+                    logger.error(f"获取Redis统计信息失败: {e}")
+            
+            return stats
             
         except Exception as e:
-            logger.error(f"Failed to get cache stats: {e}")
-            return {"enabled": True, "connected": False, "error": str(e)}
-    
-    def _calculate_hit_rate(self, info: Dict) -> str:
-        """计算缓存命中率"""
-        hits = info.get("keyspace_hits", 0)
-        misses = info.get("keyspace_misses", 0)
-        total = hits + misses
-        
-        if total == 0:
-            return "N/A"
-        
-        hit_rate = (hits / total) * 100
-        return f"{hit_rate:.2f}%"
-    
-    def health_check(self) -> Dict[str, Any]:
-        """健康检查
-        
-        Returns:
-            Dict: 健康状态信息
+            logger.error(f"获取缓存统计信息失败: {e}")
+            return {"enabled": False, "connected": False, "error": str(e)}
+
+    def _serialize(self, value: Any, strategy: CacheStrategy) -> bytes:
         """
-        if not self.is_enabled:
-            return {
-                "status": "disabled",
-                "message": "Cache is disabled"
-            }
+        序列化缓存值
+        
+        Args:
+            value: 要序列化的值
+            strategy: 缓存策略
             
+        Returns:
+            序列化后的字节数据
+        """
         try:
-            if not self.redis_client:
-                return {
-                    "status": "error",
-                    "message": "Redis client not initialized"
+            if strategy.compression:
+                # 使用pickle序列化后压缩
+                pickled_data = pickle.dumps(value)
+                return gzip.compress(pickled_data)
+            else:
+                # 直接pickle序列化
+                return pickle.dumps(value)
+        except Exception as e:
+            logger.error(f"序列化失败: {e}")
+            raise
+    
+    def _deserialize(self, data: bytes, strategy: CacheStrategy) -> Any:
+        """
+        反序列化缓存值
+        
+        Args:
+            data: 序列化的字节数据
+            strategy: 缓存策略
+            
+        Returns:
+            反序列化后的值
+        """
+        try:
+            if strategy.compression:
+                # 解压缩后反序列化
+                decompressed_data = gzip.decompress(data)
+                return pickle.loads(decompressed_data)
+            else:
+                # 直接反序列化
+                return pickle.loads(data)
+        except Exception as e:
+            logger.error(f"反序列化失败: {e}")
+            raise
+    
+    async def _evict_local_cache_if_needed(self):
+        """
+        根据需要清理本地缓存
+        """
+        max_local_cache_size = getattr(settings, 'MAX_LOCAL_CACHE_SIZE', 1000)
+        
+        if len(self.local_cache) > max_local_cache_size:
+            # 简单的LRU策略：删除一半的缓存项
+            items_to_remove = len(self.local_cache) // 2
+            keys_to_remove = list(self.local_cache.keys())[:items_to_remove]
+            
+            for key in keys_to_remove:
+                self.local_cache.pop(key, None)
+            
+            logger.info(f"本地缓存清理完成，删除了 {items_to_remove} 个项目")
+
+    async def clear_all(self, cache_type: str = None) -> bool:
+        """
+        清空缓存
+        
+        Args:
+            cache_type: 缓存类型，None表示清空所有
+            
+        Returns:
+            是否清空成功
+        """
+        try:
+            if cache_type:
+                # 清空特定类型的缓存
+                strategy = get_cache_strategy(cache_type)
+                if not strategy:
+                    return False
+                
+                pattern = f"{strategy.key_prefix}:*"
+                return await self.clear_pattern("*", cache_type) > 0
+            else:
+                # 清空所有缓存
+                self.local_cache.clear()
+                if self.redis_client:
+                    await self.redis_client.flushdb()
+                
+                # 重置统计信息
+                self.cache_stats = {
+                    "hits": 0,
+                    "misses": 0,
+                    "sets": 0,
+                    "deletes": 0,
+                    "errors": 0
                 }
+                
+                logger.info("所有缓存已清空")
+                return True
+                
+        except Exception as e:
+            logger.error(f"清空缓存失败: {e}")
+            return False
+
+
+    async def health_check(self) -> Dict[str, Any]:
+        """
+        健康检查
+        
+        Returns:
+            健康状态信息
+        """
+        health_status = {
+            "status": "healthy",
+            "enabled": self.is_enabled,
+            "local_cache_enabled": True,
+            "redis_enabled": self.redis_client is not None,
+            "timestamp": datetime.now().isoformat()
+        }
+        
+        # 检查Redis连接
+        if self.redis_client:
+            try:
+                await self.redis_client.ping()
+                health_status["redis_status"] = "connected"
+            except Exception as e:
+                health_status["redis_status"] = "disconnected"
+                health_status["redis_error"] = str(e)
+                health_status["status"] = "degraded"
+        
+        # 检查本地缓存
+        health_status["local_cache_size"] = len(self.local_cache)
+        health_status["cache_stats"] = self.cache_stats.copy()
+        
+        return health_status
+    
+    async def warmup_cache(self, cache_type: str, data: Dict[str, Any]) -> bool:
+        """
+        缓存预热
+        
+        Args:
+            cache_type: 缓存类型
+            data: 预热数据字典
             
-            # 测试连接
-            start_time = datetime.now()
-            self.redis_client.ping()
-            response_time = (datetime.now() - start_time).total_seconds() * 1000
+        Returns:
+            是否预热成功
+        """
+        try:
+            success_count = 0
+            total_count = len(data)
             
-            return {
-                "status": "healthy",
-                "message": "Cache is working properly",
-                "response_time_ms": round(response_time, 2)
-            }
+            for key, value in data.items():
+                if await self.set(key, value, cache_type=cache_type):
+                    success_count += 1
+            
+            logger.info(f"缓存预热完成: {success_count}/{total_count} 项成功")
+            return success_count == total_count
             
         except Exception as e:
-            logger.error(f"Cache health check failed: {e}")
-            return {
-                "status": "error",
-                "message": f"Cache health check failed: {str(e)}"
-            }
+            logger.error(f"缓存预热失败: {e}")
+            return False
 
-# 创建全局缓存服务实例
+
+# 全局缓存实例
 cache_service = CacheService()
-
-# 便捷函数
-def cache_set(key: str, value: Any, expire: Optional[int] = None, prefix: str = "app") -> bool:
-    """设置缓存的便捷函数"""
-    return cache_service.set(key, value, expire, prefix)
-
-def cache_get(key: str, prefix: str = "app") -> Optional[Any]:
-    """获取缓存的便捷函数"""
-    return cache_service.get(key, prefix)
-
-def cache_delete(key: str, prefix: str = "app") -> bool:
-    """删除缓存的便捷函数"""
-    return cache_service.delete(key, prefix)
-
-def cache_exists(key: str, prefix: str = "app") -> bool:
-    """检查缓存存在的便捷函数"""
-    return cache_service.exists(key, prefix)
-
-def cache_clear_pattern(pattern: str, prefix: str = "app") -> int:
-    """清除缓存模式的便捷函数"""
-    return cache_service.clear_pattern(pattern, prefix)

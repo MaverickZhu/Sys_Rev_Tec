@@ -1,0 +1,63 @@
+# Grafana数据源配置
+# 定义Prometheus数据源连接
+
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    isDefault: true
+    editable: true
+    jsonData:
+      httpMethod: POST
+      queryTimeout: 60s
+      timeInterval: 15s
+      # 启用Exemplars支持
+      exemplarTraceIdDestinations:
+        - name: trace_id
+          datasourceUid: jaeger
+    # 基本认证（如果需要）
+    # basicAuth: true
+    # basicAuthUser: admin
+    # secureJsonData:
+    #   basicAuthPassword: password
+    
+  # Redis监控数据源
+  - name: Redis-Exporter
+    type: prometheus
+    access: proxy
+    url: http://redis-exporter:9121
+    editable: true
+    jsonData:
+      httpMethod: GET
+      queryTimeout: 30s
+      timeInterval: 15s
+    
+  # PostgreSQL监控数据源
+  - name: PostgreSQL-Exporter
+    type: prometheus
+    access: proxy
+    url: http://postgres-exporter:9187
+    editable: true
+    jsonData:
+      httpMethod: GET
+      queryTimeout: 30s
+      timeInterval: 15s
+    
+  # 系统监控数据源
+  - name: Node-Exporter
+    type: prometheus
+    access: proxy
+    url: http://node-exporter:9100
+    editable: true
+    jsonData:
+      httpMethod: GET
+      queryTimeout: 30s
+      timeInterval: 15s
+
+# 删除默认数据源配置
+deleteDatasources:
+  - name: TestData DB
+    orgId: 1

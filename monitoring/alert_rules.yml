@@ -1,0 +1,278 @@
+# Prometheus告警规则
+# 定义系统性能和应用健康状态的告警条件
+
+groups:
+  # 系统资源告警
+  - name: system_alerts
+    rules:
+      # CPU使用率告警
+      - alert: HighCPUUsage
+        expr: system_cpu_usage_percent > 80
+        for: 5m
+        labels:
+          severity: warning
+          component: system
+        annotations:
+          summary: "系统CPU使用率过高"
+          description: "CPU使用率已超过80%，当前值: {{ $value }}%"
+
+      - alert: CriticalCPUUsage
+        expr: system_cpu_usage_percent > 95
+        for: 2m
+        labels:
+          severity: critical
+          component: system
+        annotations:
+          summary: "系统CPU使用率严重过高"
+          description: "CPU使用率已超过95%，当前值: {{ $value }}%，系统可能出现性能问题"
+
+      # 内存使用告警
+      - alert: HighMemoryUsage
+        expr: (system_memory_usage_bytes / (1024*1024*1024)) > 6
+        for: 5m
+        labels:
+          severity: warning
+          component: system
+        annotations:
+          summary: "系统内存使用过高"
+          description: "内存使用量已超过6GB，当前值: {{ $value | humanize }}B"
+
+      - alert: CriticalMemoryUsage
+        expr: (system_memory_usage_bytes / (1024*1024*1024)) > 8
+        for: 2m
+        labels:
+          severity: critical
+          component: system
+        annotations:
+          summary: "系统内存使用严重过高"
+          description: "内存使用量已超过8GB，当前值: {{ $value | humanize }}B，可能导致系统不稳定"
+
+      # 磁盘使用告警
+      - alert: HighDiskUsage
+        expr: system_disk_usage_percent > 85
+        for: 10m
+        labels:
+          severity: warning
+          component: system
+        annotations:
+          summary: "磁盘使用率过高"
+          description: "磁盘使用率已超过85%，当前值: {{ $value }}%"
+
+      - alert: CriticalDiskUsage
+        expr: system_disk_usage_percent > 95
+        for: 5m
+        labels:
+          severity: critical
+          component: system
+        annotations:
+          summary: "磁盘使用率严重过高"
+          description: "磁盘使用率已超过95%，当前值: {{ $value }}%，请立即清理磁盘空间"
+
+  # 应用性能告警
+  - name: application_alerts
+    rules:
+      # HTTP请求错误率告警
+      - alert: HighErrorRate
+        expr: |
+          (
+            sum(rate(http_requests_total{status_code=~"5.."}[5m])) /
+            sum(rate(http_requests_total[5m]))
+          ) * 100 > 5
+        for: 3m
+        labels:
+          severity: warning
+          component: application
+        annotations:
+          summary: "HTTP错误率过高"
+          description: "5xx错误率已超过5%，当前值: {{ $value | printf "%.2f" }}%"
+
+      - alert: CriticalErrorRate
+        expr: |
+          (
+            sum(rate(http_requests_total{status_code=~"5.."}[5m])) /
+            sum(rate(http_requests_total[5m]))
+          ) * 100 > 15
+        for: 1m
+        labels:
+          severity: critical
+          component: application
+        annotations:
+          summary: "HTTP错误率严重过高"
+          description: "5xx错误率已超过15%，当前值: {{ $value | printf "%.2f" }}%，应用可能存在严重问题"
+
+      # HTTP请求响应时间告警
+      - alert: HighResponseTime
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m])) > 2
+        for: 5m
+        labels:
+          severity: warning
+          component: application
+        annotations:
+          summary: "HTTP响应时间过长"
+          description: "95%的请求响应时间超过2秒，当前值: {{ $value | printf "%.2f" }}s"
+
+      - alert: CriticalResponseTime
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m])) > 5
+        for: 2m
+        labels:
+          severity: critical
+          component: application
+        annotations:
+          summary: "HTTP响应时间严重过长"
+          description: "95%的请求响应时间超过5秒，当前值: {{ $value | printf "%.2f" }}s"
+
+      # 应用服务不可用告警
+      - alert: ServiceDown
+        expr: up == 0
+        for: 1m
+        labels:
+          severity: critical
+          component: application
+        annotations:
+          summary: "服务不可用"
+          description: "服务 {{ $labels.job }} 在实例 {{ $labels.instance }} 上不可用"
+
+  # 缓存性能告警
+  - name: cache_alerts
+    rules:
+      # 缓存命中率告警
+      - alert: LowCacheHitRate
+        expr: cache_hit_ratio < 0.7
+        for: 10m
+        labels:
+          severity: warning
+          component: cache
+        annotations:
+          summary: "缓存命中率过低"
+          description: "缓存命中率低于70%，当前值: {{ $value | printf "%.2f" }}，可能影响性能"
+
+      - alert: CriticalCacheHitRate
+        expr: cache_hit_ratio < 0.5
+        for: 5m
+        labels:
+          severity: critical
+          component: cache
+        annotations:
+          summary: "缓存命中率严重过低"
+          description: "缓存命中率低于50%，当前值: {{ $value | printf "%.2f" }}，严重影响性能"
+
+      # 缓存操作延迟告警
+      - alert: HighCacheLatency
+        expr: histogram_quantile(0.95, rate(cache_operation_duration_seconds_bucket[5m])) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+          component: cache
+        annotations:
+          summary: "缓存操作延迟过高"
+          description: "95%的缓存操作延迟超过100ms，当前值: {{ $value | printf "%.3f" }}s"
+
+      # 缓存连接失败告警
+      - alert: CacheConnectionFailure
+        expr: increase(cache_operations_total{result="error"}[5m]) > 10
+        for: 2m
+        labels:
+          severity: critical
+          component: cache
+        annotations:
+          summary: "缓存连接失败"
+          description: "5分钟内缓存操作失败次数超过10次，当前值: {{ $value }}"
+
+  # 数据库性能告警
+  - name: database_alerts
+    rules:
+      # 数据库连接池告警
+      - alert: HighDBConnectionUsage
+        expr: db_connection_pool_size > 8
+        for: 5m
+        labels:
+          severity: warning
+          component: database
+        annotations:
+          summary: "数据库连接池使用率过高"
+          description: "数据库连接池使用数量超过8个，当前值: {{ $value }}"
+
+      - alert: CriticalDBConnectionUsage
+        expr: db_connection_pool_size > 15
+        for: 2m
+        labels:
+          severity: critical
+          component: database
+        annotations:
+          summary: "数据库连接池使用率严重过高"
+          description: "数据库连接池使用数量超过15个，当前值: {{ $value }}，可能导致连接耗尽"
+
+      # 数据库操作延迟告警
+      - alert: HighDBLatency
+        expr: histogram_quantile(0.95, rate(db_operation_duration_seconds_bucket[5m])) > 1
+        for: 5m
+        labels:
+          severity: warning
+          component: database
+        annotations:
+          summary: "数据库操作延迟过高"
+          description: "95%的数据库操作延迟超过1秒，当前值: {{ $value | printf "%.2f" }}s"
+
+  # AI服务告警
+  - name: ai_service_alerts
+    rules:
+      # AI请求延迟告警
+      - alert: HighAILatency
+        expr: histogram_quantile(0.95, rate(ai_request_duration_seconds_bucket[5m])) > 10
+        for: 5m
+        labels:
+          severity: warning
+          component: ai_service
+        annotations:
+          summary: "AI服务响应时间过长"
+          description: "95%的AI请求响应时间超过10秒，当前值: {{ $value | printf "%.2f" }}s"
+
+      - alert: CriticalAILatency
+        expr: histogram_quantile(0.95, rate(ai_request_duration_seconds_bucket[5m])) > 30
+        for: 2m
+        labels:
+          severity: critical
+          component: ai_service
+        annotations:
+          summary: "AI服务响应时间严重过长"
+          description: "95%的AI请求响应时间超过30秒，当前值: {{ $value | printf "%.2f" }}s"
+
+      # AI服务错误率告警
+      - alert: HighAIErrorRate
+        expr: |
+          (
+            sum(rate(ai_requests_total{status="error"}[5m])) /
+            sum(rate(ai_requests_total[5m]))
+          ) * 100 > 10
+        for: 3m
+        labels:
+          severity: warning
+          component: ai_service
+        annotations:
+          summary: "AI服务错误率过高"
+          description: "AI服务错误率已超过10%，当前值: {{ $value | printf "%.2f" }}%"
+
+  # 业务指标告警
+  - name: business_alerts
+    rules:
+      # 活跃连接数告警
+      - alert: HighActiveConnections
+        expr: active_connections > 100
+        for: 5m
+        labels:
+          severity: warning
+          component: business
+        annotations:
+          summary: "活跃连接数过高"
+          description: "当前活跃连接数超过100，当前值: {{ $value }}"
+
+      # 应用错误率告警
+      - alert: HighApplicationErrorRate
+        expr: error_rate > 0.05
+        for: 3m
+        labels:
+          severity: warning
+          component: business
+        annotations:
+          summary: "应用错误率过高"
+          description: "应用错误率超过5%，当前值: {{ $value | printf "%.2f" }}"

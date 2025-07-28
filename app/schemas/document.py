@@ -1,16 +1,23 @@
-from pydantic import BaseModel
-from typing import Optional
-from datetime import datetime
-
-
 # Shared properties
+
+
+from datetime import datetime
+from typing import Optional
+
+from pydantic import BaseModel
+
+
 class DocumentBase(BaseModel):
+
     filename: str
     document_type: str
 
 
 # Properties to receive on document creation
+
+
 class DocumentCreate(DocumentBase):
+
     original_filename: str
     file_path: str
     file_size: int
@@ -20,14 +27,20 @@ class DocumentCreate(DocumentBase):
 
 
 # Properties to receive on document update
+
+
 class DocumentUpdate(BaseModel):
+
     filename: Optional[str] = None
     document_type: Optional[str] = None
     project_id: Optional[int] = None
 
 
 # Properties shared by models stored in DB
+
+
 class DocumentInDBBase(DocumentBase):
+
     id: int
     file_path: str
     file_size: int
@@ -47,10 +60,16 @@ class DocumentInDBBase(DocumentBase):
 
 
 # Properties to return to client
+
+
 class Document(DocumentInDBBase):
+
     pass
 
 
 # Properties stored in DB
+
+
 class DocumentInDB(DocumentInDBBase):
+
     pass

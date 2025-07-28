@@ -7,9 +7,7 @@ sqlalchemy==2.0.23
 alembic==1.12.1
 psycopg2-binary==2.9.9
 
-# 认证和安全
-python-jose[cryptography]==3.3.0
-passlib[bcrypt]==1.7.4
+# 文件上传支持
 python-multipart==0.0.6
 
 # 数据验证和序列化
@@ -48,13 +46,8 @@ python-dotenv==1.0.0
 # 系统监控
 psutil==5.9.6
 
-# 缓存和限流
+# 缓存
 redis==5.0.1
-slowapi==0.1.9
-
-# 测试框架
-pytest==7.4.3
-pytest-asyncio==0.21.1
 
 # 开发工具
 black==23.12.1
@@ -69,8 +62,6 @@ flake8-docstrings==1.7.0
 flake8-import-order==0.18.2
 flake8-bugbear==23.12.2
 ruff==0.1.8
-pytest-cov==4.1.0
-coverage==7.3.2
 
 # 类型检查
 types-requests==2.31.0.10

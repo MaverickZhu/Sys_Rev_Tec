@@ -1,30 +1,32 @@
-# -*- coding: utf-8 -*-
+from datetime import datetime
+from typing import Any, Dict, List, Optional
+
+from fastapi import APIRouter, HTTPException, Query, Request, status
+from pydantic import BaseModel, Field
+
+from app.core.error_tracking import track_error
+from app.core.logging import get_structured_logger
+
 """
 错误追踪API端点
 """
 
-from typing import Dict, List, Optional, Any
-from datetime import datetime
-
-from fastapi import APIRouter, HTTPException, Query, Depends
-from pydantic import BaseModel, Field
-
 from app.core.error_tracking import (
-    error_tracker, 
-    get_error_stats, 
-    AlertRule, 
-    ErrorSeverity, 
-    AlertChannel
+    AlertChannel,
+    AlertRule,
+    ErrorSeverity,
+    error_tracker,
+    get_error_stats,
 )
-from app.core.auth import get_current_admin_user  # 假设有管理员认证
-from app.core.logging import get_structured_logger
 
 logger = get_structured_logger(__name__)
+
 router = APIRouter(prefix="/error-tracking", tags=["error-tracking"])
 
 
 class ErrorStatsResponse(BaseModel):
     """错误统计响应"""
+
     total_errors: int
     unique_errors: int
     error_by_type: Dict[str, int]
@@ -36,6 +38,7 @@ class ErrorStatsResponse(BaseModel):
 
 class AlertRuleRequest(BaseModel):
     """报警规则请求"""
+
     name: str = Field(..., description="规则名称")
     error_types: List[str] = Field(default_factory=list, description="匹配的错误类型")
     severity_threshold: ErrorSeverity = Field(..., description="严重程度阈值")
@@ -48,6 +51,7 @@ class AlertRuleRequest(BaseModel):
 
 class AlertRuleResponse(BaseModel):
     """报警规则响应"""
+
     name: str
     error_types: List[str]
     severity_threshold: ErrorSeverity
@@ -70,7 +74,9 @@ async def get_error_statistics(
         return ErrorStatsResponse(**stats)
     except Exception as e:
         logger.error(f"Failed to get error statistics: {e}")
-        raise HTTPException(status_code=500, detail="Failed to retrieve error statistics")
+        raise HTTPException(
+            status_code=500, detail="Failed to retrieve error statistics"
+        )
 
 
 @router.get("/rules", response_model=List[AlertRuleResponse])
@@ -90,7 +96,7 @@ async def get_alert_rules(
                 channels=rule.channels,
                 enabled=rule.enabled,
                 cooldown=rule.cooldown,
-                last_triggered=rule.last_triggered
+                last_triggered=rule.last_triggered,
             )
             for rule in rules
         ]
@@ -109,8 +115,10 @@ async def create_alert_rule(
         # 检查规则名称是否已存在
         existing_rules = error_tracker.get_alert_rules()
         if any(rule.name == rule_request.name for rule in existing_rules):
-            raise HTTPException(status_code=400, detail="Alert rule with this name already exists")
-        
+            raise HTTPException(
+                status_code=400, detail="Alert rule with this name already exists"
+            )
+
         # 创建新规则
         new_rule = AlertRule(
             name=rule_request.name,
@@ -120,13 +128,13 @@ async def create_alert_rule(
             time_window=rule_request.time_window,
             channels=rule_request.channels,
             enabled=rule_request.enabled,
-            cooldown=rule_request.cooldown
+            cooldown=rule_request.cooldown,
         )
-        
+
         error_tracker.add_alert_rule(new_rule)
-        
+
         logger.info(f"Created alert rule: {rule_request.name}")
-        
+
         return AlertRuleResponse(
             name=new_rule.name,
             error_types=list(new_rule.error_types),
@@ -136,7 +144,7 @@ async def create_alert_rule(
             channels=new_rule.channels,
             enabled=new_rule.enabled,
             cooldown=new_rule.cooldown,
-            last_triggered=new_rule.last_triggered
+            last_triggered=new_rule.last_triggered,
         )
     except HTTPException:
         raise
@@ -155,7 +163,7 @@ async def delete_alert_rule(
         success = error_tracker.remove_alert_rule(rule_name)
         if not success:
             raise HTTPException(status_code=404, detail="Alert rule not found")
-        
+
         logger.info(f"Deleted alert rule: {rule_name}")
         return {"message": "Alert rule deleted successfully"}
     except HTTPException:
@@ -172,13 +180,9 @@ async def cleanup_old_errors(
 ):
     """清理旧的错误记录"""
     try:
-        cleaned_count = error_tracker.clear_old_errors(days=days)
-        logger.info(f"Cleaned {cleaned_count} old error records")
-        return {
-            "message": f"Successfully cleaned {cleaned_count} old error records",
-            "cleaned_count": cleaned_count,
-            "days": days
-        }
+        count = error_tracker.cleanup_old_errors(days=days)
+        logger.info(f"Cleaned up {count} old error records")
+        return {"message": f"Successfully cleaned up {count} error records"}
     except Exception as e:
         logger.error(f"Failed to cleanup old errors: {e}")
         raise HTTPException(status_code=500, detail="Failed to cleanup old errors")
@@ -188,55 +192,18 @@ async def cleanup_old_errors(
 async def error_tracking_health():
     """错误追踪系统健康检查"""
     try:
-        # 获取基本统计信息
-        stats = get_error_stats(hours=1)
-        rules = error_tracker.get_alert_rules()
-        
-        return {
+        # 检查错误追踪系统状态
+        status_info = {
             "status": "healthy",
-            "recent_errors": stats["total_errors"],
-            "active_rules": len([r for r in rules if r.enabled]),
-            "total_rules": len(rules),
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": datetime.utcnow().isoformat(),
+            "total_rules": len(error_tracker.get_alert_rules()),
+            "active_rules": len(
+                [r for r in error_tracker.get_alert_rules() if r.enabled]
+            ),
         }
+        return status_info
     except Exception as e:
         logger.error(f"Error tracking health check failed: {e}")
-        return {
-            "status": "unhealthy",
-            "error": str(e),
-            "timestamp": datetime.utcnow().isoformat()
-        }
-
-
-@router.get("/test-alert")
-async def test_alert(
-    severity: ErrorSeverity = Query(default=ErrorSeverity.MEDIUM, description="测试报警的严重程度"),
-    # admin_user = Depends(get_current_admin_user)
-):
-    """测试报警功能"""
-    try:
-        from app.core.error_tracking import track_error
-        
-        # 发送测试错误
-        track_error(
-            error_type="TEST_ERROR",
-            error_code="TEST_ALERT",
-            message="This is a test alert to verify the error tracking system",
-            severity=severity,
-            path="/api/v1/error-tracking/test-alert",
-            method="GET",
-            details={
-                "test": True,
-                "timestamp": datetime.utcnow().isoformat()
-            }
+        raise HTTPException(
+            status_code=500, detail="Error tracking system health check failed"
         )
-        
-        logger.info(f"Test alert sent with severity: {severity}")
-        return {
-            "message": "Test alert sent successfully",
-            "severity": severity,
-            "timestamp": datetime.utcnow().isoformat()
-        }
-    except Exception as e:
-        logger.error(f"Failed to send test alert: {e}")
-        raise HTTPException(status_code=500, detail="Failed to send test alert")
