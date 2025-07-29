@@ -18755,3 +18755,40 @@ he monitor...
 2025-07-29 21:45:35 - app.core.cache_scheduler - WARNING - Cache system health check failed
 2025-07-29 21:45:35 - app.core.cache_scheduler - ERROR - Cache health check error: 'PermissionCacheManager' object has no attribute 'set_cache'
 2025-07-29 21:45:35 - app.core.cache_scheduler - WARNING - Cache system health check failed
+2025-07-29 21:46:33 - app.core.cache_scheduler - ERROR - Cache health check error: 'PermissionCacheManager' object has no attribute 'set_cache'
+2025-07-29 21:46:33 - app.core.cache_scheduler - WARNING - Cache system health check failed
+2025-07-29 21:46:35 - app.core.cache_scheduler - ERROR - Cache health check error: 'PermissionCacheManager' object has no attribute 'set_cache'
+2025-07-29 21:46:35 - app.core.cache_scheduler - WARNING - Cache system health check failed
+2025-07-29 21:46:35 - app.core.cache_scheduler - ERROR - Cache health check error: 'PermissionCacheManager' object has no attribute 'set_cache'
+2025-07-29 21:46:35 - app.core.cache_scheduler - WARNING - Cache system health check failed
+2025-07-29 21:47:33 - app.core.cache_scheduler - ERROR - Cache health check error: 'PermissionCacheManager' object has no attribute 'set_cache'
+2025-07-29 21:47:33 - app.core.cache_scheduler - WARNING - Cache system health check failed
+2025-07-29 21:47:35 - app.core.cache_scheduler - ERROR - Cache health check error: 'PermissionCacheManager' object has no attribute 'set_cache'
+2025-07-29 21:47:35 - app.core.cache_scheduler - WARNING - Cache system health check failed
+2025-07-29 21:47:35 - app.core.cache_scheduler - ERROR - Cache health check error: 'PermissionCacheManager' object has no attribute 'set_cache'
+2025-07-29 21:47:35 - app.core.cache_scheduler - WARNING - Cache system health check failed
+2025-07-29 21:48:06 - app.core.exceptions - ERROR - HTTP Exception: 404 - Index file not found
+2025-07-29 21:48:33 - app.core.cache_scheduler - ERROR - Cache health check error: 'PermissionCacheManager' object has no attribute 'set_cache'
+2025-07-29 21:48:33 - app.core.cache_scheduler - WARNING - Cache system health check failed
+2025-07-29 21:48:35 - app.core.cache_scheduler - ERROR - Cache health check error: 'PermissionCacheManager' object has no attribute 'set_cache'
+2025-07-29 21:48:35 - app.core.cache_scheduler - WARNING - Cache system health check failed
+2025-07-29 21:48:35 - app.core.cache_scheduler - ERROR - Cache health check error: 'PermissionCacheManager' object has no attribute 'set_cache'
+2025-07-29 21:48:35 - app.core.cache_scheduler - WARNING - Cache system health check failed
+2025-07-29 21:49:33 - app.core.cache_scheduler - ERROR - Cache health check error: 'PermissionCacheManager' object has no attribute 'set_cache'
+2025-07-29 21:49:33 - app.core.cache_scheduler - WARNING - Cache system health check failed
+2025-07-29 21:49:35 - app.core.cache_scheduler - ERROR - Cache health check error: 'PermissionCacheManager' object has no attribute 'set_cache'
+2025-07-29 21:49:35 - app.core.cache_scheduler - WARNING - Cache system health check failed
+2025-07-29 21:49:35 - app.core.cache_scheduler - ERROR - Cache health check error: 'PermissionCacheManager' object has no attribute 'set_cache'
+2025-07-29 21:49:35 - app.core.cache_scheduler - WARNING - Cache system health check failed
+2025-07-29 21:50:27 - app.core.cache_warmup - INFO - 执行定期缓存刷新
+2025-07-29 21:50:27 - app.core.cache_warmup - ERROR - 定期缓存刷新失败: 'PermissionCacheManager' object has no attribute 'clear_expired_cache'
+2025-07-29 21:50:28 - app.core.cache_warmup - INFO - 执行定期缓存刷新
+2025-07-29 21:50:28 - app.core.cache_warmup - ERROR - 定期缓存刷新失败: 'PermissionCacheManager' object has no attribute 'clear_expired_cache'
+2025-07-29 21:50:28 - app.core.cache_warmup - INFO - 执行定期缓存刷新
+2025-07-29 21:50:28 - app.core.cache_warmup - ERROR - 定期缓存刷新失败: 'PermissionCacheManager' object has no attribute 'clear_expired_cache'
+2025-07-29 21:50:33 - app.core.cache_scheduler - ERROR - Cache health check error: 'PermissionCacheManager' object has no attribute 'set_cache'
+2025-07-29 21:50:33 - app.core.cache_scheduler - WARNING - Cache system health check failed
+2025-07-29 21:50:35 - app.core.cache_scheduler - ERROR - Cache health check error: 'PermissionCacheManager' object has no attribute 'set_cache'
+2025-07-29 21:50:35 - app.core.cache_scheduler - WARNING - Cache system health check failed
+2025-07-29 21:50:35 - app.core.cache_scheduler - ERROR - Cache health check error: 'PermissionCacheManager' object has no attribute 'set_cache'
+2025-07-29 21:50:35 - app.core.cache_scheduler - WARNING - Cache system health check failed
