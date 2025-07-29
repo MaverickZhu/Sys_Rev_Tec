@@ -22,6 +22,7 @@ from app.core.exceptions import (
     validation_exception_handler,
 )
 from app.db.session import SessionLocal, get_db
+from app.middleware.auth import AuthMiddleware
 from app.middleware.monitoring import (
     MonitoringMiddleware,
     setup_monitoring,
@@ -33,6 +34,8 @@ from app.middleware.enhanced_monitoring import (
 )
 from app.middleware.request_id import RequestIDMiddleware
 from app.services.cache_init import initialize_cache_system, shutdown_cache_system
+from app.core.cache_scheduler import start_cache_scheduler, stop_cache_scheduler
+from app.core.cache_warmup import startup_cache_warmup
 
 # 设置日志
 settings.setup_logging()
@@ -54,10 +57,27 @@ async def lifespan(app: FastAPI):
         cache_init_success = await initialize_cache_system()
         if cache_init_success:
             logger.info("Cache system initialized successfully")
+            
+            # 执行缓存预热
+            logger.info("Starting cache warmup...")
+            try:
+                await startup_cache_warmup()
+                logger.info("Cache warmup completed successfully")
+            except Exception as e:
+                logger.error(f"Cache warmup failed: {e}")
         else:
             logger.warning("Cache system initialization failed, continuing without cache")
     else:
         logger.info("Cache system disabled")
+    
+    # 启动缓存调度器
+    if settings.CACHE_ENABLED:
+        logger.info("Starting cache scheduler...")
+        try:
+            await start_cache_scheduler()
+            logger.info("Cache scheduler started successfully")
+        except Exception as e:
+            logger.error(f"Failed to start cache scheduler: {e}")
     
     # 启动增强监控系统
     logger.info("Starting enhanced monitoring system...")
@@ -81,6 +101,15 @@ async def lifespan(app: FastAPI):
         logger.info("Enhanced monitoring system stopped successfully")
     except Exception as e:
         logger.error(f"Failed to stop enhanced monitoring system: {e}")
+    
+    # 停止缓存调度器
+    if settings.CACHE_ENABLED:
+        logger.info("Stopping cache scheduler...")
+        try:
+            await stop_cache_scheduler()
+            logger.info("Cache scheduler stopped successfully")
+        except Exception as e:
+            logger.error(f"Failed to stop cache scheduler: {e}")
     
     # 关闭缓存系统
     if settings.CACHE_ENABLED:
@@ -143,6 +172,9 @@ app.add_middleware(
 
 # 添加请求ID中间件（应该在最前面）
 app.add_middleware(RequestIDMiddleware)
+
+# 添加认证中间件
+app.add_middleware(AuthMiddleware)
 
 # 添加增强监控中间件
 app.add_middleware(EnhancedMonitoringMiddleware)

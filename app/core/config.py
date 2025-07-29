@@ -39,6 +39,16 @@ class Settings(BaseSettings):
     JWT_ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     JWT_REFRESH_TOKEN_EXPIRE_DAYS: int = 7
 
+    # 超级用户配置
+    FIRST_SUPERUSER_USERNAME: str = "admin"
+    FIRST_SUPERUSER_EMAIL: str = "admin@example.com"
+    FIRST_SUPERUSER_PASSWORD: str = "admin123"
+    
+    # 默认用户配置（可选）
+    FIRST_USER: Optional[str] = None
+    FIRST_USER_EMAIL: Optional[str] = None
+    FIRST_USER_PASSWORD: Optional[str] = None
+
     # 文件上传配置
     UPLOAD_DIR: str = "./uploads"
     MAX_FILE_SIZE: int = 10  # MB

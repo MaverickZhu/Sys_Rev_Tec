@@ -134,6 +134,7 @@ class Settings(BaseSettings):
         env_file = ".env"
         env_file_encoding = "utf-8"
         case_sensitive = True
+        extra = "ignore"
 
     @validator("CORS_ORIGINS", pre=True)
     def parse_cors_origins(cls, v):

@@ -352,7 +352,6 @@ def get_strategy_config(strategy_name: str) -> Optional[CacheStrategyConfig]:
 
 def update_cache_config(new_config: Dict[str, Any]) -> bool:
     """更新缓存配置"""
-    global cache_config
     try:
         # 这里可以实现配置的动态更新逻辑
         # 暂时返回True表示成功

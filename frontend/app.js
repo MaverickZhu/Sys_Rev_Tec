@@ -8,13 +8,19 @@ const CONFIG = {
     API_BASE: 'http://localhost:8001',
     REFRESH_INTERVAL: 30000, // 30秒
     NOTIFICATION_TIMEOUT: 5000, // 5秒
-    MAX_RETRIES: 3
+    MAX_RETRIES: 3,
+    AUTH_TOKEN_KEY: 'authToken',
+    USER_INFO_KEY: 'userInfo',
+    TOKEN_TYPE_KEY: 'tokenType'
 };
 
 // 应用状态
 const AppState = {
     isLoading: false,
     serviceStatus: 'unknown',
+    isAuthenticated: false,
+    currentUser: null,
+    userRole: null,
     stats: {
         totalReports: 0,
         totalProjects: 0,
@@ -100,6 +106,94 @@ const Utils = {
     }
 };
 
+// 认证服务
+const AuthService = {
+    // 获取认证头部
+    getAuthHeaders() {
+        const token = localStorage.getItem(CONFIG.AUTH_TOKEN_KEY);
+        const tokenType = localStorage.getItem(CONFIG.TOKEN_TYPE_KEY) || 'Bearer';
+        
+        if (token) {
+            return {
+                'Authorization': `${tokenType} ${token}`
+            };
+        }
+        return {};
+    },
+
+    // 检查是否已认证
+    isAuthenticated() {
+        const token = localStorage.getItem(CONFIG.AUTH_TOKEN_KEY);
+        return !!token;
+    },
+
+    // 获取当前用户信息
+    getCurrentUser() {
+        const userInfo = localStorage.getItem(CONFIG.USER_INFO_KEY);
+        try {
+            return userInfo ? JSON.parse(userInfo) : null;
+        } catch {
+            return null;
+        }
+    },
+
+    // 登出
+    logout() {
+        localStorage.removeItem(CONFIG.AUTH_TOKEN_KEY);
+        localStorage.removeItem(CONFIG.USER_INFO_KEY);
+        localStorage.removeItem(CONFIG.TOKEN_TYPE_KEY);
+        AppState.isAuthenticated = false;
+        AppState.currentUser = null;
+        AppState.userRole = null;
+        
+        // 重定向到登录页
+        window.location.href = 'login.html';
+    },
+
+    // 验证token
+    async verifyToken() {
+        try {
+            const response = await fetch(`${CONFIG.API_BASE}/api/v1/auth/verify`, {
+                method: 'GET',
+                headers: {
+                    ...this.getAuthHeaders(),
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            if (response.ok) {
+                const userData = await response.json();
+                AppState.isAuthenticated = true;
+                AppState.currentUser = userData.user || this.getCurrentUser();
+                AppState.userRole = userData.user?.role || 'user';
+                return true;
+            } else {
+                this.logout();
+                return false;
+            }
+        } catch (error) {
+            console.error('Token验证失败:', error);
+            return false;
+        }
+    },
+
+    // 检查权限
+    hasPermission(requiredRole) {
+        if (!AppState.isAuthenticated) return false;
+        
+        const roleHierarchy = {
+            'admin': 3,
+            'auditor': 2,
+            'user': 1
+        };
+        
+        const userLevel = roleHierarchy[AppState.userRole] || 0;
+        const requiredLevel = roleHierarchy[requiredRole] || 0;
+        
+        return userLevel >= requiredLevel;
+    }
+};
+
 // API服务
 const ApiService = {
     // 基础请求方法
@@ -108,6 +202,7 @@ const ApiService = {
         const config = {
             headers: {
                 'Content-Type': 'application/json',
+                ...AuthService.getAuthHeaders(),
                 ...options.headers
             },
             ...options
@@ -115,6 +210,12 @@ const ApiService = {
 
         try {
             const response = await fetch(url, config);
+            
+            // 处理认证失败
+            if (response.status === 401) {
+                AuthService.logout();
+                return;
+            }
             
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({}));
@@ -211,6 +312,91 @@ const UIController = {
                     dotElement.style.background = '#ed8936';
             }
         }
+    },
+
+    // 更新用户界面
+    updateUserInterface() {
+        if (AppState.isAuthenticated && AppState.currentUser) {
+            this.showUserInfo();
+            this.updatePermissionBasedUI();
+        } else {
+            this.hideUserInfo();
+        }
+    },
+
+    // 显示用户信息
+    showUserInfo() {
+        const user = AppState.currentUser;
+        const userInfoHtml = `
+            <div class="user-info">
+                <div class="user-avatar">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <div class="user-details">
+                    <div class="user-name">${user.username || '用户'}</div>
+                    <div class="user-role">${this.getRoleDisplayName(AppState.userRole)}</div>
+                </div>
+                <div class="user-actions">
+                    <button class="btn-icon" onclick="showUserMenu()" title="用户菜单">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                    <button class="btn-icon" onclick="AuthService.logout()" title="退出登录">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        // 在页面头部添加用户信息
+        const header = document.querySelector('.header');
+        if (header) {
+            let userInfoContainer = header.querySelector('.user-info-container');
+            if (!userInfoContainer) {
+                userInfoContainer = document.createElement('div');
+                userInfoContainer.className = 'user-info-container';
+                header.appendChild(userInfoContainer);
+            }
+            userInfoContainer.innerHTML = userInfoHtml;
+        }
+    },
+
+    // 隐藏用户信息
+    hideUserInfo() {
+        const userInfoContainer = document.querySelector('.user-info-container');
+        if (userInfoContainer) {
+            userInfoContainer.remove();
+        }
+    },
+
+    // 获取角色显示名称
+    getRoleDisplayName(role) {
+        const roleNames = {
+            'admin': '系统管理员',
+            'auditor': '审计员',
+            'user': '普通用户'
+        };
+        return roleNames[role] || '未知角色';
+    },
+
+    // 基于权限更新UI
+    updatePermissionBasedUI() {
+        // 管理员功能
+        const adminElements = document.querySelectorAll('[data-role="admin"]');
+        adminElements.forEach(el => {
+            el.style.display = AuthService.hasPermission('admin') ? 'block' : 'none';
+        });
+        
+        // 审计员功能
+        const auditorElements = document.querySelectorAll('[data-role="auditor"]');
+        auditorElements.forEach(el => {
+            el.style.display = AuthService.hasPermission('auditor') ? 'block' : 'none';
+        });
+        
+        // 用户功能
+        const userElements = document.querySelectorAll('[data-role="user"]');
+        userElements.forEach(el => {
+            el.style.display = AuthService.hasPermission('user') ? 'block' : 'none';
+        });
     },
 
     // 更新统计数据
@@ -407,6 +593,23 @@ const App = {
         console.log('系统评审技术平台启动中...');
         
         try {
+            // 检查认证状态
+            if (!AuthService.isAuthenticated()) {
+                // 未认证，重定向到登录页面
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // 验证token有效性
+            const isValid = await AuthService.verifyToken();
+            if (!isValid) {
+                AuthService.logout();
+                return;
+            }
+            
+            // 更新用户界面
+            UIController.updateUserInterface();
+            
             // 绑定事件监听器
             this.bindEventListeners();
             
@@ -484,6 +687,56 @@ window.openTemplates = () => {
 window.openSettings = () => {
     Utils.showNotification('系统设置功能开发中...', 'info');
 };
+
+// 全局函数
+function showUserMenu() {
+    // 显示用户菜单
+    const menu = document.createElement('div');
+    menu.className = 'user-menu';
+    menu.innerHTML = `
+        <div class="menu-item" onclick="showUserProfile()">
+            <i class="fas fa-user"></i> 个人资料
+        </div>
+        <div class="menu-item" onclick="showSettings()">
+            <i class="fas fa-cog"></i> 设置
+        </div>
+        <div class="menu-item" onclick="AuthService.logout()">
+            <i class="fas fa-sign-out-alt"></i> 退出登录
+        </div>
+    `;
+    
+    // 添加到页面并显示
+    document.body.appendChild(menu);
+    
+    // 点击外部关闭菜单
+    setTimeout(() => {
+        document.addEventListener('click', function closeMenu(e) {
+            if (!menu.contains(e.target)) {
+                menu.remove();
+                document.removeEventListener('click', closeMenu);
+            }
+        });
+    }, 100);
+}
+
+function showUserProfile() {
+    // 显示用户资料页面
+    Utils.showNotification('用户资料功能开发中...', 'info');
+}
+
+function showSettings() {
+    // 显示设置页面
+    Utils.showNotification('设置功能开发中...', 'info');
+}
+
+// 权限检查函数
+function requirePermission(permission, callback) {
+    if (AuthService.hasPermission(permission)) {
+        callback();
+    } else {
+        Utils.showNotification('您没有执行此操作的权限', 'error');
+    }
+}
 
 // 页面加载完成后初始化应用
 document.addEventListener('DOMContentLoaded', () => {

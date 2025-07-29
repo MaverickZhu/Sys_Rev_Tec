@@ -595,12 +595,15 @@ async def export_cache_metrics(request: Request) -> ResponseModel[Dict[str, Any]
     try:
         file_path = await cache_manager.export_metrics()
 
+        monitor = get_cache_monitor()
+        current_metrics = monitor.get_current_metrics()
+        
         return ResponseModel(
             code=200,
             message="Cache metrics exported successfully",
             data={
                 "file_path": file_path,
-                "export_time": cache_monitor.get_current_metrics().timestamp.isoformat(),
+                "export_time": current_metrics.timestamp.isoformat(),
             },
         )
     except Exception as e:

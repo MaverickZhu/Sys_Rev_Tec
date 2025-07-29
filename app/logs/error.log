@@ -1,0 +1,2 @@
+2025-07-29 16:07:01 - app.core.permission_cache - ERROR - 设置权限缓存策略失败: 'CacheManager' object has no attribute 'add_strategy'
+2025-07-29 16:07:28 - app.core.permission_cache - ERROR - 设置权限缓存策略失败: 'CacheManager' object has no attribute 'add_strategy'

@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 
-from app.api.v1 import cache, cache_optimization, health, ocr, performance, database_optimization
-from app.api.v1.endpoints import documents, projects, users, vector
+from app.api.v1 import cache, cache_optimization, health, ocr, performance, database_optimization, system_maintenance
+from app.api.v1.endpoints import auth, documents, oauth2, projects, token_blacklist, users, vector, cache_management, permission_optimization, permission_config, permission_query_optimization
 
 api_router = APIRouter()
 
@@ -10,6 +10,34 @@ api_router = APIRouter()
 
 api_router.include_router(
     health.router, tags=["🏥 健康检查"], responses={503: {"description": "服务不可用"}}
+)
+
+
+# 认证相关路由（无需认证）
+
+api_router.include_router(
+    auth.router,
+    prefix="/auth",
+    tags=["🔐 用户认证"],
+    responses={
+        401: {"description": "认证失败"},
+        400: {"description": "请求参数错误"},
+    },
+)
+
+
+# OAuth2授权服务器相关路由
+
+api_router.include_router(
+    oauth2.router,
+    prefix="/oauth2",
+    tags=["🔑 OAuth2授权"],
+    responses={
+        400: {"description": "请求参数错误"},
+        401: {"description": "客户端认证失败"},
+        403: {"description": "权限不足"},
+        404: {"description": "客户端不存在"},
+    },
 )
 
 
@@ -22,6 +50,20 @@ api_router.include_router(
     responses={
         400: {"description": "请求参数错误"},
         409: {"description": "用户已存在"},
+    },
+)
+
+
+# Token黑名单管理相关路由
+
+api_router.include_router(
+    token_blacklist.router,
+    prefix="/token-blacklist",
+    tags=["🚫 Token黑名单"],
+    responses={
+        400: {"description": "请求参数错误"},
+        404: {"description": "Token不存在"},
+        403: {"description": "权限不足"},
     },
 )
 
@@ -76,6 +118,18 @@ api_router.include_router(
     },
 )
 
+# 缓存监控和管理相关路由
+
+api_router.include_router(
+    cache_management.router,
+    prefix="/cache-management",
+    tags=["📊 缓存监控"],
+    responses={
+        403: {"description": "权限不足"},
+        500: {"description": "缓存操作失败"},
+    },
+)
+
 
 # AI向量化和智能分析相关路由
 
@@ -126,6 +180,62 @@ api_router.include_router(
     responses={
         404: {"description": "优化策略不存在"},
         500: {"description": "数据库优化失败"},
+        403: {"description": "权限不足"},
+    },
+)
+
+
+# 权限查询优化相关路由
+
+api_router.include_router(
+    permission_optimization.router,
+    prefix="/permission-optimization",
+    tags=["🚀 权限查询优化"],
+    responses={
+        404: {"description": "用户或权限不存在"},
+        500: {"description": "权限查询优化失败"},
+        403: {"description": "权限不足"},
+    },
+)
+
+
+# 权限配置管理相关路由
+
+api_router.include_router(
+    permission_config.router,
+    prefix="/permission-config",
+    tags=["⚙️ 权限配置管理"],
+    responses={
+        400: {"description": "配置参数错误"},
+        500: {"description": "配置管理失败"},
+        403: {"description": "权限不足"},
+    },
+)
+
+
+# 权限查询性能优化相关路由
+
+api_router.include_router(
+    permission_query_optimization.router,
+    prefix="/permission-query-optimization",
+    tags=["🚀 权限查询性能优化"],
+    responses={
+        400: {"description": "请求参数错误"},
+        500: {"description": "查询优化失败"},
+        403: {"description": "权限不足"},
+    },
+)
+
+
+# 系统维护相关路由
+
+api_router.include_router(
+    system_maintenance.router,
+    prefix="/system-maintenance",
+    tags=["🔧 系统维护"],
+    responses={
+        400: {"description": "请求参数错误"},
+        500: {"description": "系统维护操作失败"},
         403: {"description": "权限不足"},
     },
 )

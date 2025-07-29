@@ -633,11 +633,12 @@ class CacheManager:
         Returns:
             缓存指标
         """
+        monitor = get_cache_monitor()
         if cache_type:
-            return cache_monitor.get_current_metrics(cache_type)
+            return monitor.get_current_metrics(cache_type)
         else:
             # 返回所有类型的聚合指标
-            all_metrics = cache_monitor.get_all_current_metrics()
+            all_metrics = monitor.get_all_current_metrics()
             if not all_metrics:
                 return None
             
@@ -683,8 +684,9 @@ class CacheManager:
         Returns:
             性能报告
         """
+        monitor = get_cache_monitor()
         if cache_type:
-            return await cache_monitor.generate_performance_report(cache_type, days)
+            return await monitor.generate_performance_report(cache_type, days)
         else:
             # 生成全局报告
             strategies = get_all_cache_strategies()
@@ -693,7 +695,7 @@ class CacheManager:
             
             # 选择第一个策略类型生成报告（示例）
             first_cache_type = list(strategies.keys())[0]
-            return await cache_monitor.generate_performance_report(first_cache_type, days)
+            return await monitor.generate_performance_report(first_cache_type, days)
     
     def get_system_status(self) -> Optional[CacheSystemStatus]:
         """
@@ -823,8 +825,9 @@ class CacheManager:
             if not end_time:
                 end_time = datetime.now()
             
+            monitor = get_cache_monitor()
             if cache_type:
-                metrics_history = cache_monitor.get_metrics_history(
+                metrics_history = monitor.get_metrics_history(
                     cache_type, start_time, end_time
                 )
                 return {
@@ -839,7 +842,7 @@ class CacheManager:
                 strategies = get_all_cache_strategies()
                 
                 for ct in strategies.keys():
-                    metrics_history = cache_monitor.get_metrics_history(
+                    metrics_history = monitor.get_metrics_history(
                         ct, start_time, end_time
                     )
                     all_data[ct] = [m.to_dict() for m in metrics_history]
