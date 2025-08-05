@@ -38,12 +38,18 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# 升级pip并安装Python依赖
-COPY requirements.txt .
-RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+# 升级pip
+RUN pip install --no-cache-dir --upgrade pip
 
-# 安装额外的生产依赖
+# 先复制并安装基础依赖（这些很少变化，可以有效利用缓存）
+COPY requirements-base.txt* ./
+RUN if [ -f requirements-base.txt ]; then pip install --no-cache-dir -r requirements-base.txt; fi
+
+# 复制并安装主要依赖
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# 安装额外的生产依赖（这些很少变化）
 RUN pip install --no-cache-dir \
     gunicorn \
     uvicorn[standard] \

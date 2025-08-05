@@ -1,0 +1,455 @@
+{
+  "timestamp": "2025-08-04T11:43:17.652251",
+  "analysis_duration": "9.28秒",
+  "frontend_path": "C:\\Users\\Zz-20240101\\Desktop\\Sys_Rev_Tec\\frontend",
+  "overall_score": 79.0,
+  "success_metrics": {
+    "files_analyzed": 25632,
+    "issues_found": 0,
+    "optimizations_suggested": 2,
+    "success_rate": 100.0
+  },
+  "analysis_results": {
+    "responsive_design": {
+      "media_queries": [
+        {
+          "file": "styles.css",
+          "query": "@media (max-width: 768px)",
+          "rules_count": 1
+        },
+        {
+          "file": "styles.css",
+          "query": "@media (max-width: 480px)",
+          "rules_count": 1
+        },
+        {
+          "file": "styles.css",
+          "query": "@media (prefers-color-scheme: dark)",
+          "rules_count": 1
+        },
+        {
+          "file": "styles.css",
+          "query": "@media print",
+          "rules_count": 1
+        },
+        {
+          "file": "styles.css",
+          "query": "@media (prefers-contrast: high)",
+          "rules_count": 1
+        },
+        {
+          "file": "styles.css",
+          "query": "@media (max-width: 768px)",
+          "rules_count": 1
+        },
+        {
+          "file": "src\\App.css",
+          "query": "@media (max-width: 768px)",
+          "rules_count": 1
+        },
+        {
+          "file": "src\\App.css",
+          "query": "@media (max-width: 480px)",
+          "rules_count": 1
+        },
+        {
+          "file": "src\\App.css",
+          "query": "@media print",
+          "rules_count": 1
+        },
+        {
+          "file": "src\\index.css",
+          "query": "@media (max-width: 575.98px)",
+          "rules_count": 1
+        },
+        {
+          "file": "src\\index.css",
+          "query": "@media (min-width: 576px) and (max-width: 767.98px)",
+          "rules_count": 1
+        },
+        {
+          "file": "src\\index.css",
+          "query": "@media (min-width: 768px) and (max-width: 991.98px)",
+          "rules_count": 1
+        },
+        {
+          "file": "src\\index.css",
+          "query": "@media (min-width: 992px)",
+          "rules_count": 1
+        },
+        {
+          "file": "src\\index.css",
+          "query": "@media print",
+          "rules_count": 1
+        },
+        {
+          "file": "src\\index.css",
+          "query": "@media (prefers-reduced-motion: reduce)",
+          "rules_count": 1
+        },
+        {
+          "file": "src\\index.css",
+          "query": "@media (prefers-contrast: high)",
+          "rules_count": 1
+        },
+        {
+          "file": "dist\\assets\\index-BFjZ2a6O.css",
+          "query": "@media (max-width: 768px)",
+          "rules_count": 0
+        },
+        {
+          "file": "dist\\assets\\index-BFjZ2a6O.css",
+          "query": "@media (max-width: 480px)",
+          "rules_count": 0
+        },
+        {
+          "file": "dist\\assets\\index-BFjZ2a6O.css",
+          "query": "@media (max-width: 768px)",
+          "rules_count": 0
+        },
+        {
+          "file": "dist\\assets\\index-BFjZ2a6O.css",
+          "query": "@media (max-width: 480px)",
+          "rules_count": 0
+        },
+        {
+          "file": "dist\\assets\\index-BFjZ2a6O.css",
+          "query": "@media print",
+          "rules_count": 0
+        },
+        {
+          "file": "dist\\assets\\index-BFjZ2a6O.css",
+          "query": "@media (max-width: 575.98px)",
+          "rules_count": 0
+        },
+        {
+          "file": "dist\\assets\\index-BFjZ2a6O.css",
+          "query": "@media (min-width: 576px) and (max-width: 767.98px)",
+          "rules_count": 0
+        },
+        {
+          "file": "dist\\assets\\index-BFjZ2a6O.css",
+          "query": "@media (min-width: 768px) and (max-width: 991.98px)",
+          "rules_count": 0
+        },
+        {
+          "file": "dist\\assets\\index-BFjZ2a6O.css",
+          "query": "@media (min-width: 992px)",
+          "rules_count": 0
+        },
+        {
+          "file": "dist\\assets\\index-BFjZ2a6O.css",
+          "query": "@media print",
+          "rules_count": 0
+        },
+        {
+          "file": "dist\\assets\\index-BFjZ2a6O.css",
+          "query": "@media (prefers-reduced-motion: reduce)",
+          "rules_count": 1
+        },
+        {
+          "file": "dist\\assets\\index-BFjZ2a6O.css",
+          "query": "@media (prefers-contrast: high)",
+          "rules_count": 1
+        },
+        {
+          "file": "node_modules\\copy-to-clipboard\\example\\example.css",
+          "query": "@media screen and (max-width: 568px)",
+          "rules_count": 1
+        },
+        {
+          "file": "node_modules\\rc-checkbox\\assets\\index.css",
+          "query": "@media print",
+          "rules_count": 1
+        },
+        {
+          "file": "node_modules\\rc-checkbox\\assets\\index.css",
+          "query": "@media print",
+          "rules_count": 1
+        },
+        {
+          "file": "node_modules\\rc-dialog\\assets\\bootstrap.css",
+          "query": "@media (min-width: 768px)",
+          "rules_count": 1
+        },
+        {
+          "file": "node_modules\\rc-dialog\\assets\\index.css",
+          "query": "@media (min-width: 768px)",
+          "rules_count": 1
+        },
+        {
+          "file": "node_modules\\rc-pagination\\assets\\index.css",
+          "query": "@media all and (-ms-high-contrast: none)",
+          "rules_count": 1
+        },
+        {
+          "file": "node_modules\\rc-pagination\\assets\\index.css",
+          "query": "@media only screen and (max-width: 992px)",
+          "rules_count": 1
+        },
+        {
+          "file": "node_modules\\rc-pagination\\assets\\index.css",
+          "query": "@media only screen and (max-width: 576px)",
+          "rules_count": 1
+        },
+        {
+          "file": "node_modules\\rc-resize-observer\\assets\\index.css",
+          "query": "@media only screen and (max-width: 767.99px)",
+          "rules_count": 1
+        },
+        {
+          "file": "src\\styles\\Login.module.css",
+          "query": "@media (max-width: 768px)",
+          "rules_count": 1
+        },
+        {
+          "file": "src\\styles\\Login.module.css",
+          "query": "@media (max-width: 480px)",
+          "rules_count": 1
+        }
+      ],
+      "breakpoints": [
+        300,
+        340,
+        400,
+        480,
+        500,
+        568,
+        576,
+        600,
+        768,
+        992,
+        1000,
+        1200
+      ],
+      "flexible_layouts": [
+        "styles.css",
+        "src\\App.css",
+        "src\\index.css",
+        "node_modules\\@rc-component\\color-picker\\assets\\index.css",
+        "node_modules\\rc-collapse\\assets\\index.css",
+        "node_modules\\rc-image\\assets\\index.css",
+        "node_modules\\rc-menu\\assets\\index.css",
+        "node_modules\\rc-notification\\assets\\index.css",
+        "node_modules\\rc-pagination\\assets\\index.css",
+        "node_modules\\rc-picker\\assets\\index.css",
+        "node_modules\\rc-resize-observer\\assets\\index.css",
+        "node_modules\\rc-segmented\\assets\\index.css",
+        "node_modules\\rc-select\\assets\\index.css",
+        "node_modules\\rc-steps\\assets\\index.css",
+        "node_modules\\rc-table\\assets\\index.css",
+        "node_modules\\rc-tabs\\assets\\index.css",
+        "src\\styles\\Login.module.css"
+      ],
+      "mobile_optimization": {
+        "viewport_meta": true,
+        "touch_friendly": true,
+        "mobile_navigation": true
+      },
+      "score": 100
+    },
+    "performance_optimization": {
+      "build_optimization": {
+        "minification": true,
+        "code_splitting": true,
+        "compression": true,
+        "tree_shaking": true,
+        "source_maps": true
+      },
+      "asset_optimization": {
+        "compression": false,
+        "optimization": true
+      },
+      "code_splitting": {
+        "dynamic_imports": 2714,
+        "enabled": true
+      },
+      "lazy_loading": {
+        "components": 0,
+        "enabled": false
+      },
+      "caching_strategy": {
+        "service_worker": true,
+        "enabled": true
+      },
+      "score": 70
+    },
+    "user_experience": {
+      "loading_states": [
+        "src\\components\\Loading.tsx",
+        "src\\components\\ProtectedRoute.tsx",
+        "src\\components\\PublicRoute.tsx",
+        "src\\contexts\\AuthContext.tsx",
+        "src\\pages\\Dashboard.tsx",
+        "src\\pages\\Files.tsx",
+        "src\\pages\\Login.tsx",
+        "src\\pages\\Profile.tsx",
+        "src\\pages\\ProjectDetail.tsx",
+        "src\\pages\\Projects.tsx",
+        "src\\pages\\Register.tsx",
+        "src\\pages\\Reports.tsx",
+        "src\\pages\\Settings.tsx",
+        "src\\pages\\UserManagement.tsx",
+        "src\\pages\\Users.tsx",
+        "src\\App.vue",
+        "src\\components\\ActionFeedback.vue",
+        "src\\components\\ErrorHandler.vue",
+        "src\\components\\GlobalLoading.vue",
+        "src\\components\\PermissionManagement.vue",
+        "src\\components\\PermissionQueryOptimization.vue",
+        "src\\components\\SecurityDashboard.vue",
+        "src\\views\\Dashboard.vue",
+        "src\\views\\Login.vue",
+        "src\\views\\PermissionManagement.vue",
+        "src\\views\\Profile.vue",
+        "src\\views\\ReportManagement.vue",
+        "src\\views\\SecurityMonitoring.vue",
+        "src\\views\\SystemMaintenance.vue",
+        "src\\views\\SystemSettings.vue",
+        "src\\views\\UserManagement.vue",
+        "src\\views\\admin\\PermissionConfig.vue"
+      ],
+      "error_handling": [
+        "src\\App.tsx",
+        "src\\index.tsx",
+        "src\\components\\ErrorBoundary.tsx",
+        "src\\contexts\\AuthContext.tsx",
+        "src\\contexts\\NotificationContext.tsx",
+        "src\\contexts\\ThemeContext.tsx",
+        "src\\pages\\Dashboard.tsx",
+        "src\\pages\\Files.tsx",
+        "src\\pages\\Login.tsx",
+        "src\\pages\\Profile.tsx",
+        "src\\pages\\ProjectDetail.tsx",
+        "src\\pages\\Projects.tsx",
+        "src\\pages\\Register.tsx",
+        "src\\pages\\Reports.tsx",
+        "src\\pages\\Settings.tsx",
+        "src\\pages\\UserManagement.tsx",
+        "src\\pages\\Users.tsx",
+        "src\\App.vue",
+        "src\\components\\ActionFeedback.vue",
+        "src\\components\\ErrorHandler.vue",
+        "src\\components\\PermissionManagement.vue",
+        "src\\components\\PermissionQueryOptimization.vue",
+        "src\\components\\SecurityDashboard.vue",
+        "src\\views\\Dashboard.vue",
+        "src\\views\\Login.vue",
+        "src\\views\\NotFound.vue",
+        "src\\views\\PermissionManagement.vue",
+        "src\\views\\Profile.vue",
+        "src\\views\\ReportManagement.vue",
+        "src\\views\\SecurityMonitoring.vue",
+        "src\\views\\SystemMaintenance.vue",
+        "src\\views\\SystemSettings.vue",
+        "src\\views\\UserManagement.vue",
+        "src\\views\\admin\\PermissionConfig.vue"
+      ],
+      "navigation": {
+        "router_configured": true,
+        "responsive": true
+      },
+      "feedback_mechanisms": [
+        "toast",
+        "modal",
+        "notification"
+      ],
+      "theme_support": {
+        "dark_mode": true,
+        "theme_switching": true
+      },
+      "score": 100
+    },
+    "accessibility": {
+      "semantic_html": [
+        {
+          "file": "src\\layout\\index.vue",
+          "tags": [
+            "header",
+            "main",
+            "aside"
+          ]
+        }
+      ],
+      "aria_attributes": [],
+      "keyboard_navigation": [
+        "node_modules\\recharts\\umd\\report.html"
+      ],
+      "color_contrast": {
+        "compliant": true,
+        "ratio": 4.5
+      },
+      "screen_reader_support": [
+        "alt_text"
+      ],
+      "score": 75
+    },
+    "code_quality": {
+      "component_structure": {
+        "total_components": 42,
+        "modular": true,
+        "reusable": true
+      },
+      "type_safety": {
+        "typescript_files": 7907,
+        "javascript_files": 13278,
+        "typescript_usage": 37.32357800330423
+      },
+      "code_organization": {
+        "directories": [
+          "api",
+          "components",
+          "contexts",
+          "layout",
+          "pages",
+          "router",
+          "services",
+          "stores",
+          "styles",
+          "types",
+          "utils",
+          "views"
+        ],
+        "well_structured": true
+      },
+      "best_practices": [
+        "TypeScript配置",
+        "构建优化配置",
+        "环境变量配置"
+      ],
+      "score": 50
+    },
+    "recommendations": [
+      {
+        "category": "性能优化",
+        "priority": "high",
+        "title": "提升应用性能",
+        "description": "优化构建配置和资源加载策略",
+        "implementation": [
+          "启用代码分割和懒加载",
+          "优化图片和静态资源压缩",
+          "实现有效的缓存策略",
+          "使用CDN加速静态资源"
+        ]
+      },
+      {
+        "category": "代码质量",
+        "priority": "low",
+        "title": "提升代码质量",
+        "description": "改进代码结构和类型安全",
+        "implementation": [
+          "增强TypeScript类型定义",
+          "优化组件结构和复用性",
+          "遵循React/Vue最佳实践",
+          "添加单元测试覆盖"
+        ]
+      }
+    ]
+  },
+  "summary": {
+    "total_recommendations": 2,
+    "high_priority_issues": 1,
+    "areas_analyzed": 5,
+    "optimization_opportunities": 2
+  }
+}

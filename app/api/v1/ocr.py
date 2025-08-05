@@ -5,13 +5,11 @@ from fastapi import (
     BackgroundTasks,
     Depends,
     HTTPException,
-    Query,
     Request,
     status,
 )
 from sqlalchemy.orm import Session
 
-from app import crud
 from app.api import deps
 from app.models.document import Document
 from app.schemas.response import ResponseModel

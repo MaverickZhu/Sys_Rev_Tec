@@ -1,17 +1,17 @@
 {
   "errors": [],
-  "generated_at": "2025-07-28T07:15:43Z",
+  "generated_at": "2025-08-04T03:58:43Z",
   "metrics": {
     "_totals": {
-      "CONFIDENCE.HIGH": 5,
-      "CONFIDENCE.LOW": 0,
-      "CONFIDENCE.MEDIUM": 2,
+      "CONFIDENCE.HIGH": 13,
+      "CONFIDENCE.LOW": 1,
+      "CONFIDENCE.MEDIUM": 12,
       "CONFIDENCE.UNDEFINED": 0,
       "SEVERITY.HIGH": 2,
-      "SEVERITY.LOW": 2,
-      "SEVERITY.MEDIUM": 3,
+      "SEVERITY.LOW": 17,
+      "SEVERITY.MEDIUM": 7,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 9276,
+      "loc": 36269,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -29,6 +29,19 @@
       "skipped_tests": 0
     },
     "app/api\\deps.py": {
+      "CONFIDENCE.HIGH": 1,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 1,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 112,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "app/api\\permission_query_optimization.py": {
       "CONFIDENCE.HIGH": 0,
       "CONFIDENCE.LOW": 0,
       "CONFIDENCE.MEDIUM": 0,
@@ -37,7 +50,7 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 20,
+      "loc": 0,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -63,7 +76,7 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 60,
+      "loc": 199,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -76,7 +89,59 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 118,
+      "loc": 533,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "app/api\\v1\\cache_optimization.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 467,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "app/api\\v1\\database_optimization.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 564,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "app/api\\v1\\endpoints\\auth.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 4,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 4,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 207,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "app/api\\v1\\endpoints\\cache_management.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 842,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -89,7 +154,72 @@
       "SEVERITY.LOW": 1,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 566,
+      "loc": 568,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "app/api\\v1\\endpoints\\oauth2.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 297,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "app/api\\v1\\endpoints\\permission_config.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 472,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "app/api\\v1\\endpoints\\permission_optimization.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 756,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "app/api\\v1\\endpoints\\permission_query_optimization.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 443,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "app/api\\v1\\endpoints\\permissions.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 699,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -106,6 +236,32 @@
       "nosec": 0,
       "skipped_tests": 0
     },
+    "app/api\\v1\\endpoints\\security_monitor.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 909,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "app/api\\v1\\endpoints\\token_blacklist.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 191,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
     "app/api\\v1\\endpoints\\users.py": {
       "CONFIDENCE.HIGH": 0,
       "CONFIDENCE.LOW": 0,
@@ -115,7 +271,7 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 33,
+      "loc": 208,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -154,7 +310,7 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 175,
+      "loc": 176,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -168,6 +324,97 @@
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
       "loc": 196,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "app/api\\v1\\performance.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 362,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "app/api\\v1\\projects.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 614,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "app/api\\v1\\system_maintenance.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 419,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "app/api\\v1\\users.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 473,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "app/config\\__init__.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 24,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "app/config\\cache_strategy.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 343,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "app/config\\performance_config.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 310,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -197,6 +444,110 @@
       "nosec": 0,
       "skipped_tests": 0
     },
+    "app/core\\auth.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 2,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 2,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 185,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "app/core\\cache_config.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 294,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "app/core\\cache_config_manager.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 269,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "app/core\\cache_health_check.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 582,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "app/core\\cache_monitor.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 307,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "app/core\\cache_optimizer.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 297,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "app/core\\cache_scheduler.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 205,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "app/core\\cache_warmup.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 164,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
     "app/core\\config.py": {
       "CONFIDENCE.HIGH": 0,
       "CONFIDENCE.LOW": 0,
@@ -206,7 +557,7 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 1,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 142,
+      "loc": 160,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -232,7 +583,20 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 167,
+      "loc": 241,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "app/core\\logger.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 14,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -262,6 +626,19 @@
       "nosec": 0,
       "skipped_tests": 0
     },
+    "app/core\\middleware\\permission_middleware.py": {
+      "CONFIDENCE.HIGH": 1,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 1,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 362,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
     "app/core\\monitoring.py": {
       "CONFIDENCE.HIGH": 0,
       "CONFIDENCE.LOW": 0,
@@ -275,6 +652,136 @@
       "nosec": 0,
       "skipped_tests": 0
     },
+    "app/core\\oauth2.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 2,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 2,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 340,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "app/core\\permission_batch_checker.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 515,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "app/core\\permission_cache.py": {
+      "CONFIDENCE.HIGH": 1,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 1,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 414,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "app/core\\permission_config_manager.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 390,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "app/core\\permission_performance_monitor.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 410,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "app/core\\permission_preloader.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 425,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "app/core\\permission_query_optimizer.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 404,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "app/core\\permissions.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 375,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "app/core\\security\\threat_detector.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 731,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "app/core\\system_maintenance.py": {
+      "CONFIDENCE.HIGH": 2,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 2,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 655,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
     "app/crud\\__init__.py": {
       "CONFIDENCE.HIGH": 0,
       "CONFIDENCE.LOW": 0,
@@ -284,20 +791,33 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 16,
+      "loc": 18,
       "nosec": 0,
       "skipped_tests": 0
     },
     "app/crud\\base.py": {
-      "CONFIDENCE.HIGH": 1,
+      "CONFIDENCE.HIGH": 0,
       "CONFIDENCE.LOW": 0,
       "CONFIDENCE.MEDIUM": 0,
       "CONFIDENCE.UNDEFINED": 0,
-      "SEVERITY.HIGH": 1,
+      "SEVERITY.HIGH": 0,
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
       "loc": 124,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "app/crud\\crud_audit_log.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 423,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -314,6 +834,19 @@
       "nosec": 0,
       "skipped_tests": 0
     },
+    "app/crud\\crud_oauth2_client.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 216,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
     "app/crud\\crud_ocr.py": {
       "CONFIDENCE.HIGH": 0,
       "CONFIDENCE.LOW": 0,
@@ -327,6 +860,19 @@
       "nosec": 0,
       "skipped_tests": 0
     },
+    "app/crud\\crud_permission.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 534,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
     "app/crud\\crud_project.py": {
       "CONFIDENCE.HIGH": 0,
       "CONFIDENCE.LOW": 0,
@@ -336,7 +882,33 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 212,
+      "loc": 274,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "app/crud\\crud_security_event.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 408,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "app/crud\\crud_token_blacklist.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 2,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 2,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 184,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -349,7 +921,7 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 26,
+      "loc": 78,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -362,7 +934,7 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 155,
+      "loc": 183,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -375,7 +947,7 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 5,
+      "loc": 19,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -405,6 +977,19 @@
       "nosec": 0,
       "skipped_tests": 0
     },
+    "app/db\\init_data.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 497,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
     "app/db\\optimize_db.py": {
       "CONFIDENCE.HIGH": 0,
       "CONFIDENCE.LOW": 0,
@@ -418,6 +1003,19 @@
       "nosec": 0,
       "skipped_tests": 0
     },
+    "app/db\\permission_indexes.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 1,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 1,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 394,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
     "app/db\\session.py": {
       "CONFIDENCE.HIGH": 0,
       "CONFIDENCE.LOW": 0,
@@ -427,7 +1025,7 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 13,
+      "loc": 23,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -440,7 +1038,7 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 24,
+      "loc": 61,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -466,7 +1064,7 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 1,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 155,
+      "loc": 264,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -479,7 +1077,33 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 6,
+      "loc": 10,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "app/middleware\\auth.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 155,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "app/middleware\\enhanced_monitoring.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 325,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -505,7 +1129,7 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 109,
+      "loc": 116,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -531,7 +1155,33 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 0,
+      "loc": 20,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "app/models\\associations.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 39,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "app/models\\audit_log.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 81,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -561,6 +1211,19 @@
       "nosec": 0,
       "skipped_tests": 0
     },
+    "app/models\\oauth2_client.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 78,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
     "app/models\\ocr.py": {
       "CONFIDENCE.HIGH": 0,
       "CONFIDENCE.LOW": 0,
@@ -571,6 +1234,19 @@
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
       "loc": 38,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "app/models\\permission.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 230,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -600,6 +1276,32 @@
       "nosec": 0,
       "skipped_tests": 0
     },
+    "app/models\\security_event.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 142,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "app/models\\token_blacklist.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 25,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
     "app/models\\user.py": {
       "CONFIDENCE.HIGH": 0,
       "CONFIDENCE.LOW": 0,
@@ -609,7 +1311,7 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 28,
+      "loc": 137,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -626,6 +1328,32 @@
       "nosec": 0,
       "skipped_tests": 0
     },
+    "app/monitoring\\__init__.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 22,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "app/monitoring\\performance_monitor.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 364,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
     "app/schemas\\__init__.py": {
       "CONFIDENCE.HIGH": 0,
       "CONFIDENCE.LOW": 0,
@@ -635,7 +1363,20 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 0,
+      "loc": 46,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "app/schemas\\ai.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 124,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -652,6 +1393,19 @@
       "nosec": 0,
       "skipped_tests": 0
     },
+    "app/schemas\\oauth2.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 175,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
     "app/schemas\\ocr.py": {
       "CONFIDENCE.HIGH": 0,
       "CONFIDENCE.LOW": 0,
@@ -665,6 +1419,19 @@
       "nosec": 0,
       "skipped_tests": 0
     },
+    "app/schemas\\permission.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 308,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
     "app/schemas\\project.py": {
       "CONFIDENCE.HIGH": 0,
       "CONFIDENCE.LOW": 0,
@@ -674,7 +1441,7 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 111,
+      "loc": 117,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -691,6 +1458,32 @@
       "nosec": 0,
       "skipped_tests": 0
     },
+    "app/schemas\\security_monitor.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 331,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "app/schemas\\token_blacklist.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 57,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
     "app/schemas\\user.py": {
       "CONFIDENCE.HIGH": 0,
       "CONFIDENCE.LOW": 0,
@@ -700,7 +1493,7 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 22,
+      "loc": 54,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -730,16 +1523,94 @@
       "nosec": 0,
       "skipped_tests": 0
     },
+    "app/services\\cache_init.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 247,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "app/services\\cache_manager.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 686,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "app/services\\cache_monitor.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 498,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "app/services\\cache_optimizer.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 587,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
     "app/services\\cache_service.py": {
-      "CONFIDENCE.HIGH": 2,
+      "CONFIDENCE.HIGH": 3,
       "CONFIDENCE.LOW": 0,
       "CONFIDENCE.MEDIUM": 0,
       "CONFIDENCE.UNDEFINED": 0,
       "SEVERITY.HIGH": 0,
       "SEVERITY.LOW": 1,
-      "SEVERITY.MEDIUM": 1,
+      "SEVERITY.MEDIUM": 2,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 212,
+      "loc": 417,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "app/services\\cache_strategies.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 183,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "app/services\\cache_warmup.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 343,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -756,6 +1627,19 @@
       "nosec": 0,
       "skipped_tests": 0
     },
+    "app/services\\multi_level_cache.py": {
+      "CONFIDENCE.HIGH": 3,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 1,
+      "SEVERITY.MEDIUM": 2,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 319,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
     "app/services\\ocr_service.py": {
       "CONFIDENCE.HIGH": 0,
       "CONFIDENCE.LOW": 0,
@@ -766,6 +1650,58 @@
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
       "loc": 41,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "app/services\\performance_metrics.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 513,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "app/services\\security_service.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 576,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "app/tasks\\__init__.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 14,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "app/tasks\\cache_optimization.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 491,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -817,7 +1753,7 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 224,
+      "loc": 244,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -830,7 +1766,7 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 585,
+      "loc": 586,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -856,14 +1792,141 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 388,
+      "loc": 402,
       "nosec": 0,
       "skipped_tests": 0
     }
   },
   "results": [
     {
-      "code": "325                     file_path.unlink()\n326             except Exception:\n327                 pass\n328 \n",
+      "code": "146             return user\n147     except Exception:\n148         pass\n149 \n",
+      "col_offset": 4,
+      "end_col_offset": 12,
+      "filename": "app/api\\deps.py",
+      "issue_confidence": "HIGH",
+      "issue_cwe": {
+        "id": 703,
+        "link": "https://cwe.mitre.org/data/definitions/703.html"
+      },
+      "issue_severity": "LOW",
+      "issue_text": "Try, Except, Pass detected.",
+      "line_number": 147,
+      "line_range": [
+        147,
+        148
+      ],
+      "more_info": "https://bandit.readthedocs.io/en/1.8.6/plugins/b110_try_except_pass.html",
+      "test_id": "B110",
+      "test_name": "try_except_pass"
+    },
+    {
+      "code": "54 \n55     return LoginResponse(\n56         access_token=tokens[\"access_token\"],\n57         refresh_token=tokens[\"refresh_token\"],\n58         token_type=\"bearer\",\n59         expires_in=settings.JWT_ACCESS_TOKEN_EXPIRE_MINUTES * 60,\n60         user=UserSchema.from_orm(user),\n61     )\n62 \n",
+      "col_offset": 11,
+      "end_col_offset": 5,
+      "filename": "app/api\\v1\\endpoints\\auth.py",
+      "issue_confidence": "MEDIUM",
+      "issue_cwe": {
+        "id": 259,
+        "link": "https://cwe.mitre.org/data/definitions/259.html"
+      },
+      "issue_severity": "LOW",
+      "issue_text": "Possible hardcoded password: 'bearer'",
+      "line_number": 55,
+      "line_range": [
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61
+      ],
+      "more_info": "https://bandit.readthedocs.io/en/1.8.6/plugins/b106_hardcoded_password_funcarg.html",
+      "test_id": "B106",
+      "test_name": "hardcoded_password_funcarg"
+    },
+    {
+      "code": "86 \n87     return LoginResponse(\n88         access_token=tokens[\"access_token\"],\n89         refresh_token=tokens[\"refresh_token\"],\n90         token_type=\"bearer\",\n91         expires_in=settings.JWT_ACCESS_TOKEN_EXPIRE_MINUTES * 60,\n92         user=UserSchema.from_orm(user),\n93     )\n94 \n",
+      "col_offset": 11,
+      "end_col_offset": 5,
+      "filename": "app/api\\v1\\endpoints\\auth.py",
+      "issue_confidence": "MEDIUM",
+      "issue_cwe": {
+        "id": 259,
+        "link": "https://cwe.mitre.org/data/definitions/259.html"
+      },
+      "issue_severity": "LOW",
+      "issue_text": "Possible hardcoded password: 'bearer'",
+      "line_number": 87,
+      "line_range": [
+        87,
+        88,
+        89,
+        90,
+        91,
+        92,
+        93
+      ],
+      "more_info": "https://bandit.readthedocs.io/en/1.8.6/plugins/b106_hardcoded_password_funcarg.html",
+      "test_id": "B106",
+      "test_name": "hardcoded_password_funcarg"
+    },
+    {
+      "code": "132 \n133         return TokenResponse(\n134             access_token=access_token,\n135             token_type=\"bearer\",\n136             expires_in=settings.JWT_ACCESS_TOKEN_EXPIRE_MINUTES * 60,\n137         )\n138 \n",
+      "col_offset": 15,
+      "end_col_offset": 9,
+      "filename": "app/api\\v1\\endpoints\\auth.py",
+      "issue_confidence": "MEDIUM",
+      "issue_cwe": {
+        "id": 259,
+        "link": "https://cwe.mitre.org/data/definitions/259.html"
+      },
+      "issue_severity": "LOW",
+      "issue_text": "Possible hardcoded password: 'bearer'",
+      "line_number": 133,
+      "line_range": [
+        133,
+        134,
+        135,
+        136,
+        137
+      ],
+      "more_info": "https://bandit.readthedocs.io/en/1.8.6/plugins/b106_hardcoded_password_funcarg.html",
+      "test_id": "B106",
+      "test_name": "hardcoded_password_funcarg"
+    },
+    {
+      "code": "242 \n243         token_blacklist.add_to_blacklist(\n244             db=db,\n245             jti=jti,\n246             token=token,\n247             user_id=current_user.id,\n248             token_type=\"access\",\n249             expires_at=expires_at,\n250             reason=\"\u7528\u6237\u4e3b\u52a8\u767b\u51fa\",\n251             user_agent=user_agent,\n252             ip_address=ip_address,\n253         )\n254 \n",
+      "col_offset": 8,
+      "end_col_offset": 9,
+      "filename": "app/api\\v1\\endpoints\\auth.py",
+      "issue_confidence": "MEDIUM",
+      "issue_cwe": {
+        "id": 259,
+        "link": "https://cwe.mitre.org/data/definitions/259.html"
+      },
+      "issue_severity": "LOW",
+      "issue_text": "Possible hardcoded password: 'access'",
+      "line_number": 243,
+      "line_range": [
+        243,
+        244,
+        245,
+        246,
+        247,
+        248,
+        249,
+        250,
+        251,
+        252,
+        253
+      ],
+      "more_info": "https://bandit.readthedocs.io/en/1.8.6/plugins/b106_hardcoded_password_funcarg.html",
+      "test_id": "B106",
+      "test_name": "hardcoded_password_funcarg"
+    },
+    {
+      "code": "327                     file_path.unlink()\n328             except Exception:\n329                 pass\n330 \n",
       "col_offset": 12,
       "end_col_offset": 20,
       "filename": "app/api\\v1\\endpoints\\documents.py",
@@ -874,17 +1937,112 @@
       },
       "issue_severity": "LOW",
       "issue_text": "Try, Except, Pass detected.",
-      "line_number": 326,
+      "line_number": 328,
       "line_range": [
-        326,
-        327
+        328,
+        329
       ],
       "more_info": "https://bandit.readthedocs.io/en/1.8.6/plugins/b110_try_except_pass.html",
       "test_id": "B110",
       "test_name": "try_except_pass"
     },
     {
-      "code": "21     # \u670d\u52a1\u5668\u914d\u7f6e\n22     HOST: str = \"0.0.0.0\"\n23     PORT: int = 8000\n",
+      "code": "116 \n117     def verify_token(self, token: str, token_type: str = \"access\") -> dict:\n118         \"\"\"\u9a8c\u8bc1JWT\u4ee4\u724c\n119 \n120         Args:\n121             token: JWT\u4ee4\u724c\n122             token_type: \u4ee4\u724c\u7c7b\u578b (access/refresh)\n123 \n124         Returns:\n125             dict: \u89e3\u7801\u540e\u7684\u4ee4\u724c\u6570\u636e\n126 \n127         Raises:\n128             HTTPException: \u4ee4\u724c\u65e0\u6548\u65f6\u629b\u51fa\u5f02\u5e38\n129         \"\"\"\n130         try:\n131             payload = jwt.decode(\n132                 token,\n133                 self.secret_key,\n134                 algorithms=[self.algorithm],\n135                 audience=\"sys-rev-tec-users\",\n136                 issuer=\"sys-rev-tec\",\n137             )\n138 \n139             # \u68c0\u67e5\u4ee4\u724c\u7c7b\u578b\n140             if payload.get(\"type\") != token_type:\n141                 raise HTTPException(\n142                     status_code=status.HTTP_401_UNAUTHORIZED,\n143                     detail=f\"Invalid token type. Expected {token_type}\",\n144                     headers={\"WWW-Authenticate\": \"Bearer\"},\n145                 )\n146 \n147             # \u68c0\u67e5\u8fc7\u671f\u65f6\u95f4\n148             exp = payload.get(\"exp\")\n149             if exp is None:\n150                 raise HTTPException(\n151                     status_code=status.HTTP_401_UNAUTHORIZED,\n152                     detail=\"Token missing expiration\",\n153                     headers={\"WWW-Authenticate\": \"Bearer\"},\n154                 )\n155 \n156             if datetime.utcnow().timestamp() > exp:\n157                 raise HTTPException(\n158                     status_code=status.HTTP_401_UNAUTHORIZED,\n159                     detail=\"Token expired\",\n160                     headers={\"WWW-Authenticate\": \"Bearer\"},\n161                 )\n162 \n163             return payload\n164 \n165         except JWTError as e:\n166             raise HTTPException(\n167                 status_code=status.HTTP_401_UNAUTHORIZED,\n168                 detail=f\"Could not validate credentials: {str(e)}\",\n169                 headers={\"WWW-Authenticate\": \"Bearer\"},\n170             )\n171 \n",
+      "col_offset": 4,
+      "end_col_offset": 13,
+      "filename": "app/core\\auth.py",
+      "issue_confidence": "MEDIUM",
+      "issue_cwe": {
+        "id": 259,
+        "link": "https://cwe.mitre.org/data/definitions/259.html"
+      },
+      "issue_severity": "LOW",
+      "issue_text": "Possible hardcoded password: 'access'",
+      "line_number": 117,
+      "line_range": [
+        117,
+        118,
+        119,
+        120,
+        121,
+        122,
+        123,
+        124,
+        125,
+        126,
+        127,
+        128,
+        129,
+        130,
+        131,
+        132,
+        133,
+        134,
+        135,
+        136,
+        137,
+        138,
+        139,
+        140,
+        141,
+        142,
+        143,
+        144,
+        145,
+        146,
+        147,
+        148,
+        149,
+        150,
+        151,
+        152,
+        153,
+        154,
+        155,
+        156,
+        157,
+        158,
+        159,
+        160,
+        161,
+        162,
+        163,
+        164,
+        165,
+        166,
+        167,
+        168,
+        169,
+        170
+      ],
+      "more_info": "https://bandit.readthedocs.io/en/1.8.6/plugins/b107_hardcoded_password_default.html",
+      "test_id": "B107",
+      "test_name": "hardcoded_password_default"
+    },
+    {
+      "code": "239 \n240 def verify_token(token: str, token_type: str = \"access\") -> dict:\n241     \"\"\"\u9a8c\u8bc1\u4ee4\u724c\"\"\"\n242     return auth_manager.verify_token(token, token_type)\n243 \n",
+      "col_offset": 0,
+      "end_col_offset": 55,
+      "filename": "app/core\\auth.py",
+      "issue_confidence": "MEDIUM",
+      "issue_cwe": {
+        "id": 259,
+        "link": "https://cwe.mitre.org/data/definitions/259.html"
+      },
+      "issue_severity": "LOW",
+      "issue_text": "Possible hardcoded password: 'access'",
+      "line_number": 240,
+      "line_range": [
+        240,
+        241,
+        242
+      ],
+      "more_info": "https://bandit.readthedocs.io/en/1.8.6/plugins/b107_hardcoded_password_default.html",
+      "test_id": "B107",
+      "test_name": "hardcoded_password_default"
+    },
+    {
+      "code": "25     # \u670d\u52a1\u5668\u914d\u7f6e\n26     HOST: str = \"0.0.0.0\"\n27     PORT: int = 8000\n",
       "col_offset": 16,
       "end_col_offset": 25,
       "filename": "app/core\\config.py",
@@ -895,19 +2053,91 @@
       },
       "issue_severity": "MEDIUM",
       "issue_text": "Possible binding to all interfaces.",
-      "line_number": 22,
+      "line_number": 26,
       "line_range": [
-        22
+        26
       ],
       "more_info": "https://bandit.readthedocs.io/en/1.8.6/plugins/b104_hardcoded_bind_all_interfaces.html",
       "test_id": "B104",
       "test_name": "hardcoded_bind_all_interfaces"
     },
     {
-      "code": "63         key_str = json.dumps(key_data, sort_keys=True, default=str)\n64         return hashlib.md5(key_str.encode()).hexdigest()\n65 \n",
+      "code": "266                     pass\n267                 except Exception:\n268                     pass\n269 \n",
+      "col_offset": 16,
+      "end_col_offset": 24,
+      "filename": "app/core\\middleware\\permission_middleware.py",
+      "issue_confidence": "HIGH",
+      "issue_cwe": {
+        "id": 703,
+        "link": "https://cwe.mitre.org/data/definitions/703.html"
+      },
+      "issue_severity": "LOW",
+      "issue_text": "Try, Except, Pass detected.",
+      "line_number": 267,
+      "line_range": [
+        267,
+        268
+      ],
+      "more_info": "https://bandit.readthedocs.io/en/1.8.6/plugins/b110_try_except_pass.html",
+      "test_id": "B110",
+      "test_name": "try_except_pass"
+    },
+    {
+      "code": "296 \n297         return OAuth2TokenResponse(\n298             access_token=access_token,\n299             token_type=\"bearer\",\n300             expires_in=self.access_token_expires_in,\n301             scope=\" \".join(scopes) if scopes else None,\n302         )\n303 \n",
       "col_offset": 15,
-      "end_col_offset": 44,
-      "filename": "app/crud\\base.py",
+      "end_col_offset": 9,
+      "filename": "app/core\\oauth2.py",
+      "issue_confidence": "MEDIUM",
+      "issue_cwe": {
+        "id": 259,
+        "link": "https://cwe.mitre.org/data/definitions/259.html"
+      },
+      "issue_severity": "LOW",
+      "issue_text": "Possible hardcoded password: 'bearer'",
+      "line_number": 297,
+      "line_range": [
+        297,
+        298,
+        299,
+        300,
+        301,
+        302
+      ],
+      "more_info": "https://bandit.readthedocs.io/en/1.8.6/plugins/b106_hardcoded_password_funcarg.html",
+      "test_id": "B106",
+      "test_name": "hardcoded_password_funcarg"
+    },
+    {
+      "code": "388 \n389         return OAuth2TokenResponse(\n390             access_token=access_token,\n391             token_type=\"bearer\",\n392             expires_in=self.access_token_expires_in,\n393             refresh_token=refresh_token,\n394             scope=\" \".join(scopes) if scopes else None,\n395         )\n396 \n",
+      "col_offset": 15,
+      "end_col_offset": 9,
+      "filename": "app/core\\oauth2.py",
+      "issue_confidence": "MEDIUM",
+      "issue_cwe": {
+        "id": 259,
+        "link": "https://cwe.mitre.org/data/definitions/259.html"
+      },
+      "issue_severity": "LOW",
+      "issue_text": "Possible hardcoded password: 'bearer'",
+      "line_number": 389,
+      "line_range": [
+        389,
+        390,
+        391,
+        392,
+        393,
+        394,
+        395
+      ],
+      "more_info": "https://bandit.readthedocs.io/en/1.8.6/plugins/b106_hardcoded_password_funcarg.html",
+      "test_id": "B106",
+      "test_name": "hardcoded_password_funcarg"
+    },
+    {
+      "code": "56         if len(key_content) > 100:\n57             key_hash = hashlib.md5(key_content.encode()).hexdigest()\n58             return f\"{prefix}:{key_hash}\"\n",
+      "col_offset": 23,
+      "end_col_offset": 56,
+      "filename": "app/core\\permission_cache.py",
       "issue_confidence": "HIGH",
       "issue_cwe": {
         "id": 327,
@@ -915,16 +2145,118 @@
       },
       "issue_severity": "HIGH",
       "issue_text": "Use of weak MD5 hash for security. Consider usedforsecurity=False",
-      "line_number": 64,
+      "line_number": 57,
       "line_range": [
-        64
+        57
       ],
       "more_info": "https://bandit.readthedocs.io/en/1.8.6/plugins/b324_hashlib.html",
       "test_id": "B324",
       "test_name": "hashlib"
     },
     {
-      "code": "211     uvicorn.run(\n212         \"app.main:app\", host=\"0.0.0.0\", port=8000, reload=True, log_level=\"info\"\n213     )\n",
+      "code": "18 import shutil\n19 import subprocess\n20 import sys\n",
+      "col_offset": 0,
+      "end_col_offset": 17,
+      "filename": "app/core\\system_maintenance.py",
+      "issue_confidence": "HIGH",
+      "issue_cwe": {
+        "id": 78,
+        "link": "https://cwe.mitre.org/data/definitions/78.html"
+      },
+      "issue_severity": "LOW",
+      "issue_text": "Consider possible security implications associated with the subprocess module.",
+      "line_number": 19,
+      "line_range": [
+        19
+      ],
+      "more_info": "https://bandit.readthedocs.io/en/1.8.6/blacklists/blacklist_imports.html#b404-import-subprocess",
+      "test_id": "B404",
+      "test_name": "blacklist"
+    },
+    {
+      "code": "516             with open(db_backup_file, \"w\") as f:\n517                 result = subprocess.run(\n518                     cmd, stdout=f, stderr=subprocess.PIPE, text=True\n519                 )\n520 \n",
+      "col_offset": 25,
+      "end_col_offset": 17,
+      "filename": "app/core\\system_maintenance.py",
+      "issue_confidence": "HIGH",
+      "issue_cwe": {
+        "id": 78,
+        "link": "https://cwe.mitre.org/data/definitions/78.html"
+      },
+      "issue_severity": "LOW",
+      "issue_text": "subprocess call - check for execution of untrusted input.",
+      "line_number": 517,
+      "line_range": [
+        517,
+        518,
+        519
+      ],
+      "more_info": "https://bandit.readthedocs.io/en/1.8.6/plugins/b603_subprocess_without_shell_equals_true.html",
+      "test_id": "B603",
+      "test_name": "subprocess_without_shell_equals_true"
+    },
+    {
+      "code": "202             db.query(TokenBlacklist)\n203             .filter(TokenBlacklist.token_type == \"access\")\n204             .count()\n",
+      "col_offset": 49,
+      "end_col_offset": 57,
+      "filename": "app/crud\\crud_token_blacklist.py",
+      "issue_confidence": "MEDIUM",
+      "issue_cwe": {
+        "id": 259,
+        "link": "https://cwe.mitre.org/data/definitions/259.html"
+      },
+      "issue_severity": "LOW",
+      "issue_text": "Possible hardcoded password: 'access'",
+      "line_number": 203,
+      "line_range": [
+        203
+      ],
+      "more_info": "https://bandit.readthedocs.io/en/1.8.6/plugins/b105_hardcoded_password_string.html",
+      "test_id": "B105",
+      "test_name": "hardcoded_password_string"
+    },
+    {
+      "code": "208             db.query(TokenBlacklist)\n209             .filter(TokenBlacklist.token_type == \"refresh\")\n210             .count()\n",
+      "col_offset": 49,
+      "end_col_offset": 58,
+      "filename": "app/crud\\crud_token_blacklist.py",
+      "issue_confidence": "MEDIUM",
+      "issue_cwe": {
+        "id": 259,
+        "link": "https://cwe.mitre.org/data/definitions/259.html"
+      },
+      "issue_severity": "LOW",
+      "issue_text": "Possible hardcoded password: 'refresh'",
+      "line_number": 209,
+      "line_range": [
+        209
+      ],
+      "more_info": "https://bandit.readthedocs.io/en/1.8.6/plugins/b105_hardcoded_password_string.html",
+      "test_id": "B105",
+      "test_name": "hardcoded_password_string"
+    },
+    {
+      "code": "373             for table in tables:\n374                 count_sql = f\"SELECT COUNT(*) as count FROM {table}\"\n375                 result = self.db.execute(text(count_sql)).fetchone()\n",
+      "col_offset": 30,
+      "end_col_offset": 60,
+      "filename": "app/db\\permission_indexes.py",
+      "issue_confidence": "LOW",
+      "issue_cwe": {
+        "id": 89,
+        "link": "https://cwe.mitre.org/data/definitions/89.html"
+      },
+      "issue_severity": "MEDIUM",
+      "issue_text": "Possible SQL injection vector through string-based query construction.",
+      "line_number": 374,
+      "line_range": [
+        374
+      ],
+      "more_info": "https://bandit.readthedocs.io/en/1.8.6/plugins/b608_hardcoded_sql_expressions.html",
+      "test_id": "B608",
+      "test_name": "hardcoded_sql_expressions"
+    },
+    {
+      "code": "357     uvicorn.run(\n358         \"app.main:app\", host=\"0.0.0.0\", port=8000, reload=True, log_level=\"info\"\n359     )\n",
       "col_offset": 29,
       "end_col_offset": 38,
       "filename": "app/main.py",
@@ -935,16 +2267,16 @@
       },
       "issue_severity": "MEDIUM",
       "issue_text": "Possible binding to all interfaces.",
-      "line_number": 212,
+      "line_number": 358,
       "line_range": [
-        212
+        358
       ],
       "more_info": "https://bandit.readthedocs.io/en/1.8.6/plugins/b104_hardcoded_bind_all_interfaces.html",
       "test_id": "B104",
       "test_name": "hardcoded_bind_all_interfaces"
     },
     {
-      "code": "7 import json\n8 import pickle\n9 from typing import Any, Dict, Optional\n",
+      "code": "11 import logging\n12 import pickle\n13 from contextlib import asynccontextmanager\n",
       "col_offset": 0,
       "end_col_offset": 13,
       "filename": "app/services\\cache_service.py",
@@ -955,18 +2287,18 @@
       },
       "issue_severity": "LOW",
       "issue_text": "Consider possible security implications associated with pickle module.",
-      "line_number": 8,
+      "line_number": 12,
       "line_range": [
-        8
+        12
       ],
       "more_info": "https://bandit.readthedocs.io/en/1.8.6/blacklists/blacklist_imports.html#b403-import-pickle",
       "test_id": "B403",
       "test_name": "blacklist"
     },
     {
-      "code": "121                 try:\n122                     return pickle.loads(bytes.fromhex(pickle_value))\n123                 except Exception as e:\n",
-      "col_offset": 27,
-      "end_col_offset": 68,
+      "code": "407                 decompressed_data = gzip.decompress(data)\n408                 return pickle.loads(decompressed_data)\n409             else:\n",
+      "col_offset": 23,
+      "end_col_offset": 54,
       "filename": "app/services\\cache_service.py",
       "issue_confidence": "HIGH",
       "issue_cwe": {
@@ -975,9 +2307,89 @@
       },
       "issue_severity": "MEDIUM",
       "issue_text": "Pickle and modules that wrap it can be unsafe when used to deserialize untrusted data, possible security issue.",
-      "line_number": 122,
+      "line_number": 408,
       "line_range": [
-        122
+        408
+      ],
+      "more_info": "https://bandit.readthedocs.io/en/1.8.6/blacklists/blacklist_calls.html#b301-pickle",
+      "test_id": "B301",
+      "test_name": "blacklist"
+    },
+    {
+      "code": "410                 # \u76f4\u63a5\u53cd\u5e8f\u5217\u5316\n411                 return pickle.loads(data)\n412         except Exception as e:\n",
+      "col_offset": 23,
+      "end_col_offset": 41,
+      "filename": "app/services\\cache_service.py",
+      "issue_confidence": "HIGH",
+      "issue_cwe": {
+        "id": 502,
+        "link": "https://cwe.mitre.org/data/definitions/502.html"
+      },
+      "issue_severity": "MEDIUM",
+      "issue_text": "Pickle and modules that wrap it can be unsafe when used to deserialize untrusted data, possible security issue.",
+      "line_number": 411,
+      "line_range": [
+        411
+      ],
+      "more_info": "https://bandit.readthedocs.io/en/1.8.6/blacklists/blacklist_calls.html#b301-pickle",
+      "test_id": "B301",
+      "test_name": "blacklist"
+    },
+    {
+      "code": "11 import logging\n12 import pickle\n13 import threading\n",
+      "col_offset": 0,
+      "end_col_offset": 13,
+      "filename": "app/services\\multi_level_cache.py",
+      "issue_confidence": "HIGH",
+      "issue_cwe": {
+        "id": 502,
+        "link": "https://cwe.mitre.org/data/definitions/502.html"
+      },
+      "issue_severity": "LOW",
+      "issue_text": "Consider possible security implications associated with pickle module.",
+      "line_number": 12,
+      "line_range": [
+        12
+      ],
+      "more_info": "https://bandit.readthedocs.io/en/1.8.6/blacklists/blacklist_imports.html#b403-import-pickle",
+      "test_id": "B403",
+      "test_name": "blacklist"
+    },
+    {
+      "code": "366         elif strategy.serialization == \"pickle\":\n367             return pickle.loads(data)\n368         else:\n",
+      "col_offset": 19,
+      "end_col_offset": 37,
+      "filename": "app/services\\multi_level_cache.py",
+      "issue_confidence": "HIGH",
+      "issue_cwe": {
+        "id": 502,
+        "link": "https://cwe.mitre.org/data/definitions/502.html"
+      },
+      "issue_severity": "MEDIUM",
+      "issue_text": "Pickle and modules that wrap it can be unsafe when used to deserialize untrusted data, possible security issue.",
+      "line_number": 367,
+      "line_range": [
+        367
+      ],
+      "more_info": "https://bandit.readthedocs.io/en/1.8.6/blacklists/blacklist_calls.html#b301-pickle",
+      "test_id": "B301",
+      "test_name": "blacklist"
+    },
+    {
+      "code": "369             # \u9ed8\u8ba4\u4f7f\u7528pickle\n370             return pickle.loads(data)\n371 \n",
+      "col_offset": 19,
+      "end_col_offset": 37,
+      "filename": "app/services\\multi_level_cache.py",
+      "issue_confidence": "HIGH",
+      "issue_cwe": {
+        "id": 502,
+        "link": "https://cwe.mitre.org/data/definitions/502.html"
+      },
+      "issue_severity": "MEDIUM",
+      "issue_text": "Pickle and modules that wrap it can be unsafe when used to deserialize untrusted data, possible security issue.",
+      "line_number": 370,
+      "line_range": [
+        370
       ],
       "more_info": "https://bandit.readthedocs.io/en/1.8.6/blacklists/blacklist_calls.html#b301-pickle",
       "test_id": "B301",

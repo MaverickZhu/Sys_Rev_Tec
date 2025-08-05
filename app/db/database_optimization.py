@@ -1,4 +1,3 @@
-from fastapi import status
 from sqlalchemy import text
 
 from app.db.session import engine
@@ -21,11 +20,12 @@ def create_database_indexes():
         "CREATE INDEX IF NOT EXISTS idx_projects_category ON projects(project_category);",
         "CREATE INDEX IF NOT EXISTS idx_projects_owner_id ON projects(owner_id);",
         "CREATE INDEX IF NOT EXISTS idx_projects_created_at ON projects(created_at);",
-        "CREATE INDEX IF NOT EXISTS idx_projects_budget_amount ON projects(budget_amount);",
+        "CREATE INDEX IF NOT EXISTS idx_projects_budget ON projects(budget);"
         "CREATE INDEX IF NOT EXISTS idx_projects_procurement_method ON projects(procurement_method);",
         "CREATE INDEX IF NOT EXISTS idx_projects_review_stage ON projects(review_stage);",
         "CREATE INDEX IF NOT EXISTS idx_projects_risk_level ON projects(risk_level);",
-        "CREATE INDEX IF NOT EXISTS idx_projects_tags ON projects USING gin(tags);",  # GIN索引用于JSON数组搜索
+        # GIN索引用于JSON数组搜索
+        "CREATE INDEX IF NOT EXISTS idx_projects_tags ON projects USING gin(tags);",
         # 文档表索引
         "CREATE INDEX IF NOT EXISTS idx_documents_project_id ON documents(project_id);",
         "CREATE INDEX IF NOT EXISTS idx_documents_uploader_id ON documents(uploader_id);",

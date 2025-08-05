@@ -16,29 +16,29 @@ class Settings(BaseSettings):
     # 基础配置
     DEBUG: bool = Field(default=False, env="DEBUG")
     ENVIRONMENT: str = Field(default="production", env="ENVIRONMENT")
-    SECRET_KEY: str = Field(default="your-secret-key-here", env="SECRET_KEY")
+    SECRET_KEY: str = Field(env="SECRET_KEY")  # 必须通过环境变量设置，不提供默认值
 
     # 服务配置
-    AI_SERVICE_HOST: str = Field(default="0.0.0.0", env="AI_SERVICE_HOST")
+    AI_SERVICE_HOST: str = Field(default="127.0.0.1", env="AI_SERVICE_HOST")  # 默认只绑定本地接口
     AI_SERVICE_PORT: int = Field(default=8001, env="AI_SERVICE_PORT")
     AI_SERVICE_WORKERS: int = Field(default=1, env="AI_SERVICE_WORKERS")
 
     # 数据库配置
     DATABASE_URL: str = Field(
-        default="postgresql://postgres:sys_rev_password@localhost:5432/sys_rev_tech",
+        default="postgresql://sys_rev_user:CHANGE_PASSWORD@127.0.0.1:5432/sys_rev_tec_prod",
         env="DATABASE_URL",
     )
     DATABASE_POOL_SIZE: int = Field(default=10, env="DATABASE_POOL_SIZE")
     DATABASE_MAX_OVERFLOW: int = Field(default=20, env="DATABASE_MAX_OVERFLOW")
 
     # Redis配置
-    REDIS_URL: str = Field(default="redis://:redis_password@localhost:6379/0", env="REDIS_URL")
+    REDIS_URL: str = Field(default="redis://:redis_password@redis:6379/0", env="REDIS_URL")
     REDIS_POOL_SIZE: int = Field(default=10, env="REDIS_POOL_SIZE")
     REDIS_TIMEOUT: int = Field(default=5, env="REDIS_TIMEOUT")
 
     # Ollama配置
     OLLAMA_BASE_URL: str = Field(
-        default="http://localhost:11434", env="OLLAMA_BASE_URL"
+        default="http://localhost:11435", env="OLLAMA_BASE_URL"
     )
     OLLAMA_TIMEOUT: int = Field(default=30, env="OLLAMA_TIMEOUT")
     OLLAMA_MAX_RETRIES: int = Field(default=3, env="OLLAMA_MAX_RETRIES")
@@ -107,7 +107,7 @@ class Settings(BaseSettings):
         default=["http://localhost:3000", "http://localhost:8000"], env="CORS_ORIGINS"
     )
     ALLOWED_HOSTS: List[str] = Field(
-        default=["localhost", "127.0.0.1", "0.0.0.0"], env="ALLOWED_HOSTS"
+        default=["localhost", "127.0.0.1"], env="ALLOWED_HOSTS"  # 移除0.0.0.0以提高安全性
     )
     API_KEY_HEADER: str = Field(default="X-API-Key", env="API_KEY_HEADER")
     RATE_LIMIT_REQUESTS: int = Field(default=100, env="RATE_LIMIT_REQUESTS")

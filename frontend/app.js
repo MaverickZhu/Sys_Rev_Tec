@@ -5,7 +5,7 @@
 
 // 应用配置
 const CONFIG = {
-    API_BASE: 'http://localhost:8001',
+    API_BASE: 'http://localhost:8000',
     REFRESH_INTERVAL: 30000, // 30秒
     NOTIFICATION_TIMEOUT: 5000, // 5秒
     MAX_RETRIES: 3,

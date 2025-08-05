@@ -1,0 +1,22 @@
+{
+  "documentation_update_report": {
+    "summary": {
+      "total_documents": 400,
+      "updated_documents": 2,
+      "new_documents": 1,
+      "issues_found": 375,
+      "issues_fixed": 0,
+      "completeness_score": 84.06,
+      "timestamp": "2025-08-04T12:04:50.522974"
+    },
+    "recommendations": [
+      "有5个文档质量较低，建议改进",
+      "建议定期更新文档内容",
+      "建议添加更多代码示例",
+      "建议完善API文档的错误码说明",
+      "建议添加常见问题解答(FAQ)部分",
+      "建议增加部署和运维相关文档"
+    ],
+    "status": "completed"
+  }
+}

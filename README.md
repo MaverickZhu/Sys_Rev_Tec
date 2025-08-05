@@ -10,6 +10,63 @@
 
 ## ✨ 特性
 
+
+## 🚀 快速开始
+
+### 环境要求
+
+- Python 3.8+
+- PostgreSQL 12+
+- Redis 6+
+- Node.js 16+ (前端开发)
+
+### 安装步骤
+
+1. **克隆项目**
+```bash
+git clone <repository-url>
+cd Sys_Rev_Tec
+```
+
+2. **安装依赖**
+```bash
+# 后端依赖
+pip install -r requirements.txt
+
+# AI服务依赖
+pip install -r requirements-ai.txt
+
+# 前端依赖
+cd frontend
+npm install
+```
+
+3. **配置环境**
+```bash
+cp .env.example .env
+# 编辑 .env 文件配置数据库等信息
+```
+
+4. **初始化数据库**
+```bash
+alembic upgrade head
+python scripts/init_db.py
+```
+
+5. **启动服务**
+```bash
+# 启动主应用
+uvicorn app.main:app --host 0.0.0.0 --port 8000
+
+# 启动AI服务
+cd ai_service
+uvicorn main:app --host 0.0.0.0 --port 8001
+
+# 启动前端（开发模式）
+cd frontend
+npm run dev
+```
+
 - 🚀 **高性能**: 基于 FastAPI 的异步架构
 - 📄 **文档管理**: 支持多格式文档上传、存储和管理
 - 🔍 **OCR 识别**: 集成 PaddleOCR 进行文档内容提取
@@ -81,7 +138,15 @@ alembic upgrade head
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-## 📁 项目结构
+
+## 📚 文档
+
+- [API文档](http://localhost:8000/docs) - Swagger UI
+- [用户指南](docs/USER_GUIDE.md) - 详细使用说明
+- [部署指南](README_Docker.md) - Docker部署说明
+- [开发文档](DEVELOPMENT.md) - 开发环境配置
+
+
 
 ```
 .

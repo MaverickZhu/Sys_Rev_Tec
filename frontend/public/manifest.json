@@ -1,0 +1,16 @@
+{
+  "name": "系统审查技术平台",
+  "short_name": "审查平台",
+  "description": "系统审查技术平台前端应用",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1890ff",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    }
+  ]
+}

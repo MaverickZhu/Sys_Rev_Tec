@@ -14,6 +14,7 @@ from fastapi import (
     UploadFile,
     status,
 )
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
@@ -21,7 +22,6 @@ from app import crud
 from app.api import deps
 from app.core.config import settings
 from app.models.document import Document
-from app.models.project import Project
 from app.schemas.response import ResponseModel
 from app.services.cache_service import cache_service
 from app.utils.cache_decorator import fastapi_cache_medium, fastapi_cache_short
@@ -340,7 +340,7 @@ def batch_upload_documents(
     summary="获取项目文档列表",
     description="获取指定项目的所有文档列表，支持分页和筛选",
 )
-@fastapi_cache_medium
+# @fastapi_cache_medium  # 暂时禁用缓存以避免协程对象问题
 def get_project_documents(
     project_id: int,
     skip: int = 0,
@@ -423,7 +423,7 @@ def get_project_documents(
     summary="搜索文档",
     description="根据关键词搜索文档，支持按文件名、摘要、文本内容等多字段搜索",
 )
-@fastapi_cache_short
+# @fastapi_cache_short  # 暂时禁用缓存以避免协程对象问题
 def search_documents(
     q: Optional[str] = None,
     skip: int = 0,
@@ -513,7 +513,7 @@ def search_documents(
     summary="获取文档详细信息",
     description="根据文档ID获取文档的详细信息",
 )
-@fastapi_cache_medium
+# @fastapi_cache_medium  # 暂时禁用缓存以避免协程对象问题
 def get_document(
     document_id: int,
     db: Session = Depends(deps.get_db),
@@ -697,4 +697,119 @@ def delete_document(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to delete document: {str(e)}",
+        )
+
+
+@router.get(
+    "/{document_id}/download",
+    summary="下载文档",
+    description="根据文档ID下载文档文件",
+)
+def download_document(
+    document_id: int,
+    db: Session = Depends(deps.get_db),
+) -> Any:
+    """
+    下载文档
+
+    - **document_id**: 文档ID
+    - **返回**: 文档文件
+    - **权限**: 需要用户登录认证
+    """
+    try:
+        document = db.query(Document).filter(Document.id == document_id).first()
+        if not document:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Document not found"
+            )
+
+        file_path = Path(document.file_path)
+        if not file_path.exists():
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="File not found on disk"
+            )
+
+        return FileResponse(
+            path=str(file_path),
+            filename=document.original_filename or document.filename,
+            media_type=document.mime_type or 'application/octet-stream'
+        )
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to download document: {str(e)}",
+        )
+
+
+@router.post(
+    "/batch-download",
+    response_model=ResponseModel,
+    summary="批量下载文档",
+    description="根据文档ID列表批量下载文档，返回压缩包",
+)
+def batch_download_documents(
+    document_ids: List[int],
+    db: Session = Depends(deps.get_db),
+) -> Any:
+    """
+    批量下载文档
+
+    - **document_ids**: 文档ID列表
+    - **返回**: 包含所有文档的压缩包
+    - **权限**: 需要用户登录认证
+    """
+    import zipfile
+    import tempfile
+    
+    if not document_ids or len(document_ids) == 0:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="At least one document ID is required"
+        )
+    
+    if len(document_ids) > 50:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Maximum 50 documents allowed for batch download"
+        )
+    
+    try:
+        # 查询所有文档
+        documents = db.query(Document).filter(Document.id.in_(document_ids)).all()
+        
+        if not documents:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="No documents found"
+            )
+        
+        # 创建临时压缩文件
+        temp_zip = tempfile.NamedTemporaryFile(delete=False, suffix='.zip')
+        
+        with zipfile.ZipFile(temp_zip.name, 'w', zipfile.ZIP_DEFLATED) as zip_file:
+            for doc in documents:
+                file_path = Path(doc.file_path)
+                if file_path.exists():
+                    # 使用原始文件名添加到压缩包
+                    zip_file.write(
+                        file_path, 
+                        doc.original_filename or doc.filename
+                    )
+        
+        # 返回压缩文件
+        return FileResponse(
+            path=temp_zip.name,
+            filename=f"documents_{datetime.now().strftime('%Y%m%d_%H%M%S')}.zip",
+            media_type='application/zip'
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to batch download documents: {str(e)}",
         )

@@ -1,10 +1,9 @@
 from datetime import datetime
 from typing import Any, Dict, List, Optional
 
-from fastapi import APIRouter, HTTPException, Query, Request, status
+from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel, Field
 
-from app.core.error_tracking import track_error
 from app.core.logging import get_structured_logger
 
 """

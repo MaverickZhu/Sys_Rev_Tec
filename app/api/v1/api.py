@@ -1,7 +1,25 @@
 from fastapi import APIRouter
 
-from app.api.v1 import cache, cache_optimization, health, ocr, performance, database_optimization, system_maintenance
-from app.api.v1.endpoints import auth, documents, oauth2, projects, token_blacklist, users, vector, cache_management, permission_optimization, permission_config, permission_query_optimization
+from app.api.v1 import (
+    cache,
+    cache_optimization,
+    database_optimization,
+    health,
+    ocr,
+    performance,
+    system_maintenance,
+)
+from app.api.v1.endpoints import (
+    auth,
+    cache_management,
+    documents,
+    oauth2,
+    projects,
+    security_monitor,
+    token_blacklist,
+    users,
+    vector,
+)
 
 api_router = APIRouter()
 
@@ -185,46 +203,7 @@ api_router.include_router(
 )
 
 
-# 权限查询优化相关路由
 
-api_router.include_router(
-    permission_optimization.router,
-    prefix="/permission-optimization",
-    tags=["🚀 权限查询优化"],
-    responses={
-        404: {"description": "用户或权限不存在"},
-        500: {"description": "权限查询优化失败"},
-        403: {"description": "权限不足"},
-    },
-)
-
-
-# 权限配置管理相关路由
-
-api_router.include_router(
-    permission_config.router,
-    prefix="/permission-config",
-    tags=["⚙️ 权限配置管理"],
-    responses={
-        400: {"description": "配置参数错误"},
-        500: {"description": "配置管理失败"},
-        403: {"description": "权限不足"},
-    },
-)
-
-
-# 权限查询性能优化相关路由
-
-api_router.include_router(
-    permission_query_optimization.router,
-    prefix="/permission-query-optimization",
-    tags=["🚀 权限查询性能优化"],
-    responses={
-        400: {"description": "请求参数错误"},
-        500: {"description": "查询优化失败"},
-        403: {"description": "权限不足"},
-    },
-)
 
 
 # 系统维护相关路由
@@ -236,6 +215,20 @@ api_router.include_router(
     responses={
         400: {"description": "请求参数错误"},
         500: {"description": "系统维护操作失败"},
+        403: {"description": "权限不足"},
+    },
+)
+
+
+# 安全监控相关路由
+
+api_router.include_router(
+    security_monitor.router,
+    prefix="/security-monitor",
+    tags=["🔒 安全监控"],
+    responses={
+        400: {"description": "请求参数错误"},
+        500: {"description": "安全监控操作失败"},
         403: {"description": "权限不足"},
     },
 )

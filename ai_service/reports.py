@@ -51,7 +51,7 @@ class AnomalyDetector(BaseModel):
     """异常检测器"""
     
     detector_id: str
-    type: str
+    detector_type: str
     patterns: List[str]
     threshold: float
     description: str
@@ -152,7 +152,7 @@ class ReportsService:
         return [
             AnomalyDetector(
                 detector_id="TIMELINE_ANOMALY",
-                type="timeline",
+                detector_type="timeline",
                 patterns=[r"延期", r"滞后", r"超时", r"进度.*缓慢"],
                 threshold=0.7,
                 description="时间线异常检测",
@@ -160,7 +160,7 @@ class ReportsService:
             ),
             AnomalyDetector(
                 detector_id="BUDGET_ANOMALY",
-                type="financial",
+                detector_type="financial",
                 patterns=[r"超支", r"预算.*超出", r"成本.*增加"],
                 threshold=0.8,
                 description="预算异常检测",

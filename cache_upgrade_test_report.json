@@ -1,0 +1,49 @@
+{
+  "timestamp": "2025-08-04T11:53:41.840883",
+  "tests": [
+    {
+      "test_name": "cache_health_check",
+      "status": "failed",
+      "duration": 0.01,
+      "details": {
+        "overall_status": "warning",
+        "health_score": 57.14,
+        "total_checks": 7,
+        "healthy_checks": 4,
+        "average_response_time": 0.96
+      },
+      "message": "健康检查完成，得分: 57.1%"
+    },
+    {
+      "test_name": "cache_functionality",
+      "status": "passed",
+      "duration": 0.003,
+      "details": {
+        "total_tests": 10,
+        "passed_tests": 10,
+        "success_rate": 100.0
+      },
+      "message": "功能测试完成 - 成功率: 100.0%"
+    },
+    {
+      "test_name": "cache_performance",
+      "status": "passed",
+      "duration": 0.046,
+      "details": {
+        "write_ops_per_sec": 2166.29,
+        "read_ops_per_sec": 0,
+        "cache_hit_rate": 100.0,
+        "write_success_rate": 100.0,
+        "read_success_rate": 100.0,
+        "performance_score": 75
+      },
+      "message": "性能测试完成 - 得分: 75%"
+    }
+  ],
+  "summary": {
+    "total_tests": 3,
+    "passed": 2,
+    "failed": 1,
+    "success_rate": 66.67
+  }
+}

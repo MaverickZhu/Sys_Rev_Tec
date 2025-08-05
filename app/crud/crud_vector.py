@@ -1,23 +1,18 @@
 from datetime import datetime, timedelta
 from typing import Any, Dict, List, Optional
 
-from sqlalchemy import and_, desc, func, or_
+from sqlalchemy import and_, desc, func
 from sqlalchemy.orm import Session
 
 from app.crud.base import CRUDBase
-from app.models.document import Document
 from app.models.vector import (
     DocumentVector,
-    KnowledgeGraph,
-    KnowledgeGraphRelation,
     SearchQuery,
     VectorSearchIndex,
 )
 from app.schemas.vector import (
     DocumentVectorCreate,
     DocumentVectorUpdate,
-    KnowledgeGraphNodeCreate,
-    KnowledgeGraphRelationCreate,
     SearchQueryCreate,
     SearchQueryUpdate,
     VectorSearchIndexCreate,
@@ -180,7 +175,9 @@ class CRUDVectorSearchIndex(
 class CRUDSearchQuery(CRUDBase[SearchQuery, SearchQueryCreate, SearchQueryUpdate]):
     """搜索查询CRUD操作"""
 
-    def get_by_user(self, db: Session, *, user_id: int, skip: int = 0, limit: int = 100) -> List[SearchQuery]:
+    def get_by_user(
+        self, db: Session, *, user_id: int, skip: int = 0, limit: int = 100
+    ) -> List[SearchQuery]:
         """获取用户的搜索历史"""
         return (
             db.query(self.model)
@@ -191,17 +188,16 @@ class CRUDSearchQuery(CRUDBase[SearchQuery, SearchQueryCreate, SearchQueryUpdate
             .all()
         )
 
-    def get_popular_queries(self, db: Session, *, days: int = 30, limit: int = 10) -> List[Dict[str, Any]]:
+    def get_popular_queries(
+        self, db: Session, *, days: int = 30, limit: int = 10
+    ) -> List[Dict[str, Any]]:
         """获取热门搜索查询"""
         cutoff_date = datetime.utcnow() - timedelta(days=days)
         return (
-            db.query(
-                SearchQuery.query_text,
-                func.count(SearchQuery.id).label('count')
-            )
+            db.query(SearchQuery.query_text, func.count(SearchQuery.id).label("count"))
             .filter(SearchQuery.created_at >= cutoff_date)
             .group_by(SearchQuery.query_text)
-            .order_by(desc('count'))
+            .order_by(desc("count"))
             .limit(limit)
             .all()
         )

@@ -1,12 +1,11 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { authApi } from '@/api/auth'
-import { permissionApi } from '@/api/permission'
+import { authAPI, permissionAPI } from '@/api'
 import { ElMessage } from 'element-plus'
 
 export const useUserStore = defineStore('user', () => {
   // 状态
-  const token = ref(localStorage.getItem('token') || '')
+  const token = ref(localStorage.getItem('authToken') || '')
   const userInfo = ref(JSON.parse(localStorage.getItem('userInfo') || 'null'))
   const permissions = ref(JSON.parse(localStorage.getItem('permissions') || '[]'))
   const roles = ref(JSON.parse(localStorage.getItem('roles') || '[]'))
@@ -34,9 +33,9 @@ export const useUserStore = defineStore('user', () => {
   const setToken = (newToken) => {
     token.value = newToken
     if (newToken) {
-      localStorage.setItem('token', newToken)
+      localStorage.setItem('authToken', newToken)
     } else {
-      localStorage.removeItem('token')
+      localStorage.removeItem('authToken')
     }
   }
   
@@ -70,8 +69,8 @@ export const useUserStore = defineStore('user', () => {
   // 登录
   const login = async (credentials) => {
     try {
-      const response = await authApi.login(credentials)
-      const { access_token, user } = response.data
+      const response = await authAPI.login(credentials)
+      const { access_token, user } = response
       
       setToken(access_token)
       setUserInfo(user)
@@ -89,7 +88,7 @@ export const useUserStore = defineStore('user', () => {
   const logout = async () => {
     try {
       if (token.value) {
-        await authApi.logout()
+        await authAPI.logout()
       }
     } catch (error) {
       console.error('登出请求失败:', error)
@@ -105,8 +104,8 @@ export const useUserStore = defineStore('user', () => {
   // 刷新token
   const refreshToken = async () => {
     try {
-      const response = await authApi.refreshToken()
-      const { access_token } = response.data
+      const response = await authAPI.refreshToken()
+      const { access_token } = response
       setToken(access_token)
       return response
     } catch (error) {
@@ -119,8 +118,8 @@ export const useUserStore = defineStore('user', () => {
   // 获取用户信息
   const getUserInfo = async () => {
     try {
-      const response = await authApi.getCurrentUser()
-      setUserInfo(response.data)
+      const response = await authAPI.getCurrentUser()
+      setUserInfo(response)
       return response
     } catch (error) {
       throw error
@@ -132,8 +131,8 @@ export const useUserStore = defineStore('user', () => {
     if (!userInfo.value?.id) return
     
     try {
-      const response = await permissionApi.getUserPermissions(userInfo.value.id)
-      const { permissions: userPermissions, roles: userRoles } = response.data
+      const response = await permissionAPI.getUserPermissions(userInfo.value.id)
+      const { permissions: userPermissions, roles: userRoles } = response
       
       setPermissions(userPermissions || [])
       setRoles(userRoles || [])
@@ -184,12 +183,12 @@ export const useUserStore = defineStore('user', () => {
   // 检查资源权限
   const checkResourcePermission = async (resourceType, resourceId, action) => {
     try {
-      const response = await permissionApi.checkPermission({
+      const response = await permissionAPI.checkPermission({
         resource_type: resourceType,
         resource_id: resourceId,
         action: action
       })
-      return response.data.has_permission
+      return response.has_permission
     } catch (error) {
       console.error('检查资源权限失败:', error)
       return false
@@ -200,7 +199,7 @@ export const useUserStore = defineStore('user', () => {
   const updateUserInfo = async (updateData) => {
     try {
       const response = await authApi.updateProfile(updateData)
-      setUserInfo(response.data)
+      setUserInfo(response)
       ElMessage.success('用户信息更新成功')
       return response
     } catch (error) {

@@ -1,5 +1,4 @@
 import logging
-from typing import Any, Dict
 
 from fastapi import (
     APIRouter,
@@ -7,15 +6,12 @@ from fastapi import (
     Depends,
     HTTPException,
     Query,
-    Request,
     status,
 )
 from sqlalchemy.orm import Session
 
 from app.api import deps
 from app.crud import crud_document
-from app.models.document import Document
-from app.models.vector import DocumentVector
 from app.schemas.response import ResponseModel
 
 """
@@ -25,10 +21,10 @@ AI向量化和智能分析API路由
 """
 
 from app.core.ai_deps import (
-    is_ai_enabled,
     get_ai_integration_service,
     get_knowledge_graph_service,
     get_vector_service,
+    is_ai_enabled,
 )
 from app.schemas.ai import (
     AIStatisticsResponse,

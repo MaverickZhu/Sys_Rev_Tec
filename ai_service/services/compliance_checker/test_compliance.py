@@ -108,9 +108,12 @@ class TestComplianceRuleEngine:
     def test_load_default_rules(self):
         """测试加载默认规则"""
         rules = self.engine.get_rules()
-        assert len(rules) > 0
-        assert any(rule.rule_id == "REG_001" for rule in rules)
-        assert any(rule.rule_id == "REG_002" for rule in rules)
+        if len(rules) == 0:
+            raise AssertionError("规则列表不应为空")
+        if not any(rule.rule_id == "REG_001" for rule in rules):
+            raise AssertionError("应包含REG_001规则")
+        if not any(rule.rule_id == "REG_002" for rule in rules):
+            raise AssertionError("应包含REG_002规则")
     
     def test_add_custom_rule(self):
         """测试添加自定义规则"""
@@ -119,8 +122,10 @@ class TestComplianceRuleEngine:
             self.engine.add_rule(rule)
         
         rules = self.engine.get_rules()
-        assert any(rule.rule_id == "CUSTOM_001" for rule in rules)
-        assert any(rule.rule_id == "CUSTOM_002" for rule in rules)
+        if not any(rule.rule_id == "CUSTOM_001" for rule in rules):
+            raise AssertionError("应包含CUSTOM_001规则")
+        if not any(rule.rule_id == "CUSTOM_002" for rule in rules):
+            raise AssertionError("应包含CUSTOM_002规则")
     
     def test_check_document_compliance(self):
         """测试文档合规性检查"""
@@ -130,10 +135,14 @@ class TestComplianceRuleEngine:
         metadata = {k: v for k, v in compliant_doc.items() if k != "content"}
         result = self.engine.check_document_compliance(content, metadata)
         
-        assert isinstance(result, DocumentCompliance)
-        assert result.document_id == "doc_001"
-        assert result.compliance_score >= 0  # 应该有评分
-        assert isinstance(result.overall_compliance, ComplianceLevel)
+        if not isinstance(result, DocumentCompliance):
+            raise AssertionError("结果应为DocumentCompliance类型")
+        if result.document_id != "doc_001":
+            raise AssertionError(f"文档ID应为doc_001，实际为{result.document_id}")
+        if result.compliance_score < 0:
+            raise AssertionError("合规评分应大于等于0")
+        if not isinstance(result.overall_compliance, ComplianceLevel):
+            raise AssertionError("整体合规等级应为ComplianceLevel类型")
     
     def test_check_non_compliant_document(self):
         """测试不合规文档检查"""
@@ -143,15 +152,21 @@ class TestComplianceRuleEngine:
         metadata = {k: v for k, v in non_compliant_doc.items() if k != "content"}
         result = self.engine.check_document_compliance(content, metadata)
         
-        assert isinstance(result, DocumentCompliance)
-        assert result.document_id == "doc_004"
-        assert isinstance(result.compliance_score, (int, float))
-        assert len(result.rule_results) > 0
+        if not isinstance(result, DocumentCompliance):
+            raise AssertionError("结果应为DocumentCompliance类型")
+        if result.document_id != "doc_004":
+            raise AssertionError(f"文档ID应为doc_004，实际为{result.document_id}")
+        if not isinstance(result.compliance_score, (int, float)):
+            raise AssertionError("合规评分应为数值类型")
+        if len(result.rule_results) == 0:
+            raise AssertionError("规则结果不应为空")
         
         # 检查是否检测到敏感数据
         sensitive_violations = [r for r in result.rule_results if r.rule_id == "REG_002"]
-        assert len(sensitive_violations) > 0
-        assert not sensitive_violations[0].is_compliant
+        if len(sensitive_violations) == 0:
+            raise AssertionError("应检测到敏感数据违规")
+        if sensitive_violations[0].is_compliant:
+            raise AssertionError("敏感数据检查应不合规")
     
     def test_format_validation(self):
         """测试格式验证"""
@@ -162,8 +177,10 @@ class TestComplianceRuleEngine:
         result = self.engine.check_document_compliance(content, metadata)
         
         # 应该检测到格式问题
-        assert isinstance(result, DocumentCompliance)
-        assert len(result.rule_results) > 0
+        if not isinstance(result, DocumentCompliance):
+            raise AssertionError("结果应为DocumentCompliance类型")
+        if len(result.rule_results) == 0:
+            raise AssertionError("规则结果不应为空")
     
     def test_scoring_mechanism(self):
         """测试评分机制"""
@@ -173,10 +190,12 @@ class TestComplianceRuleEngine:
         result = self.engine.check_document_compliance(content, metadata)
         
         # 验证评分在有效范围内
-        assert 0 <= result.compliance_score <= 100
+        if not (0 <= result.compliance_score <= 100):
+            raise AssertionError(f"合规评分应在0-100范围内，实际为{result.compliance_score}")
         
         # 验证合规等级是有效的
-        assert isinstance(result.overall_compliance, ComplianceLevel)
+        if not isinstance(result.overall_compliance, ComplianceLevel):
+            raise AssertionError("整体合规等级应为ComplianceLevel类型")
 
 
 class TestComplianceAPI:
@@ -195,10 +214,14 @@ class TestComplianceAPI:
         metadata = {k: v for k, v in doc.items() if k != "content"}
         result = await self.api.check_document_compliance(content, metadata)
         
-        assert isinstance(result, DocumentCompliance)
-        assert result.document_id == doc["id"]
-        assert isinstance(result.compliance_score, (int, float))
-        assert isinstance(result.overall_compliance, ComplianceLevel)
+        if not isinstance(result, DocumentCompliance):
+            raise AssertionError("结果应为DocumentCompliance类型")
+        if result.document_id != doc["id"]:
+            raise AssertionError(f"文档ID不匹配，期望{doc['id']}，实际{result.document_id}")
+        if not isinstance(result.compliance_score, (int, float)):
+            raise AssertionError("合规评分应为数值类型")
+        if not isinstance(result.overall_compliance, ComplianceLevel):
+            raise AssertionError("整体合规等级应为ComplianceLevel类型")
     
     @pytest.mark.asyncio
     async def test_check_project_compliance(self):
@@ -206,11 +229,16 @@ class TestComplianceAPI:
         documents = self.test_documents[:3]  # 使用前3个文档
         result = await self.api.check_project_compliance(documents)
         
-        assert isinstance(result, ComplianceReport)
-        assert result.total_documents == 3
-        assert len(result.document_reports) == 3
-        assert 0 <= result.compliance_score <= 100
-        assert isinstance(result.recommendations, list)
+        if not isinstance(result, ComplianceReport):
+            raise AssertionError("结果应为ComplianceReport类型")
+        if result.total_documents != 3:
+            raise AssertionError(f"文档总数应为3，实际为{result.total_documents}")
+        if len(result.document_reports) != 3:
+            raise AssertionError(f"文档报告数量应为3，实际为{len(result.document_reports)}")
+        if not (0 <= result.compliance_score <= 100):
+            raise AssertionError(f"合规评分应在0-100范围内，实际为{result.compliance_score}")
+        if not isinstance(result.recommendations, list):
+            raise AssertionError("建议应为列表类型")
     
     @pytest.mark.asyncio
     async def test_validate_document_format(self):
@@ -219,16 +247,21 @@ class TestComplianceAPI:
         normal_doc = self.test_documents[0]
         metadata = {k: v for k, v in normal_doc.items() if k != "content"}
         result = await self.api.validate_document_format(metadata)
-        assert isinstance(result, dict)
-        assert "valid" in result
-        assert "issues" in result
+        if not isinstance(result, dict):
+            raise AssertionError("结果应为字典类型")
+        if "valid" not in result:
+            raise AssertionError("结果应包含valid字段")
+        if "issues" not in result:
+            raise AssertionError("结果应包含issues字段")
         
         # 测试格式错误文档
         error_doc = self.test_documents[4]
         metadata = {k: v for k, v in error_doc.items() if k != "content"}
         result = await self.api.validate_document_format(metadata)
-        assert isinstance(result, dict)
-        assert "valid" in result
+        if not isinstance(result, dict):
+            raise AssertionError("结果应为字典类型")
+        if "valid" not in result:
+            raise AssertionError("结果应包含valid字段")
     
     @pytest.mark.asyncio
     async def test_get_compliance_summary(self):
@@ -236,11 +269,16 @@ class TestComplianceAPI:
         project_id = "test_project_001"
         summary = await self.api.get_compliance_summary(project_id)
         
-        assert "project_id" in summary
-        assert "total_documents" in summary
-        assert "compliant_documents" in summary
-        assert "overall_compliance_score" in summary
-        assert summary["project_id"] == project_id
+        if "project_id" not in summary:
+            raise AssertionError("摘要应包含project_id字段")
+        if "total_documents" not in summary:
+            raise AssertionError("摘要应包含total_documents字段")
+        if "compliant_documents" not in summary:
+            raise AssertionError("摘要应包含compliant_documents字段")
+        if "overall_compliance_score" not in summary:
+            raise AssertionError("摘要应包含overall_compliance_score字段")
+        if summary["project_id"] != project_id:
+            raise AssertionError(f"项目ID不匹配，期望{project_id}，实际{summary['project_id']}")
 
 
 class TestPerformance:
@@ -273,8 +311,10 @@ class TestPerformance:
         
         # 处理时间应该在合理范围内（<5秒）
         processing_time = end_time - start_time
-        assert processing_time < 5.0
-        assert isinstance(result, DocumentCompliance)
+        if processing_time >= 5.0:
+            raise AssertionError(f"处理时间过长：{processing_time:.2f}秒，应小于5秒")
+        if not isinstance(result, DocumentCompliance):
+            raise AssertionError("结果应为DocumentCompliance类型")
     
     @pytest.mark.asyncio
     async def test_batch_processing_performance(self):
@@ -299,8 +339,10 @@ class TestPerformance:
         
         # 批量处理时间应该在合理范围内（<10秒）
         processing_time = end_time - start_time
-        assert processing_time < 10.0
-        assert result.total_documents == 50
+        if processing_time >= 10.0:
+            raise AssertionError(f"批量处理时间过长：{processing_time:.2f}秒，应小于10秒")
+        if result.total_documents != 50:
+            raise AssertionError(f"文档总数应为50，实际为{result.total_documents}")
 
 
 if __name__ == "__main__":

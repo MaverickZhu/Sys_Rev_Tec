@@ -99,7 +99,7 @@ async def lifespan(app: FastAPI):
         logger.info("✅ 缓存管理器初始化成功")
 
         # 初始化服务
-        vectorization_service = get_vectorization_service()
+        vectorization_service = await get_vectorization_service()
         search_service = get_search_service()
         reports_service = await get_reports_service()
 
@@ -298,7 +298,7 @@ if __name__ == "__main__":
     import uvicorn
 
     # 从环境变量获取配置
-    host = os.getenv("AI_SERVICE_HOST", "0.0.0.0")
+    host = os.getenv("AI_SERVICE_HOST", "127.0.0.1")  # 默认只绑定本地接口
     port = int(os.getenv("AI_SERVICE_PORT", "8001"))
     workers = int(os.getenv("AI_SERVICE_WORKERS", "1"))
 

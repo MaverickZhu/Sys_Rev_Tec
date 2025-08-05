@@ -5,11 +5,14 @@ from sqlalchemy import asc, desc, or_
 from sqlalchemy.orm import Session
 
 from app.crud.base import CRUDBase
-from app.models.project import Project, Issue, ProjectComparison
+from app.models.project import Issue, Project, ProjectComparison
 from app.schemas.project import (
-    ProjectCreate, ProjectUpdate,
-    IssueCreate, IssueUpdate,
-    ProjectComparisonCreate, ProjectComparisonUpdate
+    IssueCreate,
+    IssueUpdate,
+    ProjectComparisonCreate,
+    ProjectComparisonUpdate,
+    ProjectCreate,
+    ProjectUpdate,
 )
 
 
@@ -151,10 +154,10 @@ class CRUDProject(CRUDBase[Project, ProjectCreate, ProjectUpdate]):
 
         # 预算范围筛选
         if "min_budget" in filters and filters["min_budget"]:
-            query = query.filter(Project.budget_amount >= filters["min_budget"])
+            query = query.filter(Project.budget >= filters["min_budget"])
 
         if "max_budget" in filters and filters["max_budget"]:
-            query = query.filter(Project.budget_amount <= filters["max_budget"])
+            query = query.filter(Project.budget <= filters["max_budget"])
 
         # 排序
         if hasattr(Project, order_by):
@@ -265,7 +268,9 @@ class CRUDProject(CRUDBase[Project, ProjectCreate, ProjectUpdate]):
 
 # CRUD类定义
 class CRUDIssue(CRUDBase[Issue, IssueCreate, IssueUpdate]):
-    def get_by_project(self, db: Session, *, project_id: int, skip: int = 0, limit: int = 100) -> List[Issue]:
+    def get_by_project(
+        self, db: Session, *, project_id: int, skip: int = 0, limit: int = 100
+    ) -> List[Issue]:
         """根据项目ID获取问题列表"""
         return (
             db.query(Issue)
@@ -275,7 +280,9 @@ class CRUDIssue(CRUDBase[Issue, IssueCreate, IssueUpdate]):
             .all()
         )
 
-    def get_by_status(self, db: Session, *, status: str, skip: int = 0, limit: int = 100) -> List[Issue]:
+    def get_by_status(
+        self, db: Session, *, status: str, skip: int = 0, limit: int = 100
+    ) -> List[Issue]:
         """根据状态获取问题列表"""
         return (
             db.query(Issue)
@@ -286,8 +293,12 @@ class CRUDIssue(CRUDBase[Issue, IssueCreate, IssueUpdate]):
         )
 
 
-class CRUDProjectComparison(CRUDBase[ProjectComparison, ProjectComparisonCreate, ProjectComparisonUpdate]):
-    def get_by_project(self, db: Session, *, project_id: int, skip: int = 0, limit: int = 100) -> List[ProjectComparison]:
+class CRUDProjectComparison(
+    CRUDBase[ProjectComparison, ProjectComparisonCreate, ProjectComparisonUpdate]
+):
+    def get_by_project(
+        self, db: Session, *, project_id: int, skip: int = 0, limit: int = 100
+    ) -> List[ProjectComparison]:
         """根据项目ID获取比对记录"""
         return (
             db.query(ProjectComparison)
@@ -297,14 +308,18 @@ class CRUDProjectComparison(CRUDBase[ProjectComparison, ProjectComparisonCreate,
             .all()
         )
 
-    def get_comparisons_between_projects(self, db: Session, *, project_a_id: int, project_b_id: int) -> List[ProjectComparison]:
+    def get_comparisons_between_projects(
+        self, db: Session, *, project_a_id: int, project_b_id: int
+    ) -> List[ProjectComparison]:
         """获取两个项目之间的比对记录"""
         return (
             db.query(ProjectComparison)
             .filter(
                 or_(
-                    (ProjectComparison.project_id == project_a_id) & (ProjectComparison.compared_project_id == project_b_id),
-                    (ProjectComparison.project_id == project_b_id) & (ProjectComparison.compared_project_id == project_a_id)
+                    (ProjectComparison.project_id == project_a_id)
+                    & (ProjectComparison.compared_project_id == project_b_id),
+                    (ProjectComparison.project_id == project_b_id)
+                    & (ProjectComparison.compared_project_id == project_a_id),
                 )
             )
             .all()

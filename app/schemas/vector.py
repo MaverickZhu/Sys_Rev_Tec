@@ -98,8 +98,7 @@ class DocumentVectorInDB(DocumentVectorBase):
     created_at: datetime
     updated_at: Optional[datetime]
 
-    class Config:
-        from_attributes = True
+    model_config = {"from_attributes": True}
 
 
 class DocumentVector(DocumentVectorInDB):
@@ -143,8 +142,7 @@ class VectorSearchIndexInDB(VectorSearchIndexBase):
     created_at: datetime
     updated_at: Optional[datetime]
 
-    class Config:
-        from_attributes = True
+    model_config = {"from_attributes": True}
 
 
 class VectorSearchIndex(VectorSearchIndexInDB):
@@ -194,8 +192,7 @@ class SearchQueryInDB(SearchQueryBase):
     feedback: Optional[str]
     created_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = {"from_attributes": True}
 
 
 class SearchQuery(SearchQueryInDB):
@@ -317,8 +314,7 @@ class KnowledgeGraphNode(KnowledgeGraphNodeBase):
     created_at: datetime
     updated_at: Optional[datetime]
 
-    class Config:
-        from_attributes = True
+    model_config = {"from_attributes": True}
 
 
 class KnowledgeGraphRelationBase(BaseModel):
@@ -350,8 +346,7 @@ class KnowledgeGraphRelation(KnowledgeGraphRelationBase):
     created_at: datetime
     updated_at: Optional[datetime]
 
-    class Config:
-        from_attributes = True
+    model_config = {"from_attributes": True}
 
 
 # 文档智能分析相关模型
@@ -532,7 +527,7 @@ class EnhancedDocumentAnalysisResponse(BaseModel):
 class SearchHistoryItem(BaseModel):
     """搜索历史项"""
 
-    id: str = Field(description="搜索ID")
+    search_id: str = Field(description="搜索ID")
     query: str = Field(description="搜索查询")
     results_count: int = Field(description="结果数量")
     search_time: float = Field(description="搜索耗时")

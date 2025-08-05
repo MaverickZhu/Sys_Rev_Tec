@@ -6,17 +6,9 @@ AI集成服务模块
 
 import json
 import logging
-import re
 from datetime import datetime
 from typing import Any, Dict, List
 
-import aiohttp
-import numpy as np
-import openai
-from fastapi import status
-from sqlalchemy.orm import Session
-
-from app.core.config import settings
 from app.models.document import Document
 from app.utils.cache import CacheManager
 from app.utils.text_processing import TextProcessor

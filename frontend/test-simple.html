@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>简单测试页面</title>
+</head>
+<body>
+    <div id="root">
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; font-family: Arial, sans-serif;">
+            <h1>🎯 React应用测试</h1>
+            <p>如果你看到这个页面，说明基本的HTML渲染正常。</p>
+            <div id="react-status" style="margin: 20px; padding: 15px; border: 2px solid #ccc; border-radius: 8px;">
+                <p>⏳ 等待React应用加载...</p>
+            </div>
+            <script>
+                // 检查React是否加载
+                setTimeout(() => {
+                    const statusDiv = document.getElementById('react-status');
+                    if (statusDiv.innerHTML.includes('等待React应用加载')) {
+                        statusDiv.innerHTML = '<p style="color: red;">❌ React应用未能正常加载</p>';
+                        statusDiv.style.borderColor = 'red';
+                    }
+                }, 5000);
+                
+                // 检查控制台错误
+                window.addEventListener('error', (e) => {
+                    console.error('页面错误:', e.error);
+                    const statusDiv = document.getElementById('react-status');
+                    statusDiv.innerHTML += '<p style="color: red;">发现JavaScript错误，请查看控制台</p>';
+                });
+            </script>
+        </div>
+    </div>
+</body>
+</html>

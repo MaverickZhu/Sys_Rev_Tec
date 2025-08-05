@@ -2,7 +2,13 @@ import logging
 from datetime import datetime
 from typing import Any, Dict, Optional
 
-from fastapi import status
+from fastapi import Request, status
+from fastapi.exceptions import (
+    HTTPException,
+    RequestValidationError,
+    ResponseValidationError,
+)
+from fastapi.responses import JSONResponse
 
 from app.core.config import settings
 
@@ -215,105 +221,90 @@ def handle_external_service_error(
 
 # ==================== 异常处理器 ====================
 
-from fastapi import Request
-from fastapi.responses import JSONResponse
-from fastapi.exceptions import HTTPException, RequestValidationError, ResponseValidationError
-from starlette.exceptions import HTTPException as StarletteHTTPException
 
-
-async def base_api_exception_handler(request: Request, exc: BaseAPIException) -> JSONResponse:
+async def base_api_exception_handler(
+    request: Request, exc: BaseAPIException
+) -> JSONResponse:
     """处理自定义API异常"""
     logger.error(f"API Exception: {exc.message} - {exc.details}")
-    
+
     error_response = create_error_response(
         status_code=exc.status_code,
         message=exc.message,
         error_code=exc.error_code,
         details=exc.details,
-        request_id=getattr(request.state, 'request_id', None)
+        request_id=getattr(request.state, "request_id", None),
     )
-    
-    return JSONResponse(
-        status_code=exc.status_code,
-        content=error_response
-    )
+
+    return JSONResponse(status_code=exc.status_code, content=error_response)
 
 
 async def http_exception_handler(request: Request, exc: HTTPException) -> JSONResponse:
     """处理HTTP异常"""
     logger.error(f"HTTP Exception: {exc.status_code} - {exc.detail}")
-    
+
     error_response = create_error_response(
         status_code=exc.status_code,
         message=str(exc.detail),
         error_code="HTTP_ERROR",
-        request_id=getattr(request.state, 'request_id', None)
-    )
-    
-    return JSONResponse(
-        status_code=exc.status_code,
-        content=error_response
+        request_id=getattr(request.state, "request_id", None),
     )
 
+    return JSONResponse(status_code=exc.status_code, content=error_response)
 
-async def validation_exception_handler(request: Request, exc: RequestValidationError) -> JSONResponse:
+
+async def validation_exception_handler(
+    request: Request, exc: RequestValidationError
+) -> JSONResponse:
     """处理请求验证异常"""
     logger.error(f"Validation Exception: {exc.errors()}")
-    
+
     error_response = create_error_response(
         status_code=422,
         message="Validation error",
         error_code="VALIDATION_ERROR",
         details={"validation_errors": exc.errors()},
-        request_id=getattr(request.state, 'request_id', None)
-    )
-    
-    return JSONResponse(
-        status_code=422,
-        content=error_response
+        request_id=getattr(request.state, "request_id", None),
     )
 
+    return JSONResponse(status_code=422, content=error_response)
 
-async def response_validation_exception_handler(request: Request, exc: ResponseValidationError) -> JSONResponse:
+
+async def response_validation_exception_handler(
+    request: Request, exc: ResponseValidationError
+) -> JSONResponse:
     """处理响应验证异常"""
     logger.error(f"Response Validation Exception: {exc.errors()}")
-    
+
     error_response = create_error_response(
         status_code=500,
         message="Response validation error",
         error_code="RESPONSE_VALIDATION_ERROR",
         details={"validation_errors": exc.errors()},
-        request_id=getattr(request.state, 'request_id', None)
+        request_id=getattr(request.state, "request_id", None),
     )
-    
-    return JSONResponse(
-        status_code=500,
-        content=error_response
-    )
+
+    return JSONResponse(status_code=500, content=error_response)
 
 
 async def general_exception_handler(request: Request, exc: Exception) -> JSONResponse:
     """处理通用异常"""
-    logger.error(f"Unhandled Exception: {type(exc).__name__} - {str(exc)}", exc_info=True)
-    
+    logger.error(
+        f"Unhandled Exception: {type(exc).__name__} - {str(exc)}", exc_info=True
+    )
+
     # 在开发环境下显示详细错误信息
     if settings.DEBUG:
-        details = {
-            "exception_type": type(exc).__name__,
-            "exception_message": str(exc)
-        }
+        details = {"exception_type": type(exc).__name__, "exception_message": str(exc)}
     else:
         details = None
-    
+
     error_response = create_error_response(
         status_code=500,
         message="Internal server error",
         error_code="INTERNAL_ERROR",
         details=details,
-        request_id=getattr(request.state, 'request_id', None)
+        request_id=getattr(request.state, "request_id", None),
     )
-    
-    return JSONResponse(
-        status_code=500,
-        content=error_response
-    )
+
+    return JSONResponse(status_code=500, content=error_response)

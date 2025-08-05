@@ -136,10 +136,10 @@ class IntelligentSearchService:
             self.cache_manager = await get_cache_manager()
 
             # 初始化LLM客户端
-            if settings.OLLAMA_ENABLED:
+            if settings.OLLAMA_BASE_URL:
                 await self._initialize_ollama()
 
-            if settings.AZURE_OPENAI_ENABLED:
+            if settings.has_azure_openai:
                 await self._initialize_azure_openai()
 
             logger.info("✅ 智能搜索服务初始化完成")
@@ -156,7 +156,7 @@ class IntelligentSearchService:
 
         try:
             self.ollama_client = ollama.AsyncClient(
-                host=settings.OLLAMA_HOST, timeout=settings.OLLAMA_TIMEOUT
+                host=settings.OLLAMA_BASE_URL, timeout=settings.OLLAMA_TIMEOUT
             )
 
             # 测试连接

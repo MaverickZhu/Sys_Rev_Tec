@@ -138,12 +138,30 @@ class VectorDatabase:
             query_parts.append(f"AND document_id = ANY(${param_count})")
             params.append(document_ids)
 
-        # 添加元数据过滤
+        # 添加元数据过滤（使用白名单验证防止SQL注入）
         if metadata_filter:
+            # 定义允许的元数据字段白名单
+            allowed_metadata_keys = {
+                'category', 'type', 'source', 'author', 'department', 
+                'priority', 'status', 'tags', 'version', 'language'
+            }
+            
+            # 构建安全的元数据过滤条件
+            metadata_conditions = []
             for key, value in metadata_filter.items():
+                # 验证key是否在白名单中
+                if key not in allowed_metadata_keys:
+                    logger.warning(f"忽略不安全的元数据键: {key}")
+                    continue
+                    
                 param_count += 1
-                query_parts.append(f"AND metadata->>'{key}' = ${param_count}")
-                params.append(str(value))
+                # 使用JSONB操作符和参数化查询确保安全
+                metadata_conditions.append(f"metadata @> ${param_count}::jsonb")
+                # 构建JSONB对象作为参数
+                params.append(f'{{"{key}": "{str(value)}"}}')
+            
+            if metadata_conditions:
+                query_parts.append(f"AND ({' AND '.join(metadata_conditions)})")
 
         # 添加排序和限制
         query_parts.extend(["ORDER BY embedding <=> $1::vector", f"LIMIT {limit}"])
@@ -474,6 +492,72 @@ async def get_vector_database() -> VectorDatabase:
 async def get_vector_db() -> VectorDatabase:
     """获取向量数据库实例（兼容性别名）"""
     return await get_vector_database()
+
+
+async def init_vector_database():
+    """初始化向量数据库表结构"""
+    try:
+        db = await get_vector_database()
+        
+        async with db.get_connection() as conn:
+            # 检查并创建pgvector扩展
+            await conn.execute("CREATE EXTENSION IF NOT EXISTS vector")
+            
+            # 创建document_vectors表（如果不存在）
+            await conn.execute("""
+                CREATE TABLE IF NOT EXISTS document_vectors (
+                    id SERIAL PRIMARY KEY,
+                    document_id VARCHAR(255) NOT NULL,
+                    content TEXT NOT NULL,
+                    embedding vector(1536),
+                    metadata JSONB DEFAULT '{}',
+                    chunk_index INTEGER DEFAULT 0,
+                    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+                    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+                )
+            """)
+            
+            # 创建索引
+            await conn.execute("""
+                CREATE INDEX IF NOT EXISTS idx_document_vectors_document_id 
+                ON document_vectors(document_id)
+            """)
+            
+            await conn.execute("""
+                CREATE INDEX IF NOT EXISTS idx_document_vectors_embedding 
+                ON document_vectors USING ivfflat (embedding vector_cosine_ops)
+            """)
+            
+            # 创建搜索历史表
+            await conn.execute("""
+                CREATE TABLE IF NOT EXISTS vector_search_history (
+                    id SERIAL PRIMARY KEY,
+                    query_text TEXT NOT NULL,
+                    search_type VARCHAR(50) NOT NULL,
+                    results_count INTEGER DEFAULT 0,
+                    execution_time_ms FLOAT DEFAULT 0.0,
+                    user_id VARCHAR(255),
+                    metadata JSONB DEFAULT '{}',
+                    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+                )
+            """)
+            
+            # 创建统计表
+            await conn.execute("""
+                CREATE TABLE IF NOT EXISTS vector_index_stats (
+                    operation_type VARCHAR(50) PRIMARY KEY,
+                    operation_count BIGINT DEFAULT 0,
+                    total_execution_time_ms FLOAT DEFAULT 0.0,
+                    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+                    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+                )
+            """)
+            
+        logger.info("✅ 向量数据库初始化完成")
+        
+    except Exception as e:
+        logger.error(f"❌ 向量数据库初始化失败: {e}")
+        raise
 
 
 async def close_vector_db():

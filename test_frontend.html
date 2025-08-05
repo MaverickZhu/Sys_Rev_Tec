@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>前端测试页面</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .success { border-color: #52c41a; background-color: #f6ffed; }
+        .error { border-color: #ff4d4f; background-color: #fff2f0; }
+        .info { border-color: #1890ff; background-color: #e6f7ff; }
+        button {
+            background: #1890ff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #40a9ff;
+        }
+        .credentials {
+            background: #fffbe6;
+            border: 1px solid #d4b106;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>系统审计平台 - 前端测试</h1>
+        
+        <div class="test-section info">
+            <h3>系统状态检查</h3>
+            <p>前端服务地址: <a href="http://localhost:3000" target="_blank">http://localhost:3000</a></p>
+            <p>后端API地址: <a href="http://localhost:8000" target="_blank">http://localhost:8000</a></p>
+            <button onclick="checkFrontend()">检查前端服务</button>
+            <button onclick="checkBackend()">检查后端API</button>
+            <div id="status-result"></div>
+        </div>
+
+        <div class="credentials">
+            <h4>登录凭据</h4>
+            <p><strong>用户名:</strong> admin</p>
+            <p><strong>密码:</strong> admin123</p>
+        </div>
+
+        <div class="test-section">
+            <h3>功能测试</h3>
+            <p>请按以下步骤测试系统功能：</p>
+            <ol>
+                <li>点击 <a href="http://localhost:3000" target="_blank">打开前端应用</a></li>
+                <li>使用上述凭据登录系统</li>
+                <li>测试各个页面的导航功能</li>
+                <li>检查页面是否正常显示</li>
+            </ol>
+            <button onclick="openFrontend()">直接打开前端应用</button>
+        </div>
+
+        <div class="test-section">
+            <h3>已实现的功能模块</h3>
+            <ul>
+                <li>✅ 用户认证系统 (SimpleAuth)</li>
+                <li>✅ 仪表板页面</li>
+                <li>✅ 项目管理页面</li>
+                <li>✅ 文件管理页面</li>
+                <li>✅ 报告中心页面</li>
+                <li>✅ 用户管理页面</li>
+                <li>✅ 系统设置页面</li>
+                <li>✅ 响应式布局</li>
+                <li>✅ 主题切换功能</li>
+            </ul>
+        </div>
+
+        <div class="test-section">
+            <h3>技术架构</h3>
+            <ul>
+                <li><strong>前端:</strong> React 18 + TypeScript + Ant Design</li>
+                <li><strong>后端:</strong> FastAPI + Python</li>
+                <li><strong>认证:</strong> 简化认证系统 (开发环境)</li>
+                <li><strong>路由:</strong> React Router v6</li>
+                <li><strong>状态管理:</strong> React Context</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function checkFrontend() {
+            const resultDiv = document.getElementById('status-result');
+            resultDiv.innerHTML = '<p>正在检查前端服务...</p>';
+            
+            fetch('http://localhost:3000')
+                .then(response => {
+                    if (response.ok) {
+                        resultDiv.innerHTML = '<p style="color: green;">✅ 前端服务正常运行</p>';
+                    } else {
+                        resultDiv.innerHTML = '<p style="color: red;">❌ 前端服务响应异常</p>';
+                    }
+                })
+                .catch(error => {
+                    resultDiv.innerHTML = '<p style="color: red;">❌ 无法连接到前端服务</p>';
+                });
+        }
+
+        function checkBackend() {
+            const resultDiv = document.getElementById('status-result');
+            resultDiv.innerHTML = '<p>正在检查后端API...</p>';
+            
+            fetch('http://localhost:8000/api/v1/health')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'healthy') {
+                        resultDiv.innerHTML = '<p style="color: green;">✅ 后端API正常运行</p>';
+                    } else {
+                        resultDiv.innerHTML = '<p style="color: orange;">⚠️ 后端API状态异常</p>';
+                    }
+                })
+                .catch(error => {
+                    resultDiv.innerHTML = '<p style="color: red;">❌ 无法连接到后端API</p>';
+                });
+        }
+
+        function openFrontend() {
+            window.open('http://localhost:3000', '_blank');
+        }
+
+        // 页面加载时自动检查服务状态
+        window.onload = function() {
+            checkFrontend();
+            setTimeout(checkBackend, 1000);
+        };
+    </script>
+</body>
+</html>

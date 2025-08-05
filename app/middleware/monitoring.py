@@ -5,7 +5,7 @@ import re
 import time
 from typing import Callable
 
-from fastapi import Request, Response, status
+from fastapi import Request, Response
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.types import ASGIApp
 
@@ -24,14 +24,14 @@ logger = logging.getLogger(__name__)
 def setup_monitoring():
     """
     设置监控系统
-    
+
     初始化监控相关配置和组件
     """
     logger.info("Setting up monitoring system...")
-    
+
     # 这里可以添加监控系统的初始化逻辑
     # 例如：初始化指标收集器、设置监控配置等
-    
+
     logger.info("Monitoring system setup completed")
 
 

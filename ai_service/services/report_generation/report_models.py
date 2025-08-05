@@ -62,7 +62,7 @@ class ChartConfig(BaseModel):
 
 class ReportSection(BaseModel):
     """报告章节"""
-    id: str = Field(..., description="章节ID")
+    section_id: str = Field(..., description="章节ID")
     title: str = Field(..., description="章节标题")
     content: str = Field(..., description="章节内容")
     order: int = Field(..., description="章节顺序")
@@ -74,7 +74,7 @@ class ReportSection(BaseModel):
 
 class ReportTemplate(BaseModel):
     """报告模板"""
-    id: str = Field(..., description="模板ID")
+    template_id: str = Field(..., description="模板ID")
     name: str = Field(..., description="模板名称")
     report_type: ReportType = Field(..., description="报告类型")
     description: Optional[str] = Field(None, description="模板描述")

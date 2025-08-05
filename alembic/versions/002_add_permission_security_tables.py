@@ -11,7 +11,7 @@ from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
 revision = '002'
-down_revision = '001'
+down_revision = 'add_vector_tables'
 branch_labels = None
 depends_on = None
 
@@ -35,21 +35,7 @@ def upgrade():
     op.create_index(op.f('ix_permissions_name'), 'permissions', ['name'], unique=False)
     op.create_index(op.f('ix_permissions_resource_type'), 'permissions', ['resource_type'], unique=False)
     
-    # Create roles table
-    op.create_table('roles',
-        sa.Column('id', sa.Integer(), nullable=False),
-        sa.Column('name', sa.String(length=100), nullable=False),
-        sa.Column('code', sa.String(length=100), nullable=False),
-        sa.Column('description', sa.Text(), nullable=True),
-        sa.Column('level', sa.Integer(), nullable=True),
-        sa.Column('is_system', sa.Boolean(), nullable=True),
-        sa.Column('is_active', sa.Boolean(), nullable=True),
-        sa.Column('created_at', sa.DateTime(), nullable=True),
-        sa.Column('updated_at', sa.DateTime(), nullable=True),
-        sa.PrimaryKeyConstraint('id')
-    )
-    op.create_index(op.f('ix_roles_code'), 'roles', ['code'], unique=True)
-    op.create_index(op.f('ix_roles_name'), 'roles', ['name'], unique=False)
+    # Note: roles table already exists from initial migration
     
     # Create permission_groups table
     op.create_table('permission_groups',
@@ -102,34 +88,7 @@ def upgrade():
     op.create_index(op.f('ix_resource_permissions_resource_type'), 'resource_permissions', ['resource_type'], unique=False)
     op.create_index(op.f('ix_resource_permissions_user_id'), 'resource_permissions', ['user_id'], unique=False)
     
-    # Create audit_logs table
-    op.create_table('audit_logs',
-        sa.Column('id', sa.Integer(), nullable=False),
-        sa.Column('user_id', sa.Integer(), nullable=True),
-        sa.Column('username', sa.String(length=100), nullable=True),
-        sa.Column('action', sa.String(length=100), nullable=False),
-        sa.Column('resource_type', sa.String(length=50), nullable=True),
-        sa.Column('resource_id', sa.String(length=100), nullable=True),
-        sa.Column('old_values', sa.JSON(), nullable=True),
-        sa.Column('new_values', sa.JSON(), nullable=True),
-        sa.Column('ip_address', sa.String(length=45), nullable=True),
-        sa.Column('user_agent', sa.Text(), nullable=True),
-        sa.Column('request_url', sa.Text(), nullable=True),
-        sa.Column('request_method', sa.String(length=10), nullable=True),
-        sa.Column('status', sa.String(length=20), nullable=True),
-        sa.Column('error_message', sa.Text(), nullable=True),
-        sa.Column('execution_time', sa.Float(), nullable=True),
-        sa.Column('details', sa.JSON(), nullable=True),
-        sa.Column('created_at', sa.DateTime(), nullable=True),
-        sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
-        sa.PrimaryKeyConstraint('id')
-    )
-    op.create_index(op.f('ix_audit_logs_action'), 'audit_logs', ['action'], unique=False)
-    op.create_index(op.f('ix_audit_logs_created_at'), 'audit_logs', ['created_at'], unique=False)
-    op.create_index(op.f('ix_audit_logs_ip_address'), 'audit_logs', ['ip_address'], unique=False)
-    op.create_index(op.f('ix_audit_logs_resource_type'), 'audit_logs', ['resource_type'], unique=False)
-    op.create_index(op.f('ix_audit_logs_status'), 'audit_logs', ['status'], unique=False)
-    op.create_index(op.f('ix_audit_logs_user_id'), 'audit_logs', ['user_id'], unique=False)
+    # Note: audit_logs table already exists from initial migration
     
     # Create security_events table
     op.create_table('security_events',
@@ -200,14 +159,7 @@ def downgrade():
     op.drop_index(op.f('ix_security_events_created_at'), table_name='security_events')
     op.drop_table('security_events')
     
-    # Drop audit_logs table
-    op.drop_index(op.f('ix_audit_logs_user_id'), table_name='audit_logs')
-    op.drop_index(op.f('ix_audit_logs_status'), table_name='audit_logs')
-    op.drop_index(op.f('ix_audit_logs_resource_type'), table_name='audit_logs')
-    op.drop_index(op.f('ix_audit_logs_ip_address'), table_name='audit_logs')
-    op.drop_index(op.f('ix_audit_logs_created_at'), table_name='audit_logs')
-    op.drop_index(op.f('ix_audit_logs_action'), table_name='audit_logs')
-    op.drop_table('audit_logs')
+    # Note: audit_logs table not dropped here as it's managed by initial migration
     
     # Drop resource_permissions table
     op.drop_index(op.f('ix_resource_permissions_user_id'), table_name='resource_permissions')
@@ -222,10 +174,7 @@ def downgrade():
     op.drop_index(op.f('ix_permission_groups_name'), table_name='permission_groups')
     op.drop_table('permission_groups')
     
-    # Drop roles table
-    op.drop_index(op.f('ix_roles_name'), table_name='roles')
-    op.drop_index(op.f('ix_roles_code'), table_name='roles')
-    op.drop_table('roles')
+    # Note: roles table not dropped here as it's managed by initial migration
     
     # Drop permissions table
     op.drop_index(op.f('ix_permissions_resource_type'), table_name='permissions')

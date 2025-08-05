@@ -1,0 +1,255 @@
+{
+  "timestamp": "2025-08-04T11:37:51.078768",
+  "api_performance_analysis": {
+    "/api/v1/health": {
+      "avg_response_time": 108.62481594085693,
+      "min_response_time": 103.5926342010498,
+      "max_response_time": 121.87480926513672,
+      "median_response_time": 105.4685115814209,
+      "std_deviation": 6.403079981270584,
+      "total_requests": 10,
+      "success_rate": 100.0
+    },
+    "/api/v1/auth/login": {
+      "avg_response_time": 13.236451148986816,
+      "min_response_time": 2.760171890258789,
+      "max_response_time": 27.185440063476562,
+      "median_response_time": 14.069557189941406,
+      "std_deviation": 8.28309603229268,
+      "total_requests": 10,
+      "success_rate": 100.0
+    },
+    "/api/v1/projects": {
+      "avg_response_time": 17.1048641204834,
+      "min_response_time": 6.06226921081543,
+      "max_response_time": 36.41200065612793,
+      "median_response_time": 13.025164604187012,
+      "std_deviation": 11.679264217708162,
+      "total_requests": 10,
+      "success_rate": 100.0
+    },
+    "/api/v1/documents": {
+      "avg_response_time": 11.044907569885254,
+      "min_response_time": 3.1986236572265625,
+      "max_response_time": 24.15323257446289,
+      "median_response_time": 8.893251419067383,
+      "std_deviation": 8.513844951644504,
+      "total_requests": 10,
+      "success_rate": 100.0
+    },
+    "/api/v1/users": {
+      "avg_response_time": 11.600804328918457,
+      "min_response_time": 5.763769149780273,
+      "max_response_time": 32.57298469543457,
+      "median_response_time": 6.80851936340332,
+      "std_deviation": 9.087668079464642,
+      "total_requests": 10,
+      "success_rate": 100.0
+    },
+    "/api/v1/performance/summary": {
+      "avg_response_time": 12.323355674743652,
+      "min_response_time": 3.175973892211914,
+      "max_response_time": 27.24480628967285,
+      "median_response_time": 9.02414321899414,
+      "std_deviation": 10.193386026809288,
+      "total_requests": 10,
+      "success_rate": 100.0
+    },
+    "/api/v1/cache/stats": {
+      "avg_response_time": 13.149476051330566,
+      "min_response_time": 2.9511451721191406,
+      "max_response_time": 21.00658416748047,
+      "median_response_time": 14.832615852355957,
+      "std_deviation": 5.575714461838365,
+      "total_requests": 10,
+      "success_rate": 100.0
+    },
+    "/api/v1/vector/search": {
+      "avg_response_time": 8.116388320922852,
+      "min_response_time": 2.9489994049072266,
+      "max_response_time": 27.336597442626953,
+      "median_response_time": 3.354787826538086,
+      "std_deviation": 8.469195180444373,
+      "total_requests": 10,
+      "success_rate": 100.0
+    }
+  },
+  "concurrency_tests": {
+    "concurrency_1": {
+      "total_time": 0.10459637641906738,
+      "avg_response_time": 103.55663299560547,
+      "min_response_time": 103.55663299560547,
+      "max_response_time": 103.55663299560547,
+      "success_count": 1,
+      "success_rate": 100.0,
+      "requests_per_second": 9.56056064498335
+    },
+    "concurrency_5": {
+      "total_time": 0.5118474960327148,
+      "avg_response_time": 509.7532272338867,
+      "min_response_time": 508.90135765075684,
+      "max_response_time": 510.20288467407227,
+      "success_count": 5,
+      "success_rate": 100.0,
+      "requests_per_second": 9.768534649001046
+    },
+    "concurrency_10": {
+      "total_time": 1.02278733253479,
+      "avg_response_time": 1018.00217628479,
+      "min_response_time": 1016.7841911315918,
+      "max_response_time": 1018.8052654266357,
+      "success_count": 10,
+      "success_rate": 100.0,
+      "requests_per_second": 9.77720361007683
+    },
+    "concurrency_20": {
+      "total_time": 2.051461935043335,
+      "avg_response_time": 1982.6023697853088,
+      "min_response_time": 1524.79887008667,
+      "max_response_time": 2041.9785976409912,
+      "success_count": 20,
+      "success_rate": 100.0,
+      "requests_per_second": 9.749145064969252
+    },
+    "concurrency_50": {
+      "total_time": 5.232447147369385,
+      "avg_response_time": 4108.558645248413,
+      "min_response_time": 1510.6749534606934,
+      "max_response_time": 5203.4666538238525,
+      "success_count": 50,
+      "success_rate": 100.0,
+      "requests_per_second": 9.555758250733124
+    }
+  },
+  "middleware_optimization": {
+    "cors_middleware": {
+      "enabled": true,
+      "performance_impact": "低",
+      "optimization_suggestions": [
+        "配置具体的允许源而不是使用通配符",
+        "缓存CORS预检请求结果"
+      ]
+    },
+    "authentication_middleware": {
+      "enabled": true,
+      "performance_impact": "中等",
+      "optimization_suggestions": [
+        "使用JWT token缓存减少数据库查询",
+        "实现token刷新机制",
+        "优化权限检查逻辑"
+      ]
+    },
+    "logging_middleware": {
+      "enabled": true,
+      "performance_impact": "低",
+      "optimization_suggestions": [
+        "使用异步日志写入",
+        "配置日志级别过滤",
+        "实现日志轮转"
+      ]
+    },
+    "compression_middleware": {
+      "enabled": false,
+      "performance_impact": "正面",
+      "optimization_suggestions": [
+        "启用gzip压缩中间件",
+        "配置压缩阈值",
+        "选择合适的压缩级别"
+      ]
+    }
+  },
+  "route_optimization": {
+    "route_structure": {
+      "total_routes": 8,
+      "versioning": "使用/api/v1前缀",
+      "grouping": "按功能模块分组",
+      "optimization_score": 85
+    },
+    "path_parameters": {
+      "usage": "适当使用路径参数",
+      "validation": "需要加强参数验证",
+      "suggestions": [
+        "添加路径参数类型验证",
+        "实现参数范围检查",
+        "优化正则表达式匹配"
+      ]
+    },
+    "query_parameters": {
+      "pagination": "已实现分页参数",
+      "filtering": "支持基本过滤",
+      "sorting": "支持排序参数",
+      "suggestions": [
+        "标准化查询参数命名",
+        "实现查询参数缓存",
+        "添加参数默认值"
+      ]
+    },
+    "response_optimization": {
+      "compression": "需要启用",
+      "caching_headers": "部分实现",
+      "etag_support": "未实现",
+      "suggestions": [
+        "启用响应压缩",
+        "实现ETag支持",
+        "配置适当的缓存头",
+        "使用条件请求"
+      ]
+    }
+  },
+  "cache_optimization": {
+    "response_caching": {
+      "status": "部分实现",
+      "cache_hit_rate": "未知",
+      "suggestions": [
+        "实现Redis响应缓存",
+        "配置缓存过期策略",
+        "添加缓存键命名规范"
+      ]
+    },
+    "database_query_caching": {
+      "status": "基本实现",
+      "orm_caching": "SQLAlchemy查询缓存",
+      "suggestions": [
+        "优化查询缓存键",
+        "实现查询结果缓存",
+        "配置缓存失效策略"
+      ]
+    },
+    "static_content_caching": {
+      "status": "需要改进",
+      "cdn_usage": "未使用",
+      "suggestions": [
+        "配置静态文件缓存头",
+        "考虑使用CDN",
+        "实现文件版本控制"
+      ]
+    },
+    "memory_caching": {
+      "status": "已实现",
+      "cache_size": "需要监控",
+      "suggestions": [
+        "监控内存缓存使用率",
+        "配置缓存大小限制",
+        "实现缓存清理策略"
+      ]
+    }
+  },
+  "recommendations": [
+    "启用HTTP响应压缩以减少传输时间",
+    "实现API响应缓存策略",
+    "优化数据库查询和索引",
+    "配置连接池以提高并发处理能力",
+    "实现API限流和熔断机制",
+    "添加API性能监控和告警",
+    "使用异步处理长时间运行的任务",
+    "优化JSON序列化性能",
+    "实现条件请求支持(ETag/Last-Modified)",
+    "配置适当的HTTP缓存头"
+  ],
+  "summary": {
+    "total_tasks": 5,
+    "completed_tasks": 5,
+    "success_rate": 100.0,
+    "optimization_completed_at": "2025-08-04T11:38:01.975039"
+  }
+}

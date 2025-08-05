@@ -8,8 +8,6 @@ from typing import Any, Dict, List, Optional
 from pydantic import Field
 from pydantic_settings import BaseSettings
 
-from app.models.document import Document
-
 
 class AIConfig(BaseSettings):
     """AI集成配置类"""

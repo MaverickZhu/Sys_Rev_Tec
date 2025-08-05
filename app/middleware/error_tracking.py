@@ -2,7 +2,7 @@ import traceback
 import uuid
 from typing import Callable
 
-from fastapi import File, Request, Response, status
+from fastapi import Request, Response
 from starlette.middleware.base import BaseHTTPMiddleware
 
 from app.core.error_tracking import ErrorSeverity, track_error

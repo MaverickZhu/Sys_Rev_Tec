@@ -9,7 +9,7 @@ import os
 import tempfile
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict
 
 from fastapi import UploadFile
 from pdf2image import convert_from_path

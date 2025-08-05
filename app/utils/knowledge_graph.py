@@ -6,10 +6,9 @@ from datetime import datetime
 from typing import Any, Dict, List, Optional
 
 import networkx as nx
-from fastapi import status
 from sqlalchemy.orm import Session
 
-from app import crud, models, schemas
+from app import crud, schemas
 from app.models.document import Document
 from app.models.vector import KnowledgeGraph, KnowledgeGraphRelation
 from app.utils.ai_integration import AIIntegrationService
@@ -393,12 +392,12 @@ class KnowledgeGraphService:
             分析以下文本中两个实体之间的关系：
             实体1: {entity1_name} (类型: {entity1_type})
             实体2: {entity2_name} (类型: {entity2_type})
-            
+
             上下文: {context[:500]}...
-            
+
             请从以下关系类型中选择最合适的一个：
             {', '.join(self.relation_types.keys())}
-            
+
             只返回关系类型，不要其他内容。
             """
 

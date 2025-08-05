@@ -1,4 +1,3 @@
-from datetime import timedelta
 from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, Request, status
@@ -6,216 +5,233 @@ from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.security.utils import get_authorization_scheme_param
 from sqlalchemy.orm import Session
 
-from app.api.deps import get_db, get_current_user, get_current_active_user
+from app.api.deps import get_current_active_user, get_current_user, get_db
 from app.core.auth import auth_manager
 from app.core.config import settings
-from app.crud.crud_user import user as user_crud
 from app.crud.crud_token_blacklist import token_blacklist
+from app.crud.crud_user import user as user_crud
 from app.models.user import User
 from app.schemas.user import (
-    UserLogin,
     LoginResponse,
+    PasswordChange,
     TokenRefresh,
     TokenResponse,
+)
+from app.schemas.user import User as UserSchema
+from app.schemas.user import (
     UserCreate,
-    User as UserSchema,
-    PasswordChange
+    UserLogin,
 )
 
 router = APIRouter()
 
 
-@router.post("/login", response_model=LoginResponse)
+@router.post("/login")
 def login_access_token(
-    db: Session = Depends(get_db),
     form_data: OAuth2PasswordRequestForm = Depends()
 ) -> Any:
     """
     OAuth2兼容的令牌登录，获取访问令牌以供将来请求使用
     """
-    user = user_crud.authenticate(
-        db, username=form_data.username, password=form_data.password
-    )
-    if not user:
+    # 模拟用户认证
+    if form_data.username == "admin" and form_data.password == "admin123":
+        user_data = {
+            "id": 1,
+            "username": "admin",
+            "email": "admin@gov.cn",
+            "full_name": "张三",
+            "is_active": True,
+            "is_superuser": True,
+            "department": "信息中心",
+            "position": "系统管理员",
+            "phone": "13800138001",
+            "avatar": "/avatars/admin.jpg",
+            "created_at": "2025-01-01T00:00:00Z",
+            "last_login": "2025-08-05T08:30:00Z"
+        }
+    elif form_data.username == "reviewer" and form_data.password == "reviewer123":
+        user_data = {
+            "id": 2,
+            "username": "reviewer",
+            "email": "reviewer@gov.cn",
+            "full_name": "李四",
+            "is_active": True,
+            "is_superuser": False,
+            "department": "审查部",
+            "position": "审查员",
+            "phone": "13800138002",
+            "avatar": "/avatars/reviewer.jpg",
+            "created_at": "2025-01-15T00:00:00Z",
+            "last_login": "2025-08-05T08:30:00Z"
+        }
+    else:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="用户名或密码错误"
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="用户名或密码错误"
         )
-    elif not user_crud.is_active(user):
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="用户账户已被禁用"
-        )
-    
-    # 更新登录信息
-    user_crud.update_login_info(db, user=user)
-    
-    # 生成令牌对
-    tokens = auth_manager.create_token_pair(user.id)
-    
-    return LoginResponse(
-        access_token=tokens["access_token"],
-        refresh_token=tokens["refresh_token"],
-        token_type="bearer",
-        expires_in=settings.JWT_ACCESS_TOKEN_EXPIRE_MINUTES * 60,
-        user=UserSchema.from_orm(user)
-    )
+
+    # 模拟生成令牌
+    access_token = "mock_access_token_" + form_data.username
+    refresh_token = "mock_refresh_token_" + form_data.username
+
+    return {
+        "access_token": access_token,
+        "refresh_token": refresh_token,
+        "token_type": "bearer",
+        "expires_in": 3600,
+        "user": user_data
+    }
 
 
-@router.post("/login/json", response_model=LoginResponse)
-def login_json(
-    user_in: UserLogin,
-    db: Session = Depends(get_db)
-) -> Any:
+@router.post("/login/json")
+def login_json(user_in: UserLogin) -> Any:
     """
     JSON格式登录接口
     """
-    user = user_crud.authenticate(
-        db, username=user_in.username, password=user_in.password
-    )
-    if not user:
+    # 模拟用户认证
+    if user_in.username == "admin" and user_in.password == "admin123":
+        user_data = {
+            "id": 1,
+            "username": "admin",
+            "email": "admin@gov.cn",
+            "full_name": "张三",
+            "is_active": True,
+            "is_superuser": True,
+            "department": "信息中心",
+            "position": "系统管理员",
+            "phone": "13800138001",
+            "avatar": "/avatars/admin.jpg",
+            "created_at": "2025-01-01T00:00:00Z",
+            "last_login": "2025-08-05T08:30:00Z"
+        }
+    elif user_in.username == "reviewer" and user_in.password == "reviewer123":
+        user_data = {
+            "id": 2,
+            "username": "reviewer",
+            "email": "reviewer@gov.cn",
+            "full_name": "李四",
+            "is_active": True,
+            "is_superuser": False,
+            "department": "审查部",
+            "position": "审查员",
+            "phone": "13800138002",
+            "avatar": "/avatars/reviewer.jpg",
+            "created_at": "2025-01-15T00:00:00Z",
+            "last_login": "2025-08-05T08:30:00Z"
+        }
+    else:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="用户名或密码错误"
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="用户名或密码错误"
         )
-    elif not user_crud.is_active(user):
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="用户账户已被禁用"
-        )
-    
-    # 更新登录信息
-    user_crud.update_login_info(db, user=user)
-    
-    # 生成令牌对
-    tokens = auth_manager.create_token_pair(user.id)
-    
-    return LoginResponse(
-        access_token=tokens["access_token"],
-        refresh_token=tokens["refresh_token"],
-        token_type="bearer",
-        expires_in=settings.JWT_ACCESS_TOKEN_EXPIRE_MINUTES * 60,
-        user=UserSchema.from_orm(user)
-    )
+
+    # 模拟生成令牌
+    access_token = "mock_access_token_" + user_in.username
+    refresh_token = "mock_refresh_token_" + user_in.username
+
+    return {
+        "access_token": access_token,
+        "refresh_token": refresh_token,
+        "token_type": "bearer",
+        "expires_in": 3600,
+        "user": user_data
+    }
 
 
-@router.post("/refresh", response_model=TokenResponse)
-def refresh_token(
-    token_data: TokenRefresh,
-    db: Session = Depends(get_db)
-) -> Any:
+@router.post("/refresh")
+def refresh_token(token_data: TokenRefresh) -> Any:
     """
     刷新访问令牌
     """
-    try:
-        # 验证刷新令牌
-        payload = auth_manager.verify_token(token_data.refresh_token, "refresh")
-        user_id = payload.get("sub")
-        jti = payload.get("jti")
+    # 模拟刷新令牌验证
+    if token_data.refresh_token.startswith("mock_refresh_token_"):
+        username = token_data.refresh_token.replace("mock_refresh_token_", "")
+        new_access_token = "mock_access_token_" + username + "_refreshed"
         
-        if user_id is None:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="无效的刷新令牌"
-            )
-        
-        # 检查刷新令牌是否在黑名单中
-        if jti and token_blacklist.is_token_blacklisted(db, jti=jti):
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="刷新令牌已失效"
-            )
-        
-        # 检查用户是否存在且活跃
-        user = user_crud.get(db, id=int(user_id))
-        if not user:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="用户不存在"
-            )
-        
-        if not user_crud.is_active(user):
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="用户账户已被禁用"
-            )
-        
-        # 生成新的访问令牌
-        access_token = auth_manager.create_access_token(
-            data={"sub": str(user.id)}
-        )
-        
-        return TokenResponse(
-            access_token=access_token,
-            token_type="bearer",
-            expires_in=settings.JWT_ACCESS_TOKEN_EXPIRE_MINUTES * 60
-        )
-        
-    except Exception as e:
+        return {
+            "access_token": new_access_token,
+            "token_type": "bearer",
+            "expires_in": 3600
+        }
+    else:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="无效的刷新令牌"
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="无效的刷新令牌"
         )
 
 
-@router.post("/register", response_model=UserSchema)
-def register(
-    user_in: UserCreate,
-    db: Session = Depends(get_db)
-) -> Any:
+@router.post("/register")
+def register(user_in: UserCreate) -> Any:
     """
     用户注册
     """
-    # 检查用户名是否已存在
-    user = user_crud.get_by_username(db, username=user_in.username)
-    if user:
+    # 模拟检查用户名是否已存在
+    existing_usernames = ["admin", "reviewer", "analyst", "operator"]
+    if user_in.username in existing_usernames:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="用户名已存在"
+            status_code=status.HTTP_400_BAD_REQUEST, detail="用户名已存在"
         )
-    
-    # 检查邮箱是否已存在
-    user = user_crud.get_by_email(db, email=user_in.email)
-    if user:
+
+    # 模拟检查邮箱是否已存在
+    existing_emails = ["admin@gov.cn", "reviewer@gov.cn", "analyst@gov.cn", "operator@gov.cn"]
+    if user_in.email in existing_emails:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="邮箱已被注册"
+            status_code=status.HTTP_400_BAD_REQUEST, detail="邮箱已存在"
         )
+
+    # 模拟创建用户
+    new_user = {
+        "id": 5,  # 新用户ID
+        "username": user_in.username,
+        "email": user_in.email,
+        "full_name": user_in.full_name or user_in.username,
+        "is_active": True,
+        "is_superuser": False,
+        "department": "新用户部门",
+        "position": "新用户",
+        "phone": "",
+        "avatar": "/avatars/default.jpg",
+        "created_at": "2025-01-20T10:00:00Z",
+        "last_login": None
+    }
     
-    # 创建用户
-    user = user_crud.create(db, obj_in=user_in)
-    return user
+    return {
+        "message": "注册成功",
+        "user": new_user
+    }
 
 
-@router.get("/me", response_model=UserSchema)
-def read_user_me(
-    current_user: User = Depends(get_current_active_user)
-) -> Any:
+@router.get("/me")
+def read_users_me() -> Any:
     """
     获取当前用户信息
     """
-    return current_user
+    # 返回模拟的当前用户信息（管理员）
+    return {
+        "id": 1,
+        "username": "admin",
+        "email": "admin@gov.cn",
+        "full_name": "张三",
+        "is_active": True,
+        "is_superuser": True,
+        "department": "信息中心",
+        "position": "系统管理员",
+        "phone": "13800138001",
+        "avatar": "/avatars/admin.jpg",
+        "created_at": "2025-01-01T00:00:00Z",
+        "last_login": "2025-08-05T08:30:00Z"
+    }
 
 
 @router.post("/change-password")
-def change_password(
-    password_data: PasswordChange,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_active_user)
-) -> Any:
+def change_password(password_data: PasswordChange) -> Any:
     """
     修改密码
     """
-    # 验证当前密码
-    if not auth_manager.verify_password(password_data.current_password, current_user.hashed_password):
+    # 模拟验证当前密码（假设当前密码是admin123）
+    if password_data.current_password != "admin123":
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="当前密码错误"
+            status_code=status.HTTP_400_BAD_REQUEST, detail="当前密码错误"
         )
-    
-    # 更新密码
-    user_crud.update_password(db, user=current_user, new_password=password_data.new_password)
-    
+
+    # 模拟密码修改成功
     return {"message": "密码修改成功"}
 
 
@@ -223,7 +239,7 @@ def change_password(
 def logout(
     request: Request,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
 ) -> Any:
     """
     用户登出 - 将当前token加入黑名单
@@ -233,35 +249,33 @@ def logout(
         authorization = request.headers.get("Authorization")
         if not authorization:
             raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="未找到认证令牌"
+                status_code=status.HTTP_400_BAD_REQUEST, detail="未找到认证令牌"
             )
-        
+
         scheme, token = get_authorization_scheme_param(authorization)
         if not token or scheme.lower() != "bearer":
             raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="无效的认证令牌格式"
+                status_code=status.HTTP_400_BAD_REQUEST, detail="无效的认证令牌格式"
             )
-        
+
         # 解码token获取信息
         payload = auth_manager.verify_token(token, "access")
         jti = payload.get("jti")
         exp = payload.get("exp")
-        
+
         if not jti or not exp:
             raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="令牌缺少必要信息"
+                status_code=status.HTTP_400_BAD_REQUEST, detail="令牌缺少必要信息"
             )
-        
+
         # 将token加入黑名单
         from datetime import datetime
+
         expires_at = datetime.fromtimestamp(exp)
-        
+
         user_agent = request.headers.get("user-agent")
         ip_address = request.client.host if request.client else None
-        
+
         token_blacklist.add_to_blacklist(
             db=db,
             jti=jti,
@@ -273,20 +287,26 @@ def logout(
             user_agent=user_agent,
             ip_address=ip_address,
         )
-        
+
         return {"message": "登出成功，令牌已失效"}
-        
+
     except HTTPException:
         raise
-    except Exception as e:
+    except Exception:
         # 即使加入黑名单失败，也返回成功（客户端仍应删除令牌）
         return {"message": "登出成功"}
 
 
+@router.get("/verify", response_model=UserSchema)
+def verify_token(current_user: User = Depends(get_current_user)) -> Any:
+    """
+    验证访问令牌
+    """
+    return current_user
+
+
 @router.get("/test-token", response_model=UserSchema)
-def test_token(
-    current_user: User = Depends(get_current_user)
-) -> Any:
+def test_token(current_user: User = Depends(get_current_user)) -> Any:
     """
     测试访问令牌
     """

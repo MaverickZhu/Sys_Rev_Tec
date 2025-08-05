@@ -8,11 +8,11 @@
 from .cache_optimization import (
     CacheOptimizationScheduler,
     OptimizationTask,
-    cache_optimization_scheduler
+    cache_optimization_scheduler,
 )
 
 __all__ = [
     "CacheOptimizationScheduler",
     "OptimizationTask",
-    "cache_optimization_scheduler"
+    "cache_optimization_scheduler",
 ]

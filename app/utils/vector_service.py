@@ -4,13 +4,20 @@ from datetime import datetime
 from typing import Any, Dict, List, Optional
 
 import chromadb
-import pinecone
-import weaviate
+
+try:
+    from pinecone import Pinecone
+except ImportError:
+    Pinecone = None
+try:
+    import weaviate
+except ImportError:
+    weaviate = None
 from sqlalchemy.orm import Session
 
 from app import crud, models, schemas
-from app.models.vector import DocumentVector
 from app.core.config import settings
+from app.models.vector import DocumentVector
 from app.utils.ai_integration import AIIntegrationService
 from app.utils.cache import CacheManager
 from app.utils.text_processing import TextProcessor
@@ -27,20 +34,26 @@ class VectorService:
     向量服务 - 管理文档向量化、搜索和索引
     """
 
-    def __init__(self):
-        self.ai_service = AIIntegrationService()
+    def __init__(self, ai_service: AIIntegrationService):
+        self.ai_service = ai_service
         self.cache_manager = CacheManager()
         self.text_processor = TextProcessor()
-        self.vector_stores = {
+
+        # 初始化向量存储并过滤掉None的存储
+        all_stores = {
             "memory": MemoryVectorStore(),
             "chroma": (ChromaVectorStore() if settings.CHROMA_HOST else None),
-            "pinecone": (PineconeVectorStore() if settings.PINECONE_API_KEY else None),
-            "weaviate": WeaviateVectorStore() if settings.WEAVIATE_URL else None,
+            "pinecone": (
+                PineconeVectorStore()
+                if settings.PINECONE_API_KEY and Pinecone
+                else None
+            ),
+            "weaviate": (
+                WeaviateVectorStore() if settings.WEAVIATE_URL and weaviate else None
+            ),
         }
-        # 过滤掉None的存储
-        self.vector_stores = {
-            k: v for k, v in self.vector_stores.items() if v is not None
-        }
+
+        self.vector_stores = {k: v for k, v in all_stores.items() if v is not None}
 
         # 默认使用的向量存储
         self.default_store = settings.DEFAULT_VECTOR_STORE or "memory"
@@ -66,7 +79,6 @@ class VectorService:
             document_ids: 限制搜索的文档ID列表
             filter_params: 过滤参数
             vector_store: 指定使用的向量存储
-
         Returns:
             搜索结果列表
         """
@@ -450,7 +462,10 @@ class PineconeVectorStore:
     """Pinecone向量存储"""
 
     def __init__(self):
-        pinecone.init(api_key=settings.PINECONE_API_KEY)
+        if Pinecone:
+            self.pc = Pinecone(api_key=settings.PINECONE_API_KEY)
+        else:
+            self.pc = None
 
     async def search(
         self,

@@ -557,3 +557,104 @@ API 使用 URL 路径进行版本控制。当前版本为 `v1`，未来版本将
 
 **最后更新**: 2025-01-25  
 **API 版本**: v1.0.0
+## AI服务API
+
+### 文档分析
+
+**端点**: `POST /api/v1/ai/analyze`
+
+**描述**: 对上传的文档进行智能分析
+
+**请求参数**:
+```json
+{
+  "document_id": 1,
+  "analysis_type": "full",
+  "options": {
+    "extract_entities": true,
+    "sentiment_analysis": true,
+    "risk_assessment": true
+  }
+}
+```
+
+**响应示例**:
+```json
+{
+  "status": "success",
+  "analysis_id": "uuid-string",
+  "results": {
+    "entities": [...],
+    "sentiment": "neutral",
+    "risk_score": 0.3,
+    "summary": "文档摘要"
+  }
+}
+```
+
+### 智能报告生成
+
+**端点**: `POST /api/v1/ai/generate-report`
+
+**描述**: 基于项目数据生成智能分析报告
+
+**请求参数**:
+```json
+{
+  "project_id": 1,
+  "report_type": "summary",
+  "template_id": "default",
+  "options": {
+    "include_charts": true,
+    "format": "pdf"
+  }
+}
+```
+
+**响应示例**:
+```json
+{
+  "status": "success",
+  "report_id": "uuid-string",
+  "download_url": "/api/v1/reports/download/uuid-string",
+  "generated_at": "2025-01-04T10:30:00Z"
+}
+```
+
+### 语义搜索
+
+**端点**: `POST /api/v1/ai/search`
+
+**描述**: 基于语义理解的智能搜索
+
+**请求参数**:
+```json
+{
+  "query": "搜索关键词",
+  "project_id": 1,
+  "limit": 10,
+  "filters": {
+    "document_type": "contract",
+    "date_range": {
+      "start": "2024-01-01",
+      "end": "2024-12-31"
+    }
+  }
+}
+```
+
+**响应示例**:
+```json
+{
+  "status": "success",
+  "results": [
+    {
+      "document_id": 1,
+      "title": "文档标题",
+      "relevance_score": 0.95,
+      "snippet": "相关内容片段"
+    }
+  ],
+  "total": 25
+}
+```

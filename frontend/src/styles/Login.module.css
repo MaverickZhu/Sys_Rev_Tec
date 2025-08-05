@@ -1,0 +1,224 @@
+/* Login页面样式 */
+.loginContainer {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.loginBackground {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(120, 119, 198, 0.15) 0%, transparent 50%);
+}
+
+.loginContent {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  padding: 20px;
+}
+
+.loginCard {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 40px 32px;
+  transition: all 0.3s ease;
+}
+
+.loginCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+}
+
+.loginHeader {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.logoContainer {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+}
+
+.logoIcon {
+  font-size: 36px;
+  color: white;
+}
+
+.loginTitle {
+  color: #1a1a1a;
+  font-weight: 600;
+  margin-bottom: 8px !important;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.loginSubtitle {
+  color: #666;
+  font-size: 14px;
+}
+
+.loginButton {
+  height: 48px;
+  font-size: 16px;
+  font-weight: 500;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.loginButton:hover {
+  background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+}
+
+.loginButton:active {
+  transform: translateY(0);
+}
+
+.loginFooter {
+  text-align: center;
+  margin-top: 16px;
+}
+
+.registerLink {
+  color: #667eea;
+  font-weight: 500;
+  text-decoration: none;
+  margin-left: 4px;
+  transition: color 0.3s ease;
+}
+
+.registerLink:hover {
+  color: #5a6fd8;
+  text-decoration: underline;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .loginContainer {
+    padding: 16px;
+  }
+  
+  .loginCard {
+    padding: 24px 20px;
+  }
+  
+  .logoContainer {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .logoIcon {
+    font-size: 28px;
+  }
+  
+  .loginTitle {
+    font-size: 20px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .loginCard {
+    padding: 20px 16px;
+  }
+  
+  .loginButton {
+    height: 44px;
+    font-size: 15px;
+  }
+}
+
+/* 暗色主题支持 */
+:global(.dark) .loginCard {
+  background: rgba(30, 30, 30, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+:global(.dark) .loginTitle {
+  color: #ffffff;
+}
+
+:global(.dark) .loginSubtitle {
+  color: #cccccc;
+}
+
+/* 动画效果 */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.loginCard {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+/* 表单项样式增强 */
+.loginCard :global(.ant-input-affix-wrapper) {
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  transition: all 0.3s ease;
+}
+
+.loginCard :global(.ant-input-affix-wrapper:focus),
+.loginCard :global(.ant-input-affix-wrapper-focused) {
+  border-color: #667eea;
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+}
+
+.loginCard :global(.ant-checkbox-wrapper) {
+  color: #666;
+}
+
+:global(.dark) .loginCard :global(.ant-checkbox-wrapper) {
+  color: #cccccc;
+}
+
+.loginCard :global(.ant-btn-link) {
+  color: #667eea;
+  padding: 0;
+  height: auto;
+}
+
+.loginCard :global(.ant-btn-link:hover) {
+  color: #5a6fd8;
+}
+
+.loginCard :global(.ant-divider-plain) {
+  color: #999;
+  font-size: 12px;
+}
+
+:global(.dark) .loginCard :global(.ant-divider-plain) {
+  color: #999;
+}

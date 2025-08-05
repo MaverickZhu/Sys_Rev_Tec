@@ -23,7 +23,24 @@
         </el-input>
       </div>
 
-      <el-table :data="filteredUsers" style="width: 100%" v-loading="loading">
+      <!-- 权限不足提示 -->
+      <div v-if="!loading && users.length === 0 && hasPermissionError" class="permission-error">
+        <el-empty description="权限不足">
+          <template #image>
+            <el-icon size="100" color="#909399">
+              <Lock />
+            </el-icon>
+          </template>
+          <template #description>
+            <p>您没有权限查看用户列表</p>
+            <p>需要超级管理员权限才能访问此功能</p>
+          </template>
+          <el-button type="primary" @click="$router.push('/dashboard')">返回首页</el-button>
+        </el-empty>
+      </div>
+
+      <!-- 用户表格 -->
+      <el-table v-else :data="filteredUsers" style="width: 100%" v-loading="loading">
         <el-table-column prop="id" label="ID" width="80" />
         <el-table-column prop="username" label="用户名" />
         <el-table-column prop="email" label="邮箱" />
@@ -87,7 +104,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Plus, Search } from '@element-plus/icons-vue'
+import { Plus, Search, Lock } from '@element-plus/icons-vue'
 import { userAPI } from '@/api'
 import { useAuthStore } from '@/stores'
 
@@ -99,6 +116,7 @@ const users = ref([])
 const searchQuery = ref('')
 const showAddDialog = ref(false)
 const editingUser = ref(null)
+const hasPermissionError = ref(false)
 const userForm = ref({
   username: '',
   email: '',
@@ -139,9 +157,17 @@ const fetchUsers = async () => {
   loading.value = true
   try {
     const data = await userAPI.getUsers()
-    users.value = data
+    users.value = data.users || data || []
+    console.log('用户数据:', data)
   } catch (error) {
-    ElMessage.error('获取用户列表失败: ' + error.message)
+    console.error('获取用户列表错误:', error)
+    if (error.message.includes('403') || error.message.includes('权限')) {
+      ElMessage.error('权限不足：需要超级管理员权限才能查看用户列表')
+      hasPermissionError.value = true
+    } else {
+      ElMessage.error('获取用户列表失败: ' + error.message)
+    }
+    users.value = []
   } finally {
     loading.value = false
   }
@@ -245,5 +271,16 @@ onMounted(() => {
     flex-direction: column;
     gap: 10px;
   }
+}
+
+.permission-error {
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.permission-error .el-empty__description p {
+  margin: 8px 0;
+  color: #606266;
+  font-size: 14px;
 }
 </style>

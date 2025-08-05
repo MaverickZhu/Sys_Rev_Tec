@@ -7,6 +7,10 @@ const Login = () => import('@/views/Login.vue')
 const Layout = () => import('@/layout/index.vue')
 const Dashboard = () => import('@/views/Dashboard.vue')
 const UserManagement = () => import('@/views/UserManagement.vue')
+const UserManagementTest = () => import('@/views/UserManagementTest.vue')
+const UserTest = () => import('@/views/UserTest.vue')
+const AuthTest = () => import('@/views/AuthTest.vue')
+const PermissionTest = () => import('@/views/PermissionTest.vue')
 const ReportManagement = () => import('@/views/ReportManagement.vue')
 const SystemSettings = () => import('@/views/SystemSettings.vue')
 const PermissionManagement = () => import('@/components/PermissionManagement.vue')
@@ -40,7 +44,7 @@ const routes = [
         component: Dashboard,
         meta: {
           title: '仪表板',
-          icon: 'Dashboard',
+          icon: 'Odometer',
           requiresAuth: true
         }
       },
@@ -53,6 +57,46 @@ const routes = [
           icon: 'User',
           requiresAuth: true,
           permissions: ['USER_READ', 'USER_MANAGE']
+        }
+      },
+      {
+        path: 'user-management-test',
+        name: 'UserManagementTest',
+        component: UserManagementTest,
+        meta: {
+          title: '用户管理测试',
+          icon: 'User',
+          requiresAuth: false
+        }
+      },
+      {
+        path: 'user-test',
+        name: 'UserTest',
+        component: UserTest,
+        meta: {
+          title: '用户测试',
+          icon: 'User',
+          requiresAuth: false
+        }
+      },
+      {
+        path: 'auth-test',
+        name: 'AuthTest',
+        component: AuthTest,
+        meta: {
+          title: '认证测试',
+          icon: 'User',
+          requiresAuth: false
+        }
+      },
+      {
+        path: 'permission-test',
+        name: 'PermissionTest',
+        component: PermissionTest,
+        meta: {
+          title: '权限测试',
+          icon: 'Lock',
+          requiresAuth: false
         }
       },
       {
@@ -94,7 +138,7 @@ const routes = [
         component: SecurityDashboard,
         meta: {
           title: '安全监控',
-          icon: 'Shield',
+          icon: 'Warning',
           requiresAuth: true,
           permissions: ['SYSTEM_MONITOR', 'AUDIT_READ']
         }

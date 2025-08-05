@@ -6,6 +6,11 @@ import traceback
 from pathlib import Path
 
 from app.core.config import settings
+from app.db.database_optimization import (
+    analyze_query_performance,
+    create_database_indexes,
+    optimize_database_settings,
+)
 
 """
 数据库优化管理命令
@@ -20,12 +25,6 @@ from app.core.config import settings
 # 添加项目根目录到Python路径
 project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
-
-from app.db.database_optimization import (
-    analyze_query_performance,
-    create_database_indexes,
-    optimize_database_settings,
-)
 
 
 def main():

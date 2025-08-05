@@ -2,16 +2,17 @@ import logging
 import os
 from contextlib import asynccontextmanager
 
-from fastapi import Depends, FastAPI, HTTPException, Response, status
+from fastapi import Depends, FastAPI, HTTPException, Response
 from fastapi.exceptions import RequestValidationError, ResponseValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from prometheus_client import CONTENT_TYPE_LATEST, generate_latest
 from sqlalchemy import text
-from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app.api.v1.api import api_router
+from app.core.cache_scheduler import start_cache_scheduler, stop_cache_scheduler
+from app.core.cache_warmup import startup_cache_warmup
 from app.core.config import settings
 from app.core.exceptions import (
     BaseAPIException,
@@ -23,19 +24,17 @@ from app.core.exceptions import (
 )
 from app.db.session import SessionLocal, get_db
 from app.middleware.auth import AuthMiddleware
-from app.middleware.monitoring import (
-    MonitoringMiddleware,
-    setup_monitoring,
-)
 from app.middleware.enhanced_monitoring import (
     EnhancedMonitoringMiddleware,
     start_enhanced_monitoring,
     stop_enhanced_monitoring,
 )
+from app.middleware.monitoring import (
+    MonitoringMiddleware,
+    setup_monitoring,
+)
 from app.middleware.request_id import RequestIDMiddleware
 from app.services.cache_init import initialize_cache_system, shutdown_cache_system
-from app.core.cache_scheduler import start_cache_scheduler, stop_cache_scheduler
-from app.core.cache_warmup import startup_cache_warmup
 
 # 设置日志
 settings.setup_logging()
@@ -50,14 +49,14 @@ async def lifespan(app: FastAPI):
     """应用生命周期管理"""
     # 启动时执行
     logger.info("Starting application...")
-    
+
     # 初始化缓存系统
     if settings.CACHE_ENABLED:
         logger.info("Initializing cache system...")
         cache_init_success = await initialize_cache_system()
         if cache_init_success:
             logger.info("Cache system initialized successfully")
-            
+
             # 执行缓存预热
             logger.info("Starting cache warmup...")
             try:
@@ -66,10 +65,12 @@ async def lifespan(app: FastAPI):
             except Exception as e:
                 logger.error(f"Cache warmup failed: {e}")
         else:
-            logger.warning("Cache system initialization failed, continuing without cache")
+            logger.warning(
+                "Cache system initialization failed, continuing without cache"
+            )
     else:
         logger.info("Cache system disabled")
-    
+
     # 启动缓存调度器
     if settings.CACHE_ENABLED:
         logger.info("Starting cache scheduler...")
@@ -78,7 +79,7 @@ async def lifespan(app: FastAPI):
             logger.info("Cache scheduler started successfully")
         except Exception as e:
             logger.error(f"Failed to start cache scheduler: {e}")
-    
+
     # 启动增强监控系统
     logger.info("Starting enhanced monitoring system...")
     try:
@@ -86,14 +87,14 @@ async def lifespan(app: FastAPI):
         logger.info("Enhanced monitoring system started successfully")
     except Exception as e:
         logger.error(f"Failed to start enhanced monitoring system: {e}")
-    
+
     logger.info("Application startup completed")
-    
+
     yield
-    
+
     # 关闭时执行
     logger.info("Shutting down application...")
-    
+
     # 停止增强监控系统
     logger.info("Stopping enhanced monitoring system...")
     try:
@@ -101,7 +102,7 @@ async def lifespan(app: FastAPI):
         logger.info("Enhanced monitoring system stopped successfully")
     except Exception as e:
         logger.error(f"Failed to stop enhanced monitoring system: {e}")
-    
+
     # 停止缓存调度器
     if settings.CACHE_ENABLED:
         logger.info("Stopping cache scheduler...")
@@ -110,14 +111,15 @@ async def lifespan(app: FastAPI):
             logger.info("Cache scheduler stopped successfully")
         except Exception as e:
             logger.error(f"Failed to stop cache scheduler: {e}")
-    
+
     # 关闭缓存系统
     if settings.CACHE_ENABLED:
         logger.info("Shutting down cache system...")
         await shutdown_cache_system()
         logger.info("Cache system shutdown completed")
-    
+
     logger.info("Application shutdown completed")
+
 
 # 创建FastAPI应用实例
 app = FastAPI(
@@ -151,8 +153,8 @@ app = FastAPI(
     **技术栈**: FastAPI + SQLAlchemy + SQLite/PostgreSQL
     """,
     version=settings.VERSION,
-    docs_url="/docs" if settings.ENABLE_DOCS else None,
-    redoc_url="/redoc" if settings.ENABLE_DOCS else None,
+    docs_url=None,
+    redoc_url=None,
     contact={"name": "系统管理员", "email": "admin@gov-procurement.com"},
     license_info={"name": "MIT License", "url": "https://opensource.org/licenses/MIT"},
 )
@@ -190,6 +192,11 @@ if not os.path.exists(static_dir):
 # 挂载静态文件服务
 app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
+# 挂载前端文件服务
+frontend_dir = "frontend"
+if os.path.exists(frontend_dir):
+    app.mount("/frontend", StaticFiles(directory=frontend_dir), name="frontend")
+
 # 全局异常处理
 # 注册全局异常处理器
 app.add_exception_handler(BaseAPIException, base_api_exception_handler)
@@ -201,15 +208,18 @@ app.add_exception_handler(
 app.add_exception_handler(Exception, general_exception_handler)
 
 
-# 根路径 - 重定向到前端页面
-@app.get("/", summary="系统首页", description="访问系统前端界面", tags=["系统信息"])
+# 根路径 - 返回登录页面
+@app.get("/", summary="系统首页", description="访问系统登录页面", tags=["系统信息"])
 async def root():
-    """系统首页"""
-    static_file_path = os.path.join(os.getcwd(), "static", "index.html")
-    if os.path.exists(static_file_path):
-        return FileResponse(static_file_path)
+    """系统首页 - 返回登录页面"""
+    login_file_path = os.path.join(os.getcwd(), "frontend", "login.html")
+    if os.path.exists(login_file_path):
+        return FileResponse(login_file_path)
     else:
-        raise HTTPException(status_code=404, detail="Index file not found")
+        # 如果登录页面不存在，重定向到API文档
+        from fastapi.responses import RedirectResponse
+
+        return RedirectResponse(url="/docs")
 
 
 # 性能监控仪表板
@@ -221,7 +231,9 @@ async def root():
 )
 async def performance_dashboard():
     """性能监控仪表板"""
-    dashboard_file_path = os.path.join(os.getcwd(), "frontend", "performance-dashboard.html")
+    dashboard_file_path = os.path.join(
+        os.getcwd(), "frontend", "performance-dashboard.html"
+    )
     if os.path.exists(dashboard_file_path):
         return FileResponse(dashboard_file_path)
     else:
@@ -272,15 +284,18 @@ async def health_check(db: SessionLocal = Depends(get_db)):
 
     # 检查日志目录
     log_dir_exists = os.path.exists(os.path.dirname(settings.LOG_FILE))
-    
+
     # 检查缓存系统状态
     cache_status = "disabled"
     cache_error = None
     if settings.CACHE_ENABLED:
         try:
             from app.services.cache_init import get_cache_system_status
+
             cache_system_status = get_cache_system_status()
-            cache_status = "healthy" if cache_system_status["initialized"] else "unhealthy"
+            cache_status = (
+                "healthy" if cache_system_status["initialized"] else "unhealthy"
+            )
         except Exception as e:
             cache_status = "error"
             cache_error = str(e)
@@ -288,8 +303,8 @@ async def health_check(db: SessionLocal = Depends(get_db)):
 
     # 整体健康状态
     is_healthy = (
-        db_status == "connected" 
-        and upload_dir_exists 
+        db_status == "connected"
+        and upload_dir_exists
         and (not settings.CACHE_ENABLED or cache_status in ["healthy", "disabled"])
     )
 
@@ -331,6 +346,23 @@ async def metrics():
     """Prometheus监控指标"""
     return Response(content=generate_latest(), media_type=CONTENT_TYPE_LATEST)
 
+
+# 自定义文档路由
+@app.get("/docs", include_in_schema=False)
+async def custom_swagger_ui_html():
+    from fastapi.openapi.docs import get_swagger_ui_html
+    return get_swagger_ui_html(
+        openapi_url="/openapi.json",
+        title=f"{settings.APP_NAME} - Swagger UI",
+    )
+
+@app.get("/redoc", include_in_schema=False)
+async def redoc_html():
+    from fastapi.openapi.docs import get_redoc_html
+    return get_redoc_html(
+        openapi_url="/openapi.json",
+        title=f"{settings.APP_NAME} - ReDoc",
+    )
 
 # 包含API路由
 app.include_router(api_router, prefix=settings.API_V1_STR)

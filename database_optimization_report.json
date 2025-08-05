@@ -1,0 +1,143 @@
+{
+  "timestamp": "2025-08-04T11:50:18.520487",
+  "database_optimization": {
+    "indexes": {
+      "total_indexes": 17,
+      "created_successfully": 12,
+      "failed": 5,
+      "details": [
+        {
+          "index": "idx_projects_status",
+          "status": "success",
+          "sql": "CREATE INDEX IF NOT EXISTS idx_projects_status ON projects(status);"
+        },
+        {
+          "index": "idx_projects_category",
+          "status": "failed",
+          "error": "(psycopg2.errors.UndefinedColumn) column \"project_category\" does not exist\n\n[SQL: CREATE INDEX IF NOT EXISTS idx_projects_category ON projects(project_category);]\n(Background on this error at: https://sqlalche.me/e/20/f405)",
+          "sql": "CREATE INDEX IF NOT EXISTS idx_projects_category ON projects(project_category);"
+        },
+        {
+          "index": "idx_projects_owner_id",
+          "status": "success",
+          "sql": "CREATE INDEX IF NOT EXISTS idx_projects_owner_id ON projects(owner_id);"
+        },
+        {
+          "index": "idx_projects_created_at",
+          "status": "success",
+          "sql": "CREATE INDEX IF NOT EXISTS idx_projects_created_at ON projects(created_at);"
+        },
+        {
+          "index": "idx_projects_budget",
+          "status": "failed",
+          "error": "(psycopg2.errors.UndefinedColumn) column \"budget\" does not exist\n\n[SQL: CREATE INDEX IF NOT EXISTS idx_projects_budget ON projects(budget);]\n(Background on this error at: https://sqlalche.me/e/20/f405)",
+          "sql": "CREATE INDEX IF NOT EXISTS idx_projects_budget ON projects(budget);"
+        },
+        {
+          "index": "idx_documents_project_id",
+          "status": "success",
+          "sql": "CREATE INDEX IF NOT EXISTS idx_documents_project_id ON documents(project_id);"
+        },
+        {
+          "index": "idx_documents_uploader_id",
+          "status": "success",
+          "sql": "CREATE INDEX IF NOT EXISTS idx_documents_uploader_id ON documents(uploader_id);"
+        },
+        {
+          "index": "idx_documents_status",
+          "status": "success",
+          "sql": "CREATE INDEX IF NOT EXISTS idx_documents_status ON documents(status);"
+        },
+        {
+          "index": "idx_documents_created_at",
+          "status": "success",
+          "sql": "CREATE INDEX IF NOT EXISTS idx_documents_created_at ON documents(created_at);"
+        },
+        {
+          "index": "idx_users_username",
+          "status": "success",
+          "sql": "CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);"
+        },
+        {
+          "index": "idx_users_email",
+          "status": "success",
+          "sql": "CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);"
+        },
+        {
+          "index": "idx_users_is_active",
+          "status": "success",
+          "sql": "CREATE INDEX IF NOT EXISTS idx_users_is_active ON users(is_active);"
+        },
+        {
+          "index": "idx_audit_logs_user_id",
+          "status": "failed",
+          "error": "(psycopg2.errors.UndefinedTable) relation \"audit_logs\" does not exist\n\n[SQL: CREATE INDEX IF NOT EXISTS idx_audit_logs_user_id ON audit_logs(user_id);]\n(Background on this error at: https://sqlalche.me/e/20/f405)",
+          "sql": "CREATE INDEX IF NOT EXISTS idx_audit_logs_user_id ON audit_logs(user_id);"
+        },
+        {
+          "index": "idx_audit_logs_action",
+          "status": "failed",
+          "error": "(psycopg2.errors.UndefinedTable) relation \"audit_logs\" does not exist\n\n[SQL: CREATE INDEX IF NOT EXISTS idx_audit_logs_action ON audit_logs(action);]\n(Background on this error at: https://sqlalche.me/e/20/f405)",
+          "sql": "CREATE INDEX IF NOT EXISTS idx_audit_logs_action ON audit_logs(action);"
+        },
+        {
+          "index": "idx_audit_logs_created_at",
+          "status": "failed",
+          "error": "(psycopg2.errors.UndefinedTable) relation \"audit_logs\" does not exist\n\n[SQL: CREATE INDEX IF NOT EXISTS idx_audit_logs_created_at ON audit_logs(created_at);]\n(Background on this error at: https://sqlalche.me/e/20/f405)",
+          "sql": "CREATE INDEX IF NOT EXISTS idx_audit_logs_created_at ON audit_logs(created_at);"
+        },
+        {
+          "index": "idx_projects_owner_status",
+          "status": "success",
+          "sql": "CREATE INDEX IF NOT EXISTS idx_projects_owner_status ON projects(owner_id, status);"
+        },
+        {
+          "index": "idx_documents_project_status",
+          "status": "success",
+          "sql": "CREATE INDEX IF NOT EXISTS idx_documents_project_status ON documents(project_id, status);"
+        }
+      ]
+    },
+    "performance_analysis": {
+      "table_stats": [],
+      "index_usage": [],
+      "database_size": {
+        "database_size": "10109 kB"
+      },
+      "connection_stats": {
+        "total_connections": 7,
+        "active_connections": 1,
+        "idle_connections": 1
+      }
+    },
+    "settings_optimization": {
+      "analyze_completed": true,
+      "vacuum_completed": true,
+      "reindex_completed": false,
+      "details": [
+        {
+          "operation": "ANALYZE",
+          "status": "success"
+        },
+        {
+          "operation": "VACUUM",
+          "status": "success"
+        }
+      ]
+    }
+  },
+  "recommendations": [
+    "定期运行 VACUUM ANALYZE 清理死元组并更新统计信息",
+    "监控慢查询日志，优化执行时间超过100ms的查询",
+    "检查未使用的索引，删除不必要的索引以减少写入开销",
+    "对于大表，考虑分区策略",
+    "配置合适的 shared_buffers 和 work_mem 参数",
+    "监控数据库连接数，避免连接池耗尽",
+    "定期备份数据库并测试恢复流程"
+  ],
+  "summary": {
+    "total_tasks": 3,
+    "completed_tasks": 2,
+    "success_rate": 66.66666666666666
+  }
+}

@@ -168,7 +168,7 @@ class AnomalyItem(BaseModel):
     """异常项"""
     
     anomaly_id: str = Field(..., description="异常ID")
-    type: str = Field(..., description="异常类型")
+    anomaly_type: str = Field(..., description="异常类型")
     title: str = Field(..., description="异常标题")
     description: str = Field(..., description="异常描述")
     severity: str = Field(..., description="严重程度")

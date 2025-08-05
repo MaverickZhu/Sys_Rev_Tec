@@ -50,6 +50,7 @@ class EmbeddingResult:
     provider: str
     dimension: int
     processing_time: float
+    cached: bool = False
     token_count: Optional[int] = None
     metadata: Optional[Dict[str, Any]] = None
 
@@ -78,6 +79,9 @@ class BatchEmbeddingResult:
     total_processing_time: float
     individual_times: List[float]
     failed_indices: List[int]
+    dimension: int = 0
+    cache_hits: int = 0
+    cache_misses: int = 0
     metadata: Optional[Dict[str, Any]] = None
 
 
@@ -97,14 +101,12 @@ class VectorizationService:
         self.default_provider = EmbeddingProvider.OLLAMA
         self.model_configs = {
             EmbeddingProvider.OLLAMA: {
-                "model": settings.OLLAMA_EMBEDDING_MODEL,
-                "dimension": settings.EMBEDDING_DIMENSION,
-                "max_tokens": settings.MAX_TOKENS_PER_REQUEST,
+                "model": settings.AI_EMBEDDING_MODEL,
+                "dimension": settings.AI_EMBEDDING_DIMENSION,
             },
             EmbeddingProvider.AZURE_OPENAI: {
-                "model": settings.AZURE_EMBEDDING_MODEL,
-                "dimension": settings.AZURE_EMBEDDING_DIMENSION,
-                "max_tokens": settings.AZURE_MAX_TOKENS,
+                "model": settings.AZURE_OPENAI_EMBEDDING_DEPLOYMENT or "text-embedding-ada-002",
+                "dimension": settings.AI_EMBEDDING_DIMENSION,
             },
         }
 
@@ -128,11 +130,11 @@ class VectorizationService:
             self.cache_manager = await get_cache_manager()
 
             # 初始化Ollama客户端
-            if settings.OLLAMA_ENABLED:
+            if settings.OLLAMA_BASE_URL:
                 await self._initialize_ollama()
 
             # 初始化Azure OpenAI客户端
-            if settings.AZURE_OPENAI_ENABLED:
+            if settings.has_azure_openai:
                 await self._initialize_azure_openai()
 
             logger.info("✅ 向量化服务初始化完成")
@@ -150,21 +152,21 @@ class VectorizationService:
         try:
             # 创建异步客户端
             self.ollama_client = ollama.AsyncClient(
-                host=settings.OLLAMA_HOST, timeout=settings.OLLAMA_TIMEOUT
+                host=settings.OLLAMA_BASE_URL, timeout=settings.OLLAMA_TIMEOUT
             )
 
             # 测试连接
-            models = await self.ollama_client.list()
-            available_models = [model["name"] for model in models.get("models", [])]
+            models_response = await self.ollama_client.list()
+            available_models = [model.model for model in models_response.models]
 
-            if settings.OLLAMA_EMBEDDING_MODEL not in available_models:
+            if settings.AI_EMBEDDING_MODEL not in available_models:
                 logger.warning(
-                    f"⚠️ 嵌入模型 {settings.OLLAMA_EMBEDDING_MODEL} 不可用，"
+                    f"⚠️ 嵌入模型 {settings.AI_EMBEDDING_MODEL} 不可用，"
                     f"可用模型: {available_models}"
                 )
             else:
                 logger.info(
-                    f"✅ Ollama嵌入模型 {settings.OLLAMA_EMBEDDING_MODEL} 已就绪"
+                    f"✅ Ollama嵌入模型 {settings.AI_EMBEDDING_MODEL} 已就绪"
                 )
 
         except Exception as e:
@@ -231,12 +233,13 @@ class VectorizationService:
                 processing_time = time.time() - start_time
 
                 structured_logger.log_vectorization(
-                    text=processed_text[:100],
+                    document_id="single_text",
+                    chunks=1,
                     model=model,
+                    duration_ms=int(processing_time * 1000),
                     provider=provider.value,
-                    dimension=len(cached_embedding),
-                    processing_time=processing_time,
                     cache_hit=True,
+                    vector_dimension=len(cached_embedding),
                 )
 
                 return EmbeddingResult(
@@ -245,6 +248,7 @@ class VectorizationService:
                     provider=provider.value,
                     dimension=len(cached_embedding),
                     processing_time=processing_time,
+                    cached=True,
                     metadata={"cache_hit": True},
                 )
 
@@ -284,12 +288,13 @@ class VectorizationService:
 
             # 记录日志
             structured_logger.log_vectorization(
-                text=processed_text[:100],
+                document_id="single_text",
+                chunks=1,
                 model=model,
+                duration_ms=int(processing_time * 1000),
                 provider=provider.value,
-                dimension=len(embedding),
-                processing_time=processing_time,
-                cache_hit=False,
+                success=True,
+                vector_dimension=len(embedding),
             )
 
             return EmbeddingResult(
@@ -298,21 +303,21 @@ class VectorizationService:
                 provider=provider.value,
                 dimension=len(embedding),
                 processing_time=processing_time,
+                cached=False,
                 metadata={"cache_hit": False},
             )
 
         except Exception as e:
             processing_time = time.time() - start_time
 
-            structured_logger.log_error(
-                error_type="vectorization_error",
-                error_message=str(e),
-                context={
-                    "text_length": len(processed_text),
-                    "provider": provider.value,
-                    "model": model,
-                    "processing_time": processing_time,
-                },
+            structured_logger.log_vectorization(
+                document_id="single_text",
+                chunks=1,
+                model=model,
+                duration_ms=int(processing_time * 1000),
+                provider=provider.value,
+                success=False,
+                error=str(e),
             )
 
             raise RuntimeError(f"向量化失败 ({provider.value}): {e}")
@@ -432,17 +437,15 @@ class VectorizationService:
 
         # 记录批量处理日志
         structured_logger.log_vectorization(
-            text=f"批量处理 {len(texts)} 个文本",
+            document_id="batch_processing",
+            chunks=len(texts),
             model=model,
+            duration_ms=int(total_processing_time * 1000),
             provider=provider.value,
-            dimension=len(embeddings[0]) if embeddings and embeddings[0] else 0,
-            processing_time=total_processing_time,
-            cache_hit=False,
-            extra_data={
-                "batch_size": batch_size,
-                "failed_count": len(failed_indices),
-                "success_rate": (len(texts) - len(failed_indices)) / len(texts),
-            },
+            batch_size=batch_size,
+            failed_count=len(failed_indices),
+            success_rate=(len(texts) - len(failed_indices)) / len(texts),
+            vector_dimension=len(embeddings[0]) if embeddings and embeddings[0] else 0,
         )
 
         return BatchEmbeddingResult(
@@ -453,6 +456,9 @@ class VectorizationService:
             total_processing_time=total_processing_time,
             individual_times=individual_times,
             failed_indices=failed_indices,
+            dimension=len(embeddings[0]) if embeddings and embeddings[0] else 0,
+            cache_hits=0,  # TODO: 实现缓存统计
+            cache_misses=len(texts),  # TODO: 实现缓存统计
             metadata={
                 "batch_size": batch_size,
                 "success_rate": (len(texts) - len(failed_indices)) / len(texts),
@@ -555,22 +561,18 @@ class VectorizationService:
 
             # 记录文档向量化日志
             structured_logger.log_vectorization(
-                text=f"文档 {document_id}",
+                document_id=document_id,
+                chunks=len(chunks),
                 model=batch_result.model,
+                duration_ms=int(total_processing_time * 1000),
                 provider=batch_result.provider,
-                dimension=(
+                successful_chunks=len(vectorized_chunks),
+                chunk_strategy=chunk_strategy,
+                vector_dimension=(
                     len(batch_result.embeddings[0])
                     if batch_result.embeddings and batch_result.embeddings[0]
                     else 0
                 ),
-                processing_time=total_processing_time,
-                cache_hit=False,
-                extra_data={
-                    "document_id": document_id,
-                    "total_chunks": len(chunks),
-                    "successful_chunks": len(vectorized_chunks),
-                    "chunk_strategy": chunk_strategy,
-                },
             )
 
             return result
@@ -579,14 +581,12 @@ class VectorizationService:
             processing_time = time.time() - start_time
 
             structured_logger.log_error(
-                error_type="document_vectorization_error",
-                error_message=str(e),
-                context={
-                    "document_id": document_id,
-                    "content_length": len(content),
-                    "chunk_strategy": chunk_strategy,
-                    "processing_time": processing_time,
-                },
+                operation="document_vectorization_error",
+                error=str(e),
+                document_id=document_id,
+                content_length=len(content),
+                chunk_strategy=chunk_strategy,
+                processing_time=processing_time,
             )
 
             raise RuntimeError(f"文档向量化失败: {e}")

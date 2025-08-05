@@ -195,14 +195,14 @@ async def create_embedding(
     try:
         # 记录请求
         structured_logger.log_request(
-            endpoint="/vectorization/embed",
             method="POST",
-            request_data={
-                "text_length": len(request.text),
-                "provider": request.provider.value if request.provider else None,
-                "model": request.model,
-                "cache": request.cache,
-            },
+            path="/vectorization/embed",
+            status_code=200,
+            duration_ms=0,
+            text_length=len(request.text),
+            provider=request.provider.value if request.provider else None,
+            model=request.model,
+            cache=request.cache,
         )
 
         # 生成嵌入
@@ -218,12 +218,10 @@ async def create_embedding(
 
         # 记录向量化日志
         structured_logger.log_vectorization(
-            text_length=len(request.text),
-            provider=result.provider,
+            document_id="single_text",
+            chunks=1,
             model=result.model,
-            dimension=result.dimension,
-            processing_time=processing_time,
-            cached=result.cached,
+            duration_ms=int(processing_time * 1000),
         )
 
         return EmbeddingResponse(
@@ -239,13 +237,11 @@ async def create_embedding(
         processing_time = time.time() - start_time
 
         structured_logger.log_error(
-            error_type="embedding_error",
-            error_message=str(e),
-            context={
-                "text_length": len(request.text),
-                "provider": request.provider.value if request.provider else None,
-                "processing_time": processing_time,
-            },
+            operation="embedding_error",
+            error=e,
+            text_length=len(request.text),
+            provider=request.provider.value if request.provider else None,
+            processing_time=processing_time,
         )
 
         raise HTTPException(
@@ -270,15 +266,15 @@ async def create_batch_embeddings(
     try:
         # 记录请求
         structured_logger.log_request(
-            endpoint="/vectorization/embed/batch",
             method="POST",
-            request_data={
-                "text_count": len(request.texts),
-                "total_length": sum(len(text) for text in request.texts),
-                "provider": request.provider.value if request.provider else None,
-                "model": request.model,
-                "cache": request.cache,
-            },
+            path="/vectorization/embed/batch",
+            status_code=200,
+            duration_ms=0,
+            text_count=len(request.texts),
+            total_length=sum(len(text) for text in request.texts),
+            provider=request.provider.value if request.provider else None,
+            model=request.model,
+            cache=request.cache,
         )
 
         # 批量生成嵌入
@@ -294,17 +290,10 @@ async def create_batch_embeddings(
 
         # 记录向量化日志
         structured_logger.log_vectorization(
-            text_length=sum(len(text) for text in request.texts),
-            provider=result.provider,
+            document_id="batch_texts",
+            chunks=len(request.texts),
             model=result.model,
-            dimension=result.dimension,
-            processing_time=processing_time,
-            cached=False,  # 批量操作的缓存状态较复杂
-            extra_data={
-                "batch_size": len(request.texts),
-                "cache_hits": result.cache_hits,
-                "cache_misses": result.cache_misses,
-            },
+            duration_ms=int(processing_time * 1000),
         )
 
         return BatchEmbeddingResponse(
@@ -322,13 +311,11 @@ async def create_batch_embeddings(
         processing_time = time.time() - start_time
 
         structured_logger.log_error(
-            error_type="batch_embedding_error",
-            error_message=str(e),
-            context={
-                "text_count": len(request.texts),
-                "provider": request.provider.value if request.provider else None,
-                "processing_time": processing_time,
-            },
+            operation="batch_embedding_error",
+            error=e,
+            text_count=len(request.texts),
+            provider=request.provider.value if request.provider else None,
+            processing_time=processing_time,
         )
 
         raise HTTPException(
@@ -355,16 +342,16 @@ async def vectorize_document(
     try:
         # 记录请求
         structured_logger.log_request(
-            endpoint="/vectorization/vectorize/document",
             method="POST",
-            request_data={
-                "document_id": request.document_id,
-                "content_length": len(request.content),
-                "chunk_strategy": request.chunk_strategy.value,
-                "chunk_size": request.chunk_size,
-                "provider": request.provider.value if request.provider else None,
-                "overwrite": request.overwrite,
-            },
+            path="/vectorization/vectorize/document",
+            status_code=200,
+            duration_ms=0,
+            document_id=request.document_id,
+            content_length=len(request.content),
+            chunk_strategy=request.chunk_strategy.value,
+            chunk_size=request.chunk_size,
+            provider=request.provider.value if request.provider else None,
+            overwrite=request.overwrite,
         )
 
         # 检查文档是否已存在
@@ -406,18 +393,10 @@ async def vectorize_document(
 
         # 记录向量化日志
         structured_logger.log_vectorization(
-            text_length=len(request.content),
-            provider=result.provider,
+            document_id=request.document_id,
+            chunks=result.total_chunks,
             model=result.model,
-            dimension=result.dimension,
-            processing_time=processing_time,
-            cached=False,
-            extra_data={
-                "document_id": request.document_id,
-                "total_chunks": result.total_chunks,
-                "successful_chunks": result.successful_chunks,
-                "chunk_strategy": request.chunk_strategy.value,
-            },
+            duration_ms=int(processing_time * 1000),
         )
 
         # 后台任务：更新向量统计
@@ -568,18 +547,10 @@ async def vectorize_documents_batch(
 
         # 记录批量向量化日志
         structured_logger.log_vectorization(
-            text_length=sum(len(doc.content) for doc in request.documents),
-            provider=request.provider.value if request.provider else "mixed",
+            document_id="batch_documents",
+            chunks=total_chunks,
             model=request.model or "mixed",
-            dimension=0,  # 批量操作维度可能不同
-            processing_time=processing_time,
-            cached=False,
-            extra_data={
-                "batch_size": len(request.documents),
-                "successful_documents": successful_documents,
-                "failed_documents": len(errors),
-                "total_chunks": total_chunks,
-            },
+            duration_ms=int(processing_time * 1000),
         )
 
         return BatchDocumentVectorizationResponse(

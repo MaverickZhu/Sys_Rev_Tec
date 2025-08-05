@@ -1,7 +1,7 @@
 import { useAuthStore } from '@/stores'
 
 // API基础配置
-const API_BASE_URL = '/api/v1'
+const API_BASE_URL = 'http://127.0.0.1:8001/api/v1'
 
 // 创建请求实例
 class ApiService {
@@ -109,7 +109,7 @@ const apiService = new ApiService()
 
 // 认证相关API
 export const authAPI = {
-  login: (credentials) => apiService.post('/auth/login', credentials),
+  login: (credentials) => apiService.post('/auth/login/json', credentials),
   logout: () => apiService.post('/auth/logout'),
   refreshToken: () => apiService.post('/auth/refresh'),
   getCurrentUser: () => apiService.get('/auth/me'),

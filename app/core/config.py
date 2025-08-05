@@ -27,11 +27,15 @@ class Settings(BaseSettings):
     PORT: int = 8000
     RELOAD: bool = True
 
-    # 数据库配置
-    DATABASE_URL: str = "sqlite:///./app.db"
+    # 数据库配置 - PostgreSQL生产环境
+    DATABASE_URL: str = (
+        "postgresql://sys_rev_user:CHANGE_PASSWORD@127.0.0.1:5432/sys_rev_tec_prod"
+    )
     DATABASE_ECHO: bool = False
-    DATABASE_POOL_SIZE: int = 5
-    DATABASE_MAX_OVERFLOW: int = 10
+    DATABASE_POOL_SIZE: int = 20
+    DATABASE_MAX_OVERFLOW: int = 30
+    DATABASE_POOL_PRE_PING: bool = True
+    DATABASE_POOL_RECYCLE: int = 3600
 
     # JWT配置
     JWT_SECRET_KEY: str = "your-jwt-secret-key"
@@ -43,7 +47,7 @@ class Settings(BaseSettings):
     FIRST_SUPERUSER_USERNAME: str = "admin"
     FIRST_SUPERUSER_EMAIL: str = "admin@example.com"
     FIRST_SUPERUSER_PASSWORD: str = "admin123"
-    
+
     # 默认用户配置（可选）
     FIRST_USER: Optional[str] = None
     FIRST_USER_EMAIL: Optional[str] = None
@@ -82,7 +86,7 @@ class Settings(BaseSettings):
     PDF_MAX_PAGES: int = 100
 
     # 审查配置
-    REVIEW_STAGES: list = ["前期", "采购", "合同", "实施", "验收", "后期"]
+    REVIEW_STAGES: List[str] = ["前期", "采购", "合同", "实施", "验收", "后期"]
 
     # 日志配置
     LOG_LEVEL: str = "INFO"
@@ -112,13 +116,17 @@ class Settings(BaseSettings):
     SMTP_FROM: str = "noreply@example.com"
 
     # 缓存配置
-    CACHE_ENABLED: bool = True
+    CACHE_ENABLED: bool = False
     REDIS_URL: Optional[str] = None
+    REDIS_HOST: str = "127.0.0.1"
+    REDIS_PORT: int = 6379
+    REDIS_PASSWORD: Optional[str] = "redis_password"
+    REDIS_DB: int = 0
     CACHE_EXPIRE_TIME: int = 3600  # 秒
 
     # CORS配置
     ALLOWED_ORIGINS: str = (
-        "http://localhost:3000,http://localhost:8080,http://127.0.0.1:3000"
+        "http://localhost:3000,http://localhost:8080,http://localhost:8082,http://127.0.0.1:3000,http://127.0.0.1:8082"
     )
     ALLOWED_METHODS: str = "GET,POST,PUT,DELETE,OPTIONS"
     ALLOWED_HEADERS: str = "*"
@@ -221,10 +229,12 @@ class Settings(BaseSettings):
             ],
         )
 
-    class Config:
-        case_sensitive = True
-        env_file = ".env"
-        env_file_encoding = "utf-8"
+    model_config = {
+        "case_sensitive": True,
+        "env_file": [".env.production", ".env"],
+        "env_file_encoding": "utf-8",
+        "extra": "ignore"
+    }
 
 
 # 全局配置实例

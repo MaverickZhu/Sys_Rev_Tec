@@ -13,6 +13,7 @@ router = APIRouter()
 
 
 @router.get("/")
+@router.get("/health")
 async def health_check():
     """
     基础健康检查端点

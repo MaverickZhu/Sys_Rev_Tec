@@ -63,7 +63,7 @@ class AIInfrastructureVerifier:
         self.config = {
             "database_url": os.getenv(
                 "DATABASE_URL",
-                "postgresql://postgres:sys_rev_password@localhost:5432/sys_rev_tech",
+                "postgresql://sys_rev_user:CHANGE_PASSWORD@127.0.0.1:5432/sys_rev_tec_prod",
             ),
             "redis_url": os.getenv("REDIS_URL", "redis://localhost:6379/0"),
             "ollama_url": os.getenv("OLLAMA_BASE_URL", "http://localhost:11434"),

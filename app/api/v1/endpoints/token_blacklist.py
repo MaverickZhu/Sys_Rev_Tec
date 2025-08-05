@@ -1,10 +1,11 @@
-from datetime import datetime
 from typing import Any, List
 
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy.orm import Session
 
-from app import crud, schemas
+from app import crud
+from app.schemas import user as user_schemas
+from app.schemas import token_blacklist as token_schemas
 from app.api import deps
 from app.core.auth import auth_manager
 from app.models.user import UserRole as Role
@@ -12,12 +13,12 @@ from app.models.user import UserRole as Role
 router = APIRouter()
 
 
-@router.post("/add", response_model=schemas.TokenBlacklist)
+@router.post("/add", response_model=token_schemas.TokenBlacklist)
 def add_token_to_blacklist(
     *,
     db: Session = Depends(deps.get_db),
-    token_data: schemas.TokenBlacklistCreate,
-    current_user: schemas.User = Depends(deps.get_current_active_user),
+    token_data: token_schemas.TokenBlacklistCreate,
+    current_user: user_schemas.User = Depends(deps.get_current_active_user),
     request: Request,
 ) -> Any:
     """
@@ -26,13 +27,12 @@ def add_token_to_blacklist(
     # 检查权限
     if current_user.role != Role.ADMIN:
         raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="只有管理员可以执行此操作"
+            status_code=status.HTTP_403_FORBIDDEN, detail="只有管理员可以执行此操作"
         )
     # 获取请求信息
     user_agent = request.headers.get("user-agent")
     ip_address = request.client.host if request.client else None
-    
+
     blacklist_entry = crud.token_blacklist.add_to_blacklist(
         db=db,
         jti=token_data.jti,
@@ -47,12 +47,12 @@ def add_token_to_blacklist(
     return blacklist_entry
 
 
-@router.post("/validate", response_model=schemas.TokenValidationResponse)
+@router.post("/validate", response_model=token_schemas.TokenValidationResponse)
 def validate_token(
     *,
     db: Session = Depends(deps.get_db),
-    validation_request: schemas.TokenValidationRequest,
-    current_user: schemas.User = Depends(deps.get_current_active_user),
+    validation_request: token_schemas.TokenValidationRequest,
+    current_user: user_schemas.User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
     验证token是否在黑名单中
@@ -61,55 +61,53 @@ def validate_token(
         # 解码token获取jti
         payload = auth_manager.verify_token(validation_request.token, "access")
         jti = payload.get("jti")
-        
+
         if not jti:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Invalid token: missing jti"
+                detail="Invalid token: missing jti",
             )
-        
+
         # 检查黑名单
-        blacklist_info = crud.token_blacklist.get_blacklist_info(
-            db=db, jti=jti
-        )
-        
+        blacklist_info = crud.token_blacklist.get_blacklist_info(db=db, jti=jti)
+
         if blacklist_info:
-            return schemas.TokenValidationResponse(
+            return token_schemas.TokenValidationResponse(
                 is_blacklisted=True,
                 reason=blacklist_info.reason,
                 blacklisted_at=blacklist_info.blacklisted_at,
             )
         else:
-            return schemas.TokenValidationResponse(
+            return token_schemas.TokenValidationResponse(
                 is_blacklisted=False,
                 reason=None,
                 blacklisted_at=None,
             )
-    
+
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Token validation failed: {str(e)}"
+            detail=f"Token validation failed: {str(e)}",
         )
 
 
-@router.get("/list", response_model=List[schemas.TokenBlacklist])
+@router.get("/list", response_model=List[token_schemas.TokenBlacklist])
 def get_blacklist(
     *,
     db: Session = Depends(deps.get_db),
-    query_params: schemas.TokenBlacklistQuery = Depends(),
-    current_user: schemas.User = Depends(deps.get_current_active_user),
+    query_params: token_schemas.TokenBlacklistQuery = Depends(),
+    current_user: user_schemas.User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
     获取token黑名单列表
-    
+
     - 普通用户只能查看自己的token
     - 管理员可以查看所有token
     """
     # 如果不是管理员，只能查看自己的token
     if current_user.role != Role.ADMIN:
         query_params.user_id = current_user.id
-    
+
     blacklist_entries = crud.token_blacklist.get_blacklist_by_query(
         db=db, query_params=query_params
     )
@@ -120,8 +118,8 @@ def get_blacklist(
 def get_blacklist_count(
     *,
     db: Session = Depends(deps.get_db),
-    query_params: schemas.TokenBlacklistQuery = Depends(),
-    current_user: schemas.User = Depends(deps.get_current_active_user),
+    query_params: token_schemas.TokenBlacklistQuery = Depends(),
+    current_user: user_schemas.User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
     获取token黑名单总数
@@ -129,18 +127,16 @@ def get_blacklist_count(
     # 如果不是管理员，只能查看自己的token
     if current_user.role != Role.ADMIN:
         query_params.user_id = current_user.id
-    
-    count = crud.token_blacklist.get_blacklist_count(
-        db=db, query_params=query_params
-    )
+
+    count = crud.token_blacklist.get_blacklist_count(db=db, query_params=query_params)
     return {"count": count}
 
 
-@router.get("/stats", response_model=schemas.TokenBlacklistStats)
+@router.get("/stats", response_model=token_schemas.TokenBlacklistStats)
 def get_blacklist_stats(
     *,
     db: Session = Depends(deps.get_db),
-    current_user: schemas.User = Depends(deps.get_current_active_user),
+    current_user: user_schemas.User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
     获取token黑名单统计信息（仅管理员）
@@ -148,8 +144,7 @@ def get_blacklist_stats(
     # 检查权限
     if current_user.role != Role.ADMIN:
         raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="只有管理员可以执行此操作"
+            status_code=status.HTTP_403_FORBIDDEN, detail="只有管理员可以执行此操作"
         )
     stats = crud.token_blacklist.get_blacklist_stats(db=db)
     return stats
@@ -160,7 +155,7 @@ def remove_from_blacklist(
     *,
     db: Session = Depends(deps.get_db),
     jti: str,
-    current_user: schemas.User = Depends(deps.get_current_active_user),
+    current_user: user_schemas.User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
     从黑名单中移除token（仅管理员）
@@ -168,17 +163,15 @@ def remove_from_blacklist(
     # 检查权限
     if current_user.role != Role.ADMIN:
         raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="只有管理员可以执行此操作"
+            status_code=status.HTTP_403_FORBIDDEN, detail="只有管理员可以执行此操作"
         )
     success = crud.token_blacklist.remove_from_blacklist(db=db, jti=jti)
-    
+
     if not success:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Token not found in blacklist"
+            status_code=status.HTTP_404_NOT_FOUND, detail="Token not found in blacklist"
         )
-    
+
     return {"message": "Token removed from blacklist successfully"}
 
 
@@ -186,7 +179,7 @@ def remove_from_blacklist(
 def cleanup_expired_tokens(
     *,
     db: Session = Depends(deps.get_db),
-    current_user: schemas.User = Depends(deps.get_current_active_user),
+    current_user: user_schemas.User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
     清理已过期的黑名单token（仅管理员）
@@ -194,8 +187,7 @@ def cleanup_expired_tokens(
     # 检查权限
     if current_user.role != Role.ADMIN:
         raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="只有管理员可以执行此操作"
+            status_code=status.HTTP_403_FORBIDDEN, detail="只有管理员可以执行此操作"
         )
     removed_count = crud.token_blacklist.cleanup_expired_tokens(db=db)
     return {"message": f"Removed {removed_count} expired tokens from blacklist"}
@@ -207,38 +199,36 @@ def blacklist_user_tokens(
     db: Session = Depends(deps.get_db),
     user_id: int,
     reason: str = "管理员操作",
-    current_user: schemas.User = Depends(deps.get_current_active_user),
+    current_user: user_schemas.User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
     将指定用户的所有token加入黑名单（仅管理员）
-    
+
     注意：这个操作主要用于紧急情况，实际的token失效需要配合JWT验证逻辑
     """
     # 检查权限
     if current_user.role != Role.ADMIN:
         raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="只有管理员可以执行此操作"
+            status_code=status.HTTP_403_FORBIDDEN, detail="只有管理员可以执行此操作"
         )
     # 检查目标用户是否存在
     target_user = crud.user.get(db=db, id=user_id)
     if not target_user:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="User not found"
+            status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
         )
-    
+
     # 防止超级用户误操作自己
     if target_user.id == current_user.id:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Cannot blacklist your own tokens"
+            detail="Cannot blacklist your own tokens",
         )
-    
+
     affected_count = crud.token_blacklist.blacklist_user_tokens(
         db=db, user_id=user_id, reason=reason
     )
-    
+
     return {
         "message": f"Blacklisted tokens for user {target_user.username}",
         "affected_count": affected_count,

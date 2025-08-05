@@ -20,14 +20,20 @@ RUN apt-get update && apt-get install -y \
     libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# 复制依赖文件
-COPY requirements.txt .
-COPY requirements-ai.txt .
+# 升级pip
+RUN pip install --no-cache-dir --upgrade pip
 
-# 安装 Python 依赖
-RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt && \
-    pip install --no-cache-dir -r requirements-ai.txt
+# 先安装基础依赖（缓存友好）
+COPY requirements-base.txt* ./
+RUN if [ -f requirements-base.txt ]; then pip install --no-cache-dir -r requirements-base.txt; fi
+
+# 安装主要依赖
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# 最后安装AI特定依赖（这些变化较频繁）
+COPY requirements-ai.txt .
+RUN pip install --no-cache-dir -r requirements-ai.txt
 
 # 复制应用代码
 COPY app/ ./app/

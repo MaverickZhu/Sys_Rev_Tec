@@ -166,7 +166,7 @@ class CRUDDocument(CRUDBase[Document, DocumentCreate, DocumentUpdate]):
             query = query.filter(Document.uploader_id == uploader_id)
 
         total_documents = query.count()
-        processed_documents = query.filter(Document.is_processed == True).count()
+        processed_documents = query.filter(Document.is_processed).count()
         unprocessed_documents = total_documents - processed_documents
 
         # 按类型统计

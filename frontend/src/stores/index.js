@@ -15,7 +15,7 @@ export const useAuthStore = defineStore('auth', () => {
   // 登录
   const login = async (credentials) => {
     try {
-      const response = await fetch('/api/v1/auth/login', {
+      const response = await fetch('http://127.0.0.1:8001/api/v1/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -117,7 +117,7 @@ export const useSystemStore = defineStore('system', () => {
   // 获取系统统计信息
   const fetchSystemStats = async () => {
     try {
-      const response = await fetch('/api/v1/system/stats', {
+      const response = await fetch('http://127.0.0.1:8001/api/v1/system/stats', {
         headers: {
           'Authorization': `Bearer ${useAuthStore().token}`,
         },
@@ -135,7 +135,7 @@ export const useSystemStore = defineStore('system', () => {
   // 获取系统状态
   const fetchSystemStatus = async () => {
     try {
-      const response = await fetch('/api/v1/system/health', {
+      const response = await fetch('http://127.0.0.1:8001/api/v1/system/health', {
         headers: {
           'Authorization': `Bearer ${useAuthStore().token}`,
         },
@@ -157,7 +157,7 @@ export const useSystemStore = defineStore('system', () => {
   // 获取最近活动
   const fetchRecentActivities = async () => {
     try {
-      const response = await fetch('/api/v1/system/activities', {
+      const response = await fetch('http://127.0.0.1:8001/api/v1/system/activities', {
         headers: {
           'Authorization': `Bearer ${useAuthStore().token}`,
         },

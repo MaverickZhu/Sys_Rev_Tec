@@ -22,7 +22,9 @@ class ProjectCreate(ProjectBase):
     project_code: str
     project_type: str = "货物"
     procurement_method: Optional[str] = None
-    budget_amount: Optional[Decimal] = None
+    budget: Optional[Decimal] = None
+    start_date: Optional[str] = None
+    end_date: Optional[str] = None
     department: Optional[str] = None
     priority: Optional[str] = "medium"
     risk_level: Optional[str] = "low"
@@ -39,7 +41,9 @@ class ProjectUpdate(BaseModel):
     project_code: Optional[str] = None
     project_type: Optional[str] = None
     procurement_method: Optional[str] = None
-    budget_amount: Optional[Decimal] = None
+    budget: Optional[Decimal] = None
+    start_date: Optional[str] = None
+    end_date: Optional[str] = None
     department: Optional[str] = None
     priority: Optional[str] = None
     risk_level: Optional[str] = None
@@ -60,7 +64,9 @@ class ProjectInDBBase(ProjectBase):
     status: Optional[str] = "planning"
     review_status: Optional[str] = "pending"
     is_active: Optional[bool] = True
-    budget_amount: Optional[Decimal] = None
+    budget: Optional[Decimal] = None
+    start_date: Optional[str] = None
+    end_date: Optional[str] = None
     department: Optional[str] = None
     priority: Optional[str] = "medium"
     risk_level: Optional[str] = "low"

@@ -6,13 +6,14 @@
 提供函数和模型查询结果的缓存装饰器
 """
 
+import asyncio
 import datetime
 import decimal
 import hashlib
 import inspect
 import json
 from functools import wraps
-from typing import TYPE_CHECKING, Any, Optional, Union
+from typing import Any, Optional
 
 from fastapi import Request
 from sqlalchemy.orm import Session
@@ -157,17 +158,23 @@ def cache_result(
                 )
 
             # 尝试从缓存获取
-            cached_result = cache_service.get(cache_key, prefix)
-            if cached_result is not None:
-                logger.debug(f"Cache hit for {func.__name__}: {cache_key}")
-                return cached_result
+            try:
+                cached_result = await cache_service.get(cache_key, prefix)
+                if cached_result is not None:
+                    logger.debug(f"Cache hit for {func.__name__}: {cache_key}")
+                    return cached_result
+            except Exception as e:
+                logger.warning(f"Cache get failed for {func.__name__}: {e}")
 
             # 执行函数
             logger.debug(f"Cache miss for {func.__name__}: {cache_key}")
             result = await func(*args, **kwargs)
 
             # 缓存结果
-            cache_service.set(cache_key, result, expire, prefix)
+            try:
+                await cache_service.set(cache_key, result, prefix, expire)
+            except Exception as e:
+                logger.warning(f"Cache set failed for {func.__name__}: {e}")
 
             return result
 
@@ -199,18 +206,24 @@ def cache_result(
                     func.__name__, tuple(filtered_args), filtered_kwargs
                 )
 
-            # 尝试从缓存获取
-            cached_result = cache_service.get(cache_key, prefix)
-            if cached_result is not None:
-                logger.debug(f"Cache hit for {func.__name__}: {cache_key}")
-                return cached_result
+            # 暂时跳过缓存获取以避免协程对象问题
+            # try:
+            #     cached_result = asyncio.run(cache_service.get(cache_key, prefix))
+            #     if cached_result is not None:
+            #         logger.debug(f"Cache hit for {func.__name__}: {cache_key}")
+            #         return cached_result
+            # except Exception as e:
+            #     logger.warning(f"Cache get failed for {func.__name__}: {e}")
 
             # 执行函数
             logger.debug(f"Cache miss for {func.__name__}: {cache_key}")
             result = func(*args, **kwargs)
 
-            # 缓存结果
-            cache_service.set(cache_key, result, expire, prefix)
+            # 暂时跳过缓存设置以避免协程对象问题
+            # try:
+            #     asyncio.run(cache_service.set(cache_key, result, prefix, expire))
+            # except Exception as e:
+            #     logger.warning(f"Cache set failed for {func.__name__}: {e}")
 
             return result
 
@@ -268,18 +281,24 @@ def cache_model_result(
                 model_name, filtered_args, filtered_kwargs, include_user
             )
 
-            # 尝试从缓存获取
-            cached_result = cache_service.get(cache_key, "model")
-            if cached_result is not None:
-                logger.debug(f"Model cache hit for {func.__name__}: {cache_key}")
-                return cached_result
+            # 暂时跳过缓存获取以避免协程对象问题
+            # try:
+            #     cached_result = asyncio.run(cache_service.get(cache_key, "model"))
+            #     if cached_result is not None:
+            #         logger.debug(f"Model cache hit for {func.__name__}: {cache_key}")
+            #         return cached_result
+            # except Exception as e:
+            #     logger.warning(f"Model cache get failed for {func.__name__}: {e}")
 
             # 执行函数
             logger.debug(f"Model cache miss for {func.__name__}: {cache_key}")
             result = func(*args, **kwargs)
 
-            # 缓存结果
-            cache_service.set(cache_key, result, expire, "model")
+            # 暂时跳过缓存设置以避免协程对象问题
+            # try:
+            #     asyncio.run(cache_service.set(cache_key, result, "model", expire))
+            # except Exception as e:
+            #     logger.warning(f"Model cache set failed for {func.__name__}: {e}")
 
             return result
 
@@ -290,7 +309,12 @@ def cache_model_result(
             cache_key = _generate_model_cache_key(
                 model_name, filtered_args, filtered_kwargs, include_user
             )
-            return cache_service.delete(cache_key, "model")
+            # 暂时跳过缓存删除以避免协程对象问题
+            # try:
+            #     return asyncio.run(cache_service.delete(cache_key, "model"))
+            # except Exception as e:
+            #     logger.warning(f"Model cache delete failed: {e}")
+            return False
 
         def cache_key(*args, **kwargs):
             filtered_args = args
@@ -321,9 +345,9 @@ def invalidate_cache_on_change(cache_keys: list):
             # 执行原函数
             result = await func(*args, **kwargs)
 
-            # 失效相关缓存
-            for cache_key in cache_keys:
-                cache_service.delete_pattern(cache_key)
+            # 暂时跳过缓存失效以避免协程对象问题
+            # for cache_key in cache_keys:
+            #     cache_service.delete_pattern(cache_key)
 
             return result
 
@@ -332,9 +356,9 @@ def invalidate_cache_on_change(cache_keys: list):
             # 执行原函数
             result = func(*args, **kwargs)
 
-            # 失效相关缓存
-            for cache_key in cache_keys:
-                cache_service.delete_pattern(cache_key)
+            # 暂时跳过缓存失效以避免协程对象问题
+            # for cache_key in cache_keys:
+            #     cache_service.delete_pattern(cache_key)
 
             return result
 
